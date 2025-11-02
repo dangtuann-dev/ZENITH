@@ -10,7 +10,7 @@ namespace ZENITH.Models
 
         public int OrderId { get; set; }
 
-        public int ProductId { get; set; }
+        public int VariantId { get; set; }
 
         [Required]
         [Range(1, int.MaxValue)]
@@ -22,10 +22,13 @@ namespace ZENITH.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalPrice { get; set; }
 
-        // Navigation Properties
+        // Lưu thông tin variant tại thời điểm đặt hàng
+        [StringLength(500)]
+        public string? VariantDescription { get; set; } // "Size: L, Color: Red"
+
         [ForeignKey("OrderId")]
         public virtual Order Order { get; set; } = null!;
-        [ForeignKey("ProductId")]
-        public virtual Product Product { get; set; } = null!;
+        [ForeignKey("VariantId")]
+        public virtual ProductVariant ProductVariant { get; set; } = null!;
     }
 }

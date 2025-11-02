@@ -11,7 +11,7 @@ namespace ZENITH.Models
         [Required]
         public string UserId { get; set; } = string.Empty;
 
-        public int ProductId { get; set; }
+        public int VariantId { get; set; }
 
         [Required]
         [Range(1, int.MaxValue)]
@@ -20,10 +20,9 @@ namespace ZENITH.Models
         public DateTime AddedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        // Navigation Properties
         [ForeignKey("UserId")]
         public virtual ApplicationUser User { get; set; } = null!;
-        [ForeignKey("ProductId")]
-        public virtual Product Product { get; set; } = null!;
+        [ForeignKey("VariantId")]
+        public virtual ProductVariant ProductVariant { get; set; } = null!;
     }
 }

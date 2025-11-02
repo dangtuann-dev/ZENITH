@@ -8,7 +8,7 @@ namespace ZENITH.Models
         [Key]
         public int LogId { get; set; }
 
-        public int ProductId { get; set; }
+        public int VariantId { get; set; }
 
         [Required]
         public string UserId { get; set; } = string.Empty;
@@ -27,8 +27,9 @@ namespace ZENITH.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation Properties
-        [ForeignKey("ProductId")]
-        public virtual Product Product { get; set; } = null!;
+
+        [ForeignKey("VariantId")]
+        public virtual ProductVariant ProductVariant { get; set; } = null!;
         [ForeignKey("UserId")]
         public virtual ApplicationUser User { get; set; } = null!;
     }

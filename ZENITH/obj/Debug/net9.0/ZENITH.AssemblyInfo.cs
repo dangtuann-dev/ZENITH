@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ZENITH")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3827f4d391b7e1dc92476b7c6b80c94d4bfbae37")]
 [assembly: System.Reflection.AssemblyProductAttribute("ZENITH")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ZENITH")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,5 +1,51 @@
 wwwroot\css\site.css
 wwwroot\favicon.ico
+wwwroot\image\icons\arrow-down-2.svg
+wwwroot\image\icons\arrow-down.svg
+wwwroot\image\icons\arrow-left.svg
+wwwroot\image\icons\arrow-right.svg
+wwwroot\image\icons\arrow-up.png
+wwwroot\image\icons\bag.svg
+wwwroot\image\icons\buy.svg
+wwwroot\image\icons\calling.svg
+wwwroot\image\icons\checkbox-checked.svg
+wwwroot\image\icons\checkbox-uncheck.svg
+wwwroot\image\icons\danger.svg
+wwwroot\image\icons\document.svg
+wwwroot\image\icons\download.svg
+wwwroot\image\icons\dropdown-arrow.svg
+wwwroot\image\icons\edit.svg
+wwwroot\image\icons\facebook.svg
+wwwroot\image\icons\filter.svg
+wwwroot\image\icons\form-error.svg
+wwwroot\image\icons\gift-2.svg
+wwwroot\image\icons\gift.svg
+wwwroot\image\icons\google.svg
+wwwroot\image\icons\heart-2.svg
+wwwroot\image\icons\heart-red.svg
+wwwroot\image\icons\heart.svg
+wwwroot\image\icons\info.svg
+wwwroot\image\icons\linkedin.svg
+wwwroot\image\icons\location.svg
+wwwroot\image\icons\lock.svg
+wwwroot\image\icons\message-2.svg
+wwwroot\image\icons\message.svg
+wwwroot\image\icons\minus.svg
+wwwroot\image\icons\more.svg
+wwwroot\image\icons\plus.svg
+wwwroot\image\icons\profile.svg
+wwwroot\image\icons\search.svg
+wwwroot\image\icons\select-arrow.svg
+wwwroot\image\icons\shield.svg
+wwwroot\image\icons\star-blank.svg
+wwwroot\image\icons\star-half.svg
+wwwroot\image\icons\star.svg
+wwwroot\image\icons\sun.svg
+wwwroot\image\icons\tiktok.svg
+wwwroot\image\icons\trash.svg
+wwwroot\image\icons\twitter.svg
+wwwroot\image\icons\youtube.svg
+wwwroot\image\icons\zenith-logo.png
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
@@ -111,8 +157,8 @@ D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.min.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt
-D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery-validation\dist\additional-methods.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery-validation\dist\additional-methods.min.js
+D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery-validation\dist\additional-methods.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery-validation\dist\jquery.validate.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery-validation\dist\jquery.validate.min.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery-validation\LICENSE.md
@@ -123,3 +169,47 @@ D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\dist\jquery.slim.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\dist\jquery.slim.min.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\dist\jquery.slim.min.map
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\LICENSE.txt
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\arrow-down-2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\arrow-down.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\arrow-left.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\arrow-right.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\bag.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\buy.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\calling.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\checkbox-checked.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\checkbox-uncheck.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\danger.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\document.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\download.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\dropdown-arrow.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\edit.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\facebook.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\filter.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\form-error.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\gift-2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\gift.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\google.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\heart-2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\heart-red.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\heart.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\info.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\linkedin.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\location.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\lock.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\message-2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\message.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\minus.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\more.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\plus.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\profile.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\search.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\select-arrow.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\shield.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\star-blank.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\star-half.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\star.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\sun.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\tiktok.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\trash.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\twitter.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\youtube.svg

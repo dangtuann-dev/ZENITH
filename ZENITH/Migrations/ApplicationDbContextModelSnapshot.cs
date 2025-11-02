@@ -357,6 +357,86 @@ namespace ZENITH.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("ZENITH.Models.Attribute", b =>
+                {
+                    b.Property<int>("AttributeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AttributeId"));
+
+                    b.Property<string>("AttributeName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("DisplayOrder")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("InputType")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("select");
+
+                    b.Property<bool>("IsRequired")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.HasKey("AttributeId");
+
+                    b.HasIndex("AttributeName")
+                        .IsUnique();
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.ToTable("Attributes");
+                });
+
+            modelBuilder.Entity("ZENITH.Models.AttributeValue", b =>
+                {
+                    b.Property<int>("ValueId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ValueId"));
+
+                    b.Property<int>("AttributeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ColorCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("DisplayOrder")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("ValueName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("ValueId");
+
+                    b.HasIndex("AttributeId");
+
+                    b.HasIndex("AttributeId", "ValueName")
+                        .IsUnique();
+
+                    b.ToTable("AttributeValues");
+                });
+
             modelBuilder.Entity("ZENITH.Models.CartItem", b =>
                 {
                     b.Property<int>("CartId")
@@ -370,9 +450,6 @@ namespace ZENITH.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -385,11 +462,14 @@ namespace ZENITH.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("VariantId")
+                        .HasColumnType("int");
+
                     b.HasKey("CartId");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("VariantId");
 
-                    b.HasIndex("UserId", "ProductId")
+                    b.HasIndex("UserId", "VariantId")
                         .IsUnique();
 
                     b.ToTable("CartItems");
@@ -461,18 +541,18 @@ namespace ZENITH.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("VariantId")
+                        .HasColumnType("int");
+
                     b.HasKey("FavoriteId");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("VariantId");
 
-                    b.HasIndex("UserId", "ProductId")
+                    b.HasIndex("UserId", "VariantId")
                         .IsUnique();
 
                     b.ToTable("Favorites");
@@ -500,9 +580,6 @@ namespace ZENITH.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
                     b.Property<int>("QuantityAfter")
                         .HasColumnType("int");
 
@@ -513,13 +590,16 @@ namespace ZENITH.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("VariantId")
+                        .HasColumnType("int");
+
                     b.HasKey("LogId");
 
                     b.HasIndex("CreatedAt");
 
-                    b.HasIndex("ProductId");
-
                     b.HasIndex("UserId");
+
+                    b.HasIndex("VariantId");
 
                     b.ToTable("InventoryLogs");
                 });
@@ -615,9 +695,6 @@ namespace ZENITH.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -627,11 +704,18 @@ namespace ZENITH.Migrations
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("VariantDescription")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("VariantId")
+                        .HasColumnType("int");
+
                     b.HasKey("OrderItemId");
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("VariantId");
 
                     b.ToTable("OrderItems");
                 });
@@ -779,41 +863,18 @@ namespace ZENITH.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<int>("LowStockThreshold")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(10);
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("ProductName")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
-
-                    b.Property<decimal?>("SalePrice")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Sku")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("SoldCount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
-                    b.Property<int>("StockQuantity")
-                        .HasColumnType("int");
-
                     b.Property<int?>("SupplierId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Unit")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
@@ -825,14 +886,9 @@ namespace ZENITH.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
-                    b.Property<float?>("Weight")
-                        .HasColumnType("real");
-
                     b.HasKey("ProductId");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("Price");
 
                     b.HasIndex("ProductName");
 
@@ -877,6 +933,70 @@ namespace ZENITH.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductImages");
+                });
+
+            modelBuilder.Entity("ZENITH.Models.ProductVariant", b =>
+                {
+                    b.Property<int>("VariantId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VariantId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<int>("LowStockThreshold")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(10);
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("SalePrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("SoldCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<int>("StockQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("VariantSku")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("VariantId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("StockQuantity");
+
+                    b.HasIndex("VariantSku")
+                        .IsUnique();
+
+                    b.HasIndex("IsActive", "Price");
+
+                    b.ToTable("ProductVariants");
                 });
 
             modelBuilder.Entity("ZENITH.Models.Review", b =>
@@ -1017,6 +1137,32 @@ namespace ZENITH.Migrations
                     b.ToTable("Suppliers");
                 });
 
+            modelBuilder.Entity("ZENITH.Models.VariantAttributeValue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ValueId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VariantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ValueId");
+
+                    b.HasIndex("VariantId");
+
+                    b.HasIndex("VariantId", "ValueId")
+                        .IsUnique();
+
+                    b.ToTable("VariantAttributeValues");
+                });
+
             modelBuilder.Entity("ZENITH.Models.Voucher", b =>
                 {
                     b.Property<int>("VoucherId")
@@ -1151,21 +1297,32 @@ namespace ZENITH.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ZENITH.Models.CartItem", b =>
+            modelBuilder.Entity("ZENITH.Models.AttributeValue", b =>
                 {
-                    b.HasOne("ZENITH.Models.Product", "Product")
-                        .WithMany("CartItems")
-                        .HasForeignKey("ProductId")
+                    b.HasOne("ZENITH.Models.Attribute", "Attribute")
+                        .WithMany("AttributeValues")
+                        .HasForeignKey("AttributeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Attribute");
+                });
+
+            modelBuilder.Entity("ZENITH.Models.CartItem", b =>
+                {
                     b.HasOne("ZENITH.Models.ApplicationUser", "User")
                         .WithMany("CartItems")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Product");
+                    b.HasOne("ZENITH.Models.ProductVariant", "ProductVariant")
+                        .WithMany("CartItems")
+                        .HasForeignKey("VariantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductVariant");
 
                     b.Navigation("User");
                 });
@@ -1182,38 +1339,38 @@ namespace ZENITH.Migrations
 
             modelBuilder.Entity("ZENITH.Models.Favorite", b =>
                 {
-                    b.HasOne("ZENITH.Models.Product", "Product")
-                        .WithMany("Favorites")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ZENITH.Models.ApplicationUser", "User")
                         .WithMany("Favorites")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Product");
+                    b.HasOne("ZENITH.Models.ProductVariant", "ProductVariant")
+                        .WithMany("Favorites")
+                        .HasForeignKey("VariantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductVariant");
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("ZENITH.Models.InventoryLog", b =>
                 {
-                    b.HasOne("ZENITH.Models.Product", "Product")
-                        .WithMany("InventoryLogs")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("ZENITH.Models.ApplicationUser", "User")
                         .WithMany("InventoryLogs")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Product");
+                    b.HasOne("ZENITH.Models.ProductVariant", "ProductVariant")
+                        .WithMany("InventoryLogs")
+                        .HasForeignKey("VariantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ProductVariant");
 
                     b.Navigation("User");
                 });
@@ -1253,15 +1410,15 @@ namespace ZENITH.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ZENITH.Models.Product", "Product")
+                    b.HasOne("ZENITH.Models.ProductVariant", "ProductVariant")
                         .WithMany("OrderItems")
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("VariantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Order");
 
-                    b.Navigation("Product");
+                    b.Navigation("ProductVariant");
                 });
 
             modelBuilder.Entity("ZENITH.Models.OrderStatusHistory", b =>
@@ -1342,6 +1499,17 @@ namespace ZENITH.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("ZENITH.Models.ProductVariant", b =>
+                {
+                    b.HasOne("ZENITH.Models.Product", "Product")
+                        .WithMany("ProductVariants")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("ZENITH.Models.Review", b =>
                 {
                     b.HasOne("ZENITH.Models.Product", "Product")
@@ -1372,6 +1540,25 @@ namespace ZENITH.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("ZENITH.Models.VariantAttributeValue", b =>
+                {
+                    b.HasOne("ZENITH.Models.AttributeValue", "AttributeValue")
+                        .WithMany("VariantAttributeValues")
+                        .HasForeignKey("ValueId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ZENITH.Models.ProductVariant", "ProductVariant")
+                        .WithMany("VariantAttributeValues")
+                        .HasForeignKey("VariantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AttributeValue");
+
+                    b.Navigation("ProductVariant");
+                });
+
             modelBuilder.Entity("ZENITH.Models.Address", b =>
                 {
                     b.Navigation("Orders");
@@ -1396,6 +1583,16 @@ namespace ZENITH.Migrations
                     b.Navigation("PaymentMethods");
 
                     b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("ZENITH.Models.Attribute", b =>
+                {
+                    b.Navigation("AttributeValues");
+                });
+
+            modelBuilder.Entity("ZENITH.Models.AttributeValue", b =>
+                {
+                    b.Navigation("VariantAttributeValues");
                 });
 
             modelBuilder.Entity("ZENITH.Models.Category", b =>
@@ -1423,6 +1620,15 @@ namespace ZENITH.Migrations
 
             modelBuilder.Entity("ZENITH.Models.Product", b =>
                 {
+                    b.Navigation("ProductImages");
+
+                    b.Navigation("ProductVariants");
+
+                    b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("ZENITH.Models.ProductVariant", b =>
+                {
                     b.Navigation("CartItems");
 
                     b.Navigation("Favorites");
@@ -1431,9 +1637,7 @@ namespace ZENITH.Migrations
 
                     b.Navigation("OrderItems");
 
-                    b.Navigation("ProductImages");
-
-                    b.Navigation("Reviews");
+                    b.Navigation("VariantAttributeValues");
                 });
 
             modelBuilder.Entity("ZENITH.Models.Supplier", b =>
