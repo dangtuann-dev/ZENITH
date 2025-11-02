@@ -1,0 +1,423 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Web Profile\\ZENITH\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\appdata\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\appdata\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Web Profile\\ZENITH\\ZENITH\\Migrations\\20251102101539_FinalSetupLocationFix.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ZENITH\\Migrations\\20251102101539_FinalSetupLocationFix.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Web Profile\\ZENITH\\ZENITH\\Migrations\\20251102101049_FinalInitialSetup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ZENITH\\Migrations\\20251102101049_FinalInitialSetup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Web Profile\\ZENITH\\ZENITH\\Migrations\\20251102100129_WebTableDatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ZENITH\\Migrations\\20251102100129_WebTableDatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\review.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\review.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\shipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\shipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\orderstatushistory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\orderstatushistory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\ordervoucher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\ordervoucher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\orderitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\orderitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\voucher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\voucher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\favorite.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\favorite.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\cartitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\cartitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\inventorylog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\inventorylog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\productimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\productimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\supplier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\supplier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\paymentmethod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\paymentmethod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\address.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\address.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\adminlog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\adminlog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\applicationrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\applicationrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\models\\applicationuser..cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\models\\applicationuser..cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\migrations\\20251102092828_identitysetup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\migrations\\20251102092828_identitysetup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "20251102101539_FinalSetupLocationFix.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Migrations\\20251102101539_FinalSetupLocationFix.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Migrations\\20251102101539_FinalSetupLocationFix.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Migrations\\20251102101539_FinalSetupLocationFix.cs",
+              "RelativeToolTip": "ZENITH\\Migrations\\20251102101539_FinalSetupLocationFix.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T10:15:39.293Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\AppData\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "ZENITH\\AppData\\ApplicationDbContext.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\AppData\\ApplicationDbContext.cs",
+              "RelativeToolTip": "ZENITH\\AppData\\ApplicationDbContext.cs",
+              "ViewState": "AgIAALUBAAAAAAAAAADwv70BAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T08:49:32.532Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "20251102100129_WebTableDatabase.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Migrations\\20251102100129_WebTableDatabase.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Migrations\\20251102100129_WebTableDatabase.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Migrations\\20251102100129_WebTableDatabase.cs",
+              "RelativeToolTip": "ZENITH\\Migrations\\20251102100129_WebTableDatabase.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T10:01:30.095Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "20251102101049_FinalInitialSetup.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Migrations\\20251102101049_FinalInitialSetup.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Migrations\\20251102101049_FinalInitialSetup.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Migrations\\20251102101049_FinalInitialSetup.cs",
+              "RelativeToolTip": "ZENITH\\Migrations\\20251102101049_FinalInitialSetup.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T10:10:49.579Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Review.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\Review.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\Review.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\Review.cs",
+              "RelativeToolTip": "ZENITH\\Models\\Review.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAwwCEAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:46:22.496Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Shipment.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\Shipment.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\Shipment.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\Shipment.cs",
+              "RelativeToolTip": "ZENITH\\Models\\Shipment.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:46:03.594Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "OrderStatusHistory.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\OrderStatusHistory.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\OrderStatusHistory.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\OrderStatusHistory.cs",
+              "RelativeToolTip": "ZENITH\\Models\\OrderStatusHistory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:45:15.708Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "OrderVoucher.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\OrderVoucher.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\OrderVoucher.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\OrderVoucher.cs",
+              "RelativeToolTip": "ZENITH\\Models\\OrderVoucher.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:44:47.489Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Product.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\Product.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\Product.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\Product.cs",
+              "RelativeToolTip": "ZENITH\\Models\\Product.cs",
+              "ViewState": "AgIAADAAAAAAAAAAAAAuwDMAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:41:59.708Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "OrderItem.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\OrderItem.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\OrderItem.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\OrderItem.cs",
+              "RelativeToolTip": "ZENITH\\Models\\OrderItem.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:44:31.267Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Order.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\Order.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\Order.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\Order.cs",
+              "RelativeToolTip": "ZENITH\\Models\\Order.cs",
+              "ViewState": "AgIAAB4AAAAAAAAAAADwvzoAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:44:02.781Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Voucher.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\Voucher.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\Voucher.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\Voucher.cs",
+              "RelativeToolTip": "ZENITH\\Models\\Voucher.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAwwCgAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:43:41.423Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Favorite.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\Favorite.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\Favorite.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\Favorite.cs",
+              "RelativeToolTip": "ZENITH\\Models\\Favorite.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:43:23.485Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "CartItem.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\CartItem.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\CartItem.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\CartItem.cs",
+              "RelativeToolTip": "ZENITH\\Models\\CartItem.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAYwBsAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:42:50.499Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "InventoryLog.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\InventoryLog.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\InventoryLog.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\InventoryLog.cs",
+              "RelativeToolTip": "ZENITH\\Models\\InventoryLog.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAwwCEAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:42:31.822Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "ProductImage.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\ProductImage.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\ProductImage.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\ProductImage.cs",
+              "RelativeToolTip": "ZENITH\\Models\\ProductImage.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:42:12.753Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Supplier.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\Supplier.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\Supplier.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\Supplier.cs",
+              "RelativeToolTip": "ZENITH\\Models\\Supplier.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAADwvyEAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:41:30.966Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Category.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\Category.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\Category.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\Category.cs",
+              "RelativeToolTip": "ZENITH\\Models\\Category.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAADwvyIAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:41:16.883Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "PaymentMethod.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\PaymentMethod.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\PaymentMethod.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\PaymentMethod.cs",
+              "RelativeToolTip": "ZENITH\\Models\\PaymentMethod.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAADwvyUAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:40:50.379Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "Address.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\Address.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\Address.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\Address.cs",
+              "RelativeToolTip": "ZENITH\\Models\\Address.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAADwvy4AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:40:22.485Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "AdminLog.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\AdminLog.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\AdminLog.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\AdminLog.cs",
+              "RelativeToolTip": "ZENITH\\Models\\AdminLog.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAYwCUAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:39:59.714Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "ApplicationRole.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\ApplicationRole.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\ApplicationRole.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\ApplicationRole.cs",
+              "RelativeToolTip": "ZENITH\\Models\\ApplicationRole.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:39:38.754Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "20251102092828_IdentitySetup.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Migrations\\20251102092828_IdentitySetup.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Migrations\\20251102092828_IdentitySetup.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Migrations\\20251102092828_IdentitySetup.cs",
+              "RelativeToolTip": "ZENITH\\Migrations\\20251102092828_IdentitySetup.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:28:28.479Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "ApplicationUser..cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\ApplicationUser..cs",
+              "RelativeDocumentMoniker": "ZENITH\\Models\\ApplicationUser..cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Models\\ApplicationUser..cs",
+              "RelativeToolTip": "ZENITH\\Models\\ApplicationUser..cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T09:26:07.741Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "ZENITH\\Views\\Home\\Index.cshtml",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "ZENITH\\Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-02T08:44:04.355Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

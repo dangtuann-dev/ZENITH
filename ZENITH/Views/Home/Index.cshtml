@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Kiểm tra Kết nối CSDL";
+}
+
+<div class="container mt-5">
+    <h1>Trạng thái CSDL</h1>
+
+    @if (ViewBag.Status.Contains("THÀNH CÔNG"))
+    {
+        <div class="alert alert-success" role="alert">
+            <strong>@ViewBag.Status</strong>
+            <p>@ViewBag.Message</p>
+            <p>Database đang nằm ở thư mục: <code>/bin/Debug/.../App_Data</code></p>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger" role="alert">
+            <strong>@ViewBag.Status</strong>
+            <p>@ViewBag.Message</p>
+        </div>
+    }
+
+    <p>Bây giờ bạn đã có thể bắt đầu thêm dữ liệu mẫu và logic nghiệp vụ.</p>
+</div>
