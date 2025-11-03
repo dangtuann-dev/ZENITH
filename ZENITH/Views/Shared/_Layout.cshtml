@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,6 +7,7 @@
     <script type="importmap"></script>
     @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> *@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ZENITH.styles.css" asp-append-version="true" />
 
     <script src="~/js/site.js"
@@ -81,7 +82,7 @@
                                                     <img src="/image/img/category/cate-1.1.svg"
                                                          alt=""
                                                          class="menu-column__icon-1" />
-                                                    <img src ="/image/img/category/cate-1.2.svg"
+                                                    <img src="/image/img/category/cate-1.2.svg"
                                                          alt=""
                                                          class="menu-column__icon-2" />
                                                 </div>
@@ -4237,33 +4238,32 @@
                 <div class="navbar__overlay js-toggle" toggle-target="#navbar"></div>
                 <partial name="_LoginPartial" />
             </div>
-           
+
         </div>
 
     </header>
-        <main role="main" class="pb-3" style="height:1000px">
-            @RenderBody()
-        </main>
+    <main role="main" class="pb-3" style="height:1000px">
+        @RenderBody()
+    </main>
 
-    <footer >
+    <footer>
         <div class="container">
             <div class="footer__row">
                 <!-- Footer column 1 -->
                 <div class="footer__col">
                     <!-- Logo -->
                     <a href="./" class="logo footer__logo">
-                        <img src="/image/icons/zenith-logo.png" alt="grocerymart" class="logo__img" style="width:37px; height: 37px;"/>
+                        <img src="/image/icons/zenith-logo.png" alt="grocerymart" class="logo__img" style="width:37px; height: 37px;" />
                         <h1 class="logo__title" style="color:#3643BA; ">Zenith</h1>
                     </a>
                     <p class="footer__desc">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, maxime et veniam eligendi rem
-                        voluptatibus.
+                        Zenith - thương hiệu đồ thể thao dành cho sinh viên Việt Nam. Với hơn 5.000 sản phẩm cho 60+ môn thể thao. Chất lượng vượt trội, giá cả phải chăng, nhiều ưu đãi lớn!
                     </p>
 
-                    <p class="footer__help-text">Receive product news and updates.</p>
+                    <p class="footer__help-text">Nhận tin tức và cập nhật về sản phẩm.</p>
                     <form action="" class="footer__form">
-                        <input type="text" class="footer__input" placeholder="Email address" />
-                        <button class="btn btn--primary">SEND</button>
+                        <input type="text" class="footer__input" placeholder="Địa Chỉ Email" />
+                        <button class="btn btn--primary">GỬI</button>
                     </form>
                 </div>
 
@@ -4333,21 +4333,21 @@
                     <ul class="footer__list">
                         <li>
                             <p class="footer__label">Email</p>
-                            <a href="mailto:contact@grocerymart.com" class="footer__link"> contact@grocerymart.com </a>
+                            <a href="mailto:contact@grocerymart.com" class="footer__link">dangtuann.dev@gmail.com </a>
                         </li>
                         <li>
                             <p class="footer__label">Hotline</p>
-                            <a href="tel:18008888" class="footer__link">18008888</a>
+                            <a href="tel:18008888" class="footer__link">0908779590</a>
                         </li>
                         <li>
                             <p class="footer__label">Address</p>
                             <p class="footer__text">
-                                No. 11D, Lot A10, Nam Trung Yen urban area, Yen Hoa Ward, Cau Giay District, City. Hanoi
+                                Đường Nguyễn Tri Phương, phường Biên Hòa, tỉnh Đồng Nai
                             </p>
                         </li>
                         <li>
                             <p class="footer__label">Hours</p>
-                            <p class="footer__text">M - F 08:00am - 06:00pm</p>
+                            <p class="footer__text">24/7</p>
                         </li>
                     </ul>
                 </div>
@@ -4378,7 +4378,7 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

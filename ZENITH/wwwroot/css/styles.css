@@ -1,0 +1,9 @@
+﻿.arrow-icon {
+        width: 24px;
+    height: 24px;
+    -webkit-mask: url("~/image/auth/intro-arrow.svg") no-repeat center;
+    mask: url("~/image/auth/intro-arrow.svg") no-repeat center;
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    background-color: #3643BA;
+}

@@ -1,19 +1,118 @@
 ﻿@page
 @model RegisterModel
+@using Microsoft.AspNetCore.Identity
+@using ZENITH.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "| Đăng Ký - Đăng ký để luôn nắm bắt thông tin mới nhất từ Zenith!";
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+    var externalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 }
 
-<h1>@ViewData["Title"]</h1>
 
-<div class="row">
+<!-- Auth content -->
+<div id="auth-content" class="auth__content hide">
+    <div class="auth__content-inner">
+        <a asp-controller="Home" class="logo">
+            <img src="~/image/icons/zenith-logo.png" style="width: 37px; height: 37px;"  alt="Zenith" class="logo__img" />
+            <h1 class="logo__title" style="color:#3643BA;">Zenith</h1>
+        </a>
+        <h1 class="auth__heading">Đăng Ký</h1>
+        <p class="auth__desc">Đăng ký để luôn nắm bắt thông tin mới nhất từ Zenith!</p>
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form auth__form">
+            <div class="form__group">
+                <div class="form__text-input">
+                    <input asp-for="Input.Email" class="form__input" autocomplete="username" aria-required="true" placeholder="Email" />
+                    <img src="~/image/icons/message.svg" alt="" class="form__input-icon" />
+                    <img src="~/image/icons/form-error.svg" alt="" class="form__input-icon-error" />
+                </div>
+                <p class="form__error">Email không hợp lệ!</p>
+            </div>
+            <div class="form__group">
+                <div class="form__text-input">
+                    <input asp-for="Input.Password" class="form__input" autocomplete="new-password" aria-required="true" placeholder="Mật Khẩu" />
+                    <img src="~/image/icons/lock.svg" alt="" class="form__input-icon" />
+                    <img src="~/image/icons/form-error.svg" alt="" class="form__input-icon-error" />
+                </div>
+                @*Cần nâng cấp error*@
+                <p class="form__error">Mật khẩu chưa đủ mạnh!</p>
+            </div>
+            <div class="form__group">
+                <div class="form__text-input">
+                    <input asp-for="Input.ConfirmPassword" class="form__input" autocomplete="new-password" aria-required="true" placeholder="password" />
+                    <img src="./assets/icons/lock.svg" alt="" class="form__input-icon" />
+                    <img src="./assets/icons/form-error.svg" alt="" class="form__input-icon-error" />
+                </div>
+                @*Cần nâng cấp error*@
+                <p class="form__error">Mật khẩu không trùng khớp!</p>
+            </div>
+            <div class="form__group form__group--inline">
+                <label class="form__checkbox" asp-for="Input.RememberMe">
+
+                    <input asp-for="Input.RememberMe"
+                           class="form__checkbox-input d-none" />
+
+                    <span class="form__checkbox-label">Đặt làm mặc định</span>
+                </label>
+            </div>
+            @*Đăng nhập bằng gg chưa làm*@
+            <div class="form__group auth__btn-group">
+                <button class="btn btn--primary auth__btn form__submit-btn">Đăng Ký</button>
+                <button class="btn btn--outline auth__btn btn--no-margin">
+                    <img src="~image/icons/google.svg" alt="" class="btn__icon icon" />
+                    Đăng nhập bằng Google
+                </button>
+            </div>
+
+            @* @{
+                if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                {
+                    <div>
+                        <p>
+                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
+                            about setting up this ASP.NET application to support logging in via external services</a>.
+                        </p>
+                    </div>
+                }
+                else
+                {
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form">
+                        <div class="auth__social">
+                            @foreach (var provider in Model.ExternalLogins)
+                            {
+                                if (provider.Name == "Google")
+                                {
+                                    <button type="submit" class="btn btn--google auth__btn" name="provider" value="@provider.Name" title="Đăng ký bằng tài khoản @provider.DisplayName của bạn">
+                                        <svg class="icon" width="20" height="20">
+                                            <use xlink:href="#google"></use>
+                                        </svg>
+                                        Đăng ký bằng Google
+                                    </button>
+                                }
+                            }
+                        </div>
+                    </form>
+                }
+            } *@
+        </form>
+
+        <p class="auth__text">
+            Bạn đã có tài khoản?
+            <a asp-page="Login" class="auth__link auth__text-link">Đăng nhập</a>
+        </p>
+    </div>
+</div>
+
+
+@* <div class="row">
     <div class="col-md-4">
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <h2>Create a new account.</h2>
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                <input asp-for="Input.Email" class="form__input" autocomplete="username" aria-required="true" placeholder="name@example.com" />
                 <label asp-for="Input.Email">Email</label>
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
@@ -64,4 +163,4 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-}
+} *@

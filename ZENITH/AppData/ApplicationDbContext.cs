@@ -18,6 +18,7 @@ namespace ZENITH.AppData
         public DbSet<Address> Addresses { get; set; }
         public DbSet<PaymentMethod> PaymentMethods { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Sport> sports { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductVariant> ProductVariants { get; set; }
@@ -166,7 +167,20 @@ namespace ZENITH.AppData
 
                 entity.HasIndex(e => e.SupplierName);
             });
+            // ==================== SPORT CONFIGURATION =====================
+            modelBuilder.Entity<Sport>(entity =>
+            {
+                entity.HasKey(e => e.SportId);
+                entity.Property(e => e.SportName).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Description).HasMaxLength(500);
+                entity.Property(e => e.IconUrl).HasMaxLength(255);
+                entity.Property(e => e.IsActive).HasDefaultValue(true);
+                entity.Property(e => e.DisplayOrder).HasDefaultValue(0);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
 
+                entity.HasIndex(e => e.SportName).IsUnique();
+                entity.HasIndex(e => e.DisplayOrder);
+            });
             // ==================== PRODUCT CONFIGURATION ====================
 
             modelBuilder.Entity<Product>(entity =>
@@ -182,9 +196,14 @@ namespace ZENITH.AppData
                 entity.Property(e => e.UpdatedAt).HasDefaultValueSql("GETDATE()");
 
                 entity.HasOne(e => e.Category)
-                    .WithMany(c => c.Products)
-                    .HasForeignKey(e => e.CategoryId)
-                    .OnDelete(DeleteBehavior.Restrict);
+                        .WithMany(c => c.Products)
+                        .HasForeignKey(e => e.CategoryId)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Sport)
+                    .WithMany(s => s.Products)
+                    .HasForeignKey(e => e.SportId)
+                    .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(e => e.Supplier)
                     .WithMany(s => s.Products)
@@ -194,6 +213,7 @@ namespace ZENITH.AppData
                 entity.HasIndex(e => e.Sku).IsUnique();
                 entity.HasIndex(e => e.ProductName);
                 entity.HasIndex(e => e.CategoryId);
+                entity.HasIndex(e => e.SportId); 
                 entity.HasIndex(e => new { e.IsActive, e.IsFeatured });
             });
 

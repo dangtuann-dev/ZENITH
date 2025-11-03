@@ -873,6 +873,9 @@ namespace ZENITH.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int?>("SportId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("SupplierId")
                         .HasColumnType("int");
 
@@ -894,6 +897,8 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("Sku")
                         .IsUnique();
+
+                    b.HasIndex("SportId");
 
                     b.HasIndex("SupplierId");
 
@@ -1089,6 +1094,52 @@ namespace ZENITH.Migrations
                     b.HasIndex("TrackingNumber");
 
                     b.ToTable("Shipments");
+                });
+
+            modelBuilder.Entity("ZENITH.Models.Sport", b =>
+                {
+                    b.Property<int>("SportId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SportId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("DisplayOrder")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("IconUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("SportName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("SportId");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("SportName")
+                        .IsUnique();
+
+                    b.ToTable("sports");
                 });
 
             modelBuilder.Entity("ZENITH.Models.Supplier", b =>
@@ -1478,12 +1529,19 @@ namespace ZENITH.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("ZENITH.Models.Sport", "Sport")
+                        .WithMany("Products")
+                        .HasForeignKey("SportId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("ZENITH.Models.Supplier", "Supplier")
                         .WithMany("Products")
                         .HasForeignKey("SupplierId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Category");
+
+                    b.Navigation("Sport");
 
                     b.Navigation("Supplier");
                 });
@@ -1638,6 +1696,11 @@ namespace ZENITH.Migrations
                     b.Navigation("OrderItems");
 
                     b.Navigation("VariantAttributeValues");
+                });
+
+            modelBuilder.Entity("ZENITH.Models.Sport", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("ZENITH.Models.Supplier", b =>

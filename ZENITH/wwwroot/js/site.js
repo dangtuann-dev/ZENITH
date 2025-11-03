@@ -108,13 +108,27 @@ function handleActiveMenu() {
         menu.querySelector(`.${activeClass}`)?.classList.remove(activeClass);
     };
 
+    // Xóa class active trong một menu cụ thể
+    const removeActive = (menu) => {
+        const activeItems = menu.querySelectorAll(`.${activeClass}`);
+        activeItems.forEach((item) => item.classList.remove(activeClass));
+    };
+
+    // Khởi tạo menu
     const init = () => {
+        // Xóa tất cả active trước
+        removeAllActive();
+
+        // Thêm active cho phần tử đầu tiên của menu chính
+        const mainMenu = document.querySelector(".navbar__list .js-menu-list");
+        if (mainMenu && mainMenu.children.length > 0 && window.innerWidth > 991) {
+            mainMenu.children[0].classList.add(activeClass);
+        }
+
+        // Thêm sự kiện cho tất cả các menu item
         menus.forEach((menu) => {
             const items = menu.children;
             if (!items.length) return;
-
-            removeActive(menu);
-            if (window.innerWidth > 991) items[0].classList.add(activeClass);
 
             Array.from(items).forEach((item) => {
                 item.onmouseenter = () => {
@@ -132,8 +146,29 @@ function handleActiveMenu() {
         });
     };
 
+    // Khởi tạo menu
     init();
 
+    // Thêm sự kiện cho dropdown
+    //dropdowns.forEach((dropdown) => {
+    //    dropdown.onmouseenter = () => {
+    //        if (window.innerWidth <= 991) return;
+
+    //        // Xóa tất cả active
+    //        removeAllActive();
+
+    //        // Thêm active cho dropdown hiện tại
+    //        const currentMenu = dropdown.querySelector(".js-menu-list");
+    //        if (currentMenu && currentMenu.children.length > 0) {
+    //            currentMenu.children[0].classList.add(activeClass);
+    //        }
+    //    };
+
+    //    dropdown.onmouseleave = () => {
+    //        if (window.innerWidth <= 991) return;
+    //        init();
+    //    };
+    //});
     dropdowns.forEach((dropdown) => {
         dropdown.onmouseleave = () => init();
     });
@@ -203,8 +238,12 @@ window.addEventListener("template-loaded", () => {
         const contents = tabContainer.querySelectorAll(`.${contentsSelector}`);
         tabs.forEach((tab, index) => {
             tab.onclick = () => {
-                tabContainer.querySelector(`.${tabActive}`)?.classList.remove(tabActive);
-                tabContainer.querySelector(`.${contentActive}`)?.classList.remove(contentActive);
+                tabContainer
+                    .querySelector(`.${tabActive}`)
+                    ?.classList.remove(tabActive);
+                tabContainer
+                    .querySelector(`.${contentActive}`)
+                    ?.classList.remove(contentActive);
                 tab.classList.add(tabActive);
                 contents[index].classList.add(contentActive);
             };
@@ -219,10 +258,14 @@ window.addEventListener("template-loaded", () => {
             const isDark = localStorage.dark === "true";
             document.querySelector("html").classList.toggle("dark", !isDark);
             localStorage.setItem("dark", !isDark);
-            switchBtn.querySelector("span").textContent = isDark ? "Dark mode" : "Light mode";
+            switchBtn.querySelector("span").textContent = isDark
+                ? "Dark mode"
+                : "Light mode";
         };
         const isDark = localStorage.dark === "true";
-        switchBtn.querySelector("span").textContent = isDark ? "Light mode" : "Dark mode";
+        switchBtn.querySelector("span").textContent = isDark
+            ? "Light mode"
+            : "Dark mode";
     }
 });
 

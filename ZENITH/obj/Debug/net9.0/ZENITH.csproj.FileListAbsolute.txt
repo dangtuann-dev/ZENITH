@@ -455,7 +455,11 @@ D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\ftuktk4i20-jjbwa2nalx.g
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\y004060gfb-5id264paoq.gz
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\1cjq1fm9fj-3qcngug300.gz
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\8nbhf6lr44-2l551b9060.gz
-D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\19ytycuyou-4etzxx9y3k.gz
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\0cj3j7cx4u-jqstd6f2yp.gz
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\ri7uqi3euj-aiicqxeiot.gz
-D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\tdb3if1fid-p6oc67nb4l.gz
+D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\19ytycuyou-908v2hun0d.gz
+D:\Web Profile\ZENITH\ZENITH\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.Google.dll
+D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\tdb3if1fid-l0e0ikbv9e.gz
+D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\irb5v3ujda-7q8dnw2e3p.gz
+D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\r9urob54ol-d8sa9tc2co.gz
+D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\x7fc027y5i-76sz4jsa0v.gz

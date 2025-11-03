@@ -11,7 +11,7 @@ namespace ZENITH.Models
         public int CategoryId { get; set; }
 
         public int? SupplierId { get; set; }
-
+        public int? SportId { get; set; }
         [Required]
         [StringLength(200)]
         public string ProductName { get; set; } = string.Empty;
@@ -35,6 +35,8 @@ namespace ZENITH.Models
         public virtual Category Category { get; set; } = null!;
         [ForeignKey("SupplierId")]
         public virtual Supplier? Supplier { get; set; }
+        [ForeignKey("SportId")]
+        public virtual Sport? Sport { get; set; }
         public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
         public virtual ICollection<ProductVariant> ProductVariants { get; set; } = new List<ProductVariant>();
         public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();

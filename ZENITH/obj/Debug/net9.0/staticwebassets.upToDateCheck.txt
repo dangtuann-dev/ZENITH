@@ -1,5 +1,9 @@
 wwwroot\css\site.css
+wwwroot\css\styles.css
 wwwroot\favicon.ico
+wwwroot\image\auth\forgot-password.png
+wwwroot\image\auth\intro-arrow.svg
+wwwroot\image\auth\intro.svg
 wwwroot\image\icons\arrow-down-2.svg
 wwwroot\image\icons\arrow-down.svg
 wwwroot\image\icons\arrow-left.svg
@@ -45,7 +49,9 @@ wwwroot\image\icons\tiktok.svg
 wwwroot\image\icons\trash.svg
 wwwroot\image\icons\twitter.svg
 wwwroot\image\icons\youtube.svg
+wwwroot\image\icons\zenith-logo-white.png
 wwwroot\image\icons\zenith-logo.png
+wwwroot\image\pageImage\login-page.jpg
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
@@ -213,3 +219,6 @@ D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\tiktok.svg
 D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\trash.svg
 D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\twitter.svg
 D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\youtube.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\css\styles.css
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\auth\intro-arrow.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\auth\intro.svg
