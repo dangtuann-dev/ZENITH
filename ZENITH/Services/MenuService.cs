@@ -35,7 +35,38 @@ namespace ZENITH.Services
             // 2. Bắt đầu xây dựng cấu trúc phân cấp đệ quy
             return BuildSportHierarchy(topLevelSports, allSports, allLinks, allCategories);
         }
+        //Lấy tất cả Sub-Sports/Categories(dạng phẳng)
+        public async Task<List<SportMenuItem>> GetAllSubSportsWithCategoriesAsync()
+        {
+            var allLinks = await _context.SportCategories.AsNoTracking().ToListAsync();
+            var allCategories = await _context.Categories.AsNoTracking().ToListAsync();
 
+            // Lấy tất cả Sports có ParentId (Sub-Sports)
+            var allSubSports = await _context.Sports
+                .Where(s => s.ParentSportId != null)
+                .OrderBy(s => s.ParentSportId) // Nhóm theo Sport Cha gốc
+                .ThenBy(s => s.DisplayOrder)
+                .AsNoTracking()
+                .ToListAsync();
+
+            // Ánh xạ sang SportMenuItem (Giống logic Sport Con)
+            var items = new List<SportMenuItem>();
+            foreach (var sport in allSubSports)
+            {
+                var menuItem = new SportMenuItem
+                {
+                    Id = sport.SportId,
+                    Name = sport.SportName,
+                    IconUrl = sport.IconUrl,
+                    Categories = GetSportCategories(sport.SportId, allLinks, allCategories),
+                    // SubSports là list rỗng vì đây là tầng cuối cùng
+                    SubSports = new List<SportMenuItem>()
+                };
+                items.Add(menuItem);
+            }
+
+            return items;
+        }
         // Hàm đệ quy (Recursive) để xây dựng cấu trúc Sport Cha-Con
         private List<SportMenuItem> BuildSportHierarchy(
     IEnumerable<Sport> currentSports,

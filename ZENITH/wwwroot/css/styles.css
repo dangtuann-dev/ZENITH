@@ -7,3 +7,11 @@
     -webkit-mask-size: contain;
     background-color: #3643BA;
 }
+.sub-menu__column--equitment {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 14px 0;
+}
+.sub-menu--not-main {
+    grid-template-columns: 1fr;
+}

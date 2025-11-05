@@ -13,7 +13,8 @@
     }
     .menu-advert img {
         width: 100%;
-        height: auto;
+        height: 522px;
+        object-fit: contain;
         display: block;
     }
 

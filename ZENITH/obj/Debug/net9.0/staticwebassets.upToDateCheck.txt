@@ -1,5 +1,5 @@
+wwwroot\css\menu-advert.css
 wwwroot\css\site.css
-wwwroot\css\styles.css
 wwwroot\favicon.ico
 wwwroot\fonts\Lato-Black.woff
 wwwroot\fonts\Lato-Black.woff2
@@ -195,9 +195,9 @@ wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
-wwwroot\css\menu-advert.css
+wwwroot\css\styles.css
+D:\Web Profile\ZENITH\ZENITH\wwwroot\css\menu-advert.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\css\site.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\styles.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\favicon.ico
 D:\Web Profile\ZENITH\ZENITH\wwwroot\fonts\stylesheet.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\image\auth\intro-arrow.svg
@@ -368,4 +368,4 @@ D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\dist\jquery.slim.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\dist\jquery.slim.min.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\dist\jquery.slim.min.map
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\LICENSE.txt
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\menu-advert.css
+D:\Web Profile\ZENITH\ZENITH\wwwroot\css\styles.css

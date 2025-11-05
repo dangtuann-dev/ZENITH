@@ -6,5 +6,6 @@ namespace ZENITH.Services
     {
         // Lấy dữ liệu menu đã được cấu trúc
         Task<List<SportMenuItem>> GetMenuDataAsync();
+        Task<List<SportMenuItem>> GetAllSubSportsWithCategoriesAsync();
     }
 }
