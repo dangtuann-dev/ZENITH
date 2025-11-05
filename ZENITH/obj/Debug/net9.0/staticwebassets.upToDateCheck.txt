@@ -1,5 +1,6 @@
 wwwroot\css\menu-advert.css
-wwwroot\css\site.css
+wwwroot\css\scrollbar.css
+wwwroot\css\styles.css
 wwwroot\favicon.ico
 wwwroot\fonts\Lato-Black.woff
 wwwroot\fonts\Lato-Black.woff2
@@ -21,6 +22,7 @@ wwwroot\fonts\Lato-Thin.woff
 wwwroot\fonts\Lato-Thin.woff2
 wwwroot\fonts\stylesheet.css
 wwwroot\image\advert-action\mon-the-theo-act.webp
+wwwroot\image\advert-action\rackets-small-web-1.webp
 wwwroot\image\auth\forgot-password.png
 wwwroot\image\auth\intro-arrow.svg
 wwwroot\image\auth\intro.svg
@@ -134,7 +136,6 @@ wwwroot\image\icons\youtube.svg
 wwwroot\image\icons\zenith-logo-white.png
 wwwroot\image\icons\zenith-logo.png
 wwwroot\image\pageImage\login-page.jpg
-wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
@@ -195,9 +196,11 @@ wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
-wwwroot\css\styles.css
+wwwroot\css\site.css
+wwwroot\js\site.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\css\menu-advert.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\site.css
+D:\Web Profile\ZENITH\ZENITH\wwwroot\css\scrollbar.css
+D:\Web Profile\ZENITH\ZENITH\wwwroot\css\styles.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\favicon.ico
 D:\Web Profile\ZENITH\ZENITH\wwwroot\fonts\stylesheet.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\image\auth\intro-arrow.svg
@@ -308,7 +311,6 @@ D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\tiktok.svg
 D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\trash.svg
 D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\twitter.svg
 D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\youtube.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\js\site.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
@@ -368,4 +370,5 @@ D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\dist\jquery.slim.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\dist\jquery.slim.min.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\dist\jquery.slim.min.map
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\LICENSE.txt
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\styles.css
+D:\Web Profile\ZENITH\ZENITH\wwwroot\css\site.css
+D:\Web Profile\ZENITH\ZENITH\wwwroot\js\site.js

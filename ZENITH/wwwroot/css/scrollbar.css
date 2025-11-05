@@ -1,0 +1,52 @@
+﻿/* Scrollbar màu primary chỉ trong sub-menu */
+
+/* Firefox */
+.sub-menu {
+    scrollbar-color: var(--primary-color, #3643BA) transparent;
+    scrollbar-width: thin;
+}
+
+/* WebKit (Chrome, Edge, Safari) */
+.sub-menu::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sub-menu::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sub-menu::-webkit-scrollbar-thumb {
+    background: var(--primary-color, #3643BA);
+    border-radius: 4px;
+}
+
+.sub-menu::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color, #3643BA);
+}
+
+/* Đảm bảo áp dụng cho các phần tử con có overflow */
+.sub-menu *,
+.sub-menu__column *,
+.menu-column * {
+    scrollbar-color: var(--primary-color, #3643BA) transparent;
+    scrollbar-width: thin;
+}
+
+.sub-menu *::-webkit-scrollbar,
+.sub-menu__column *::-webkit-scrollbar,
+.menu-column *::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sub-menu *::-webkit-scrollbar-track,
+.sub-menu__column *::-webkit-scrollbar-track,
+.menu-column *::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sub-menu *::-webkit-scrollbar-thumb,
+.sub-menu__column *::-webkit-scrollbar-thumb,
+.menu-column *::-webkit-scrollbar-thumb {
+    background: var(--primary-color, #3643BA);
+    border-radius: 4px;
+}
