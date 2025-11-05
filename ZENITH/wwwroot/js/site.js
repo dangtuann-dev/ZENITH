@@ -103,12 +103,6 @@ function handleActiveMenu() {
     const dropdowns = $$(".js-dropdown");
     const menus = $$(".js-menu-list");
     const activeClass = "menu-column__item--active";
-
-    const removeActive = (menu) => {
-        menu.querySelector(`.${activeClass}`)?.classList.remove(activeClass);
-    };
-
-    // Xóa class active trong một menu cụ thể
     const removeActive = (menu) => {
         const activeItems = menu.querySelectorAll(`.${activeClass}`);
         activeItems.forEach((item) => item.classList.remove(activeClass));

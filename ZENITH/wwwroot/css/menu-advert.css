@@ -1,0 +1,30 @@
+﻿/* Advert placeholder shown when no sport item is hovered */
+.menu-advert {
+    position: absolute;
+    inset: 0 0 0 var(--main-column-width);
+    
+    padding-left: var(--inner-padding);
+    
+}
+    .menu-advert a {
+        display: flex;
+        justify-content: center;
+          align-items: center;
+    }
+    .menu-advert img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+/* Hide advert when hovering the sport list */
+.menu-column__list:hover ~ .menu-advert {
+  display: none;
+}
+
+@media (max-width: 991.98px) {
+  .menu-advert {
+    position: initial;
+    padding-left: 0;
+  }
+}

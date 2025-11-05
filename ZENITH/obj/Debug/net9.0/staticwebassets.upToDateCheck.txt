@@ -1,9 +1,91 @@
 wwwroot\css\site.css
 wwwroot\css\styles.css
 wwwroot\favicon.ico
+wwwroot\fonts\Lato-Black.woff
+wwwroot\fonts\Lato-Black.woff2
+wwwroot\fonts\Lato-Bold.woff
+wwwroot\fonts\Lato-Bold.woff2
+wwwroot\fonts\Lato-Hairline.woff
+wwwroot\fonts\Lato-Hairline.woff2
+wwwroot\fonts\Lato-Heavy.woff
+wwwroot\fonts\Lato-Heavy.woff2
+wwwroot\fonts\Lato-Italic.woff
+wwwroot\fonts\Lato-Italic.woff2
+wwwroot\fonts\Lato-Light.woff
+wwwroot\fonts\Lato-Light.woff2
+wwwroot\fonts\Lato-Medium.woff
+wwwroot\fonts\Lato-Medium.woff2
+wwwroot\fonts\Lato-Regular.woff
+wwwroot\fonts\Lato-Regular.woff2
+wwwroot\fonts\Lato-Thin.woff
+wwwroot\fonts\Lato-Thin.woff2
+wwwroot\fonts\stylesheet.css
+wwwroot\image\advert-action\mon-the-theo-act.webp
 wwwroot\image\auth\forgot-password.png
 wwwroot\image\auth\intro-arrow.svg
 wwwroot\image\auth\intro.svg
+wwwroot\image\categoryImage\cate-1.1.svg
+wwwroot\image\categoryImage\cate-1.2.svg
+wwwroot\image\categoryImage\cate-10.1.svg
+wwwroot\image\categoryImage\cate-10.2.svg
+wwwroot\image\categoryImage\cate-11.1.svg
+wwwroot\image\categoryImage\cate-11.2.svg
+wwwroot\image\categoryImage\cate-12.1.svg
+wwwroot\image\categoryImage\cate-12.2.svg
+wwwroot\image\categoryImage\cate-13.1.svg
+wwwroot\image\categoryImage\cate-13.2.svg
+wwwroot\image\categoryImage\cate-14.1.svg
+wwwroot\image\categoryImage\cate-14.2.svg
+wwwroot\image\categoryImage\cate-15.1.svg
+wwwroot\image\categoryImage\cate-15.2.svg
+wwwroot\image\categoryImage\cate-16.1.svg
+wwwroot\image\categoryImage\cate-16.2.svg
+wwwroot\image\categoryImage\cate-17.1.svg
+wwwroot\image\categoryImage\cate-17.2.svg
+wwwroot\image\categoryImage\cate-18.1.svg
+wwwroot\image\categoryImage\cate-18.2.svg
+wwwroot\image\categoryImage\cate-19.1.svg
+wwwroot\image\categoryImage\cate-19.2.svg
+wwwroot\image\categoryImage\cate-2.1.svg
+wwwroot\image\categoryImage\cate-2.2.svg
+wwwroot\image\categoryImage\cate-3.1.svg
+wwwroot\image\categoryImage\cate-3.2.svg
+wwwroot\image\categoryImage\cate-4.1.svg
+wwwroot\image\categoryImage\cate-4.2.svg
+wwwroot\image\categoryImage\cate-5.1.svg
+wwwroot\image\categoryImage\cate-5.2.svg
+wwwroot\image\categoryImage\cate-6.1.svg
+wwwroot\image\categoryImage\cate-6.2.svg
+wwwroot\image\categoryImage\cate-7.1.svg
+wwwroot\image\categoryImage\cate-7.2.svg
+wwwroot\image\categoryImage\cate-8.1.svg
+wwwroot\image\categoryImage\cate-8.2.svg
+wwwroot\image\categoryImage\cate-9.1.svg
+wwwroot\image\categoryImage\cate-9.2.svg
+wwwroot\image\categoryImage\sport\bong-ban.svg
+wwwroot\image\categoryImage\sport\bong-chay.svg
+wwwroot\image\categoryImage\sport\bong-chuyen.svg
+wwwroot\image\categoryImage\sport\bong-ro.svg
+wwwroot\image\categoryImage\sport\boxing.svg
+wwwroot\image\categoryImage\sport\camtrai.svg
+wwwroot\image\categoryImage\sport\cau-long.svg
+wwwroot\image\categoryImage\sport\chay-bo-duong-truong.svg
+wwwroot\image\categoryImage\sport\di-bo.svg
+wwwroot\image\categoryImage\sport\do-boi-loi.svg
+wwwroot\image\categoryImage\sport\football.svg
+wwwroot\image\categoryImage\sport\hiking-trekking.svg
+wwwroot\image\categoryImage\sport\kinh-mu-boi-loi.svg
+wwwroot\image\categoryImage\sport\leo-nui-nhan-tao.svg
+wwwroot\image\categoryImage\sport\phu-kien-boi.svg
+wwwroot\image\categoryImage\sport\phu-kien-xe-dap.svg
+wwwroot\image\categoryImage\sport\phu-tung-bao-duong-xe-dap.svg
+wwwroot\image\categoryImage\sport\pickleball.svg
+wwwroot\image\categoryImage\sport\quan-ao-xe-dap.svg
+wwwroot\image\categoryImage\sport\quan-ao-yoga.svg
+wwwroot\image\categoryImage\sport\tennis.svg
+wwwroot\image\categoryImage\sport\tham-tui-yoga.svg
+wwwroot\image\categoryImage\sport\trail.svg
+wwwroot\image\categoryImage\sport\xe-dap.svg
 wwwroot\image\icons\arrow-down-2.svg
 wwwroot\image\icons\arrow-down.svg
 wwwroot\image\icons\arrow-left.svg
@@ -113,8 +195,119 @@ wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
+wwwroot\css\menu-advert.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\css\site.css
+D:\Web Profile\ZENITH\ZENITH\wwwroot\css\styles.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\favicon.ico
+D:\Web Profile\ZENITH\ZENITH\wwwroot\fonts\stylesheet.css
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\auth\intro-arrow.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\auth\intro.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-1.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-1.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-10.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-10.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-11.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-11.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-12.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-12.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-13.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-13.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-14.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-14.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-15.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-15.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-16.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-16.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-17.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-17.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-18.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-18.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-19.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-19.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-2.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-2.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-3.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-3.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-4.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-4.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-5.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-5.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-6.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-6.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-7.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-7.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-8.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-8.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-9.1.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\cate-9.2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\bong-ban.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\bong-chay.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\bong-chuyen.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\bong-ro.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\boxing.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\camtrai.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\cau-long.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\chay-bo-duong-truong.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\di-bo.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\do-boi-loi.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\football.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\hiking-trekking.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\kinh-mu-boi-loi.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\leo-nui-nhan-tao.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\phu-kien-boi.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\phu-kien-xe-dap.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\phu-tung-bao-duong-xe-dap.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\pickleball.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\quan-ao-xe-dap.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\quan-ao-yoga.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\tennis.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\tham-tui-yoga.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\trail.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\categoryImage\sport\xe-dap.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\arrow-down-2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\arrow-down.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\arrow-left.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\arrow-right.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\bag.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\buy.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\calling.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\checkbox-checked.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\checkbox-uncheck.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\danger.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\document.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\download.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\dropdown-arrow.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\edit.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\facebook.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\filter.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\form-error.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\gift-2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\gift.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\google.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\heart-2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\heart-red.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\heart.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\info.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\linkedin.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\location.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\lock.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\message-2.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\message.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\minus.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\more.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\plus.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\profile.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\search.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\select-arrow.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\shield.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\star-blank.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\star-half.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\star.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\sun.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\tiktok.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\trash.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\twitter.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\youtube.svg
 D:\Web Profile\ZENITH\ZENITH\wwwroot\js\site.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
@@ -163,8 +356,8 @@ D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.min.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt
-D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery-validation\dist\additional-methods.min.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery-validation\dist\additional-methods.js
+D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery-validation\dist\additional-methods.min.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery-validation\dist\jquery.validate.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery-validation\dist\jquery.validate.min.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery-validation\LICENSE.md
@@ -175,50 +368,4 @@ D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\dist\jquery.slim.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\dist\jquery.slim.min.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\dist\jquery.slim.min.map
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\LICENSE.txt
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\arrow-down-2.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\arrow-down.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\arrow-left.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\arrow-right.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\bag.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\buy.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\calling.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\checkbox-checked.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\checkbox-uncheck.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\danger.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\document.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\download.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\dropdown-arrow.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\edit.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\facebook.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\filter.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\form-error.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\gift-2.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\gift.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\google.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\heart-2.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\heart-red.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\heart.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\info.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\linkedin.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\location.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\lock.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\message-2.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\message.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\minus.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\more.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\plus.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\profile.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\search.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\select-arrow.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\shield.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\star-blank.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\star-half.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\star.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\sun.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\tiktok.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\trash.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\twitter.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\youtube.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\styles.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\auth\intro-arrow.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\image\auth\intro.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\css\menu-advert.css

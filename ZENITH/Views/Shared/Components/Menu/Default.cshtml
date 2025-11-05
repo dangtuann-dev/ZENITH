@@ -1,0 +1,76 @@
+﻿@model ZENITH.ViewModels.MenuViewModel
+<li class="navbar__item">
+    <a href="#" class="navbar__link">
+        <span class="navbar__link--title">Môn Thể Thao</span>
+        <img src="~/image/icons/arrow-down.svg" alt="" class="icon navbar__arrow" />
+    </a>
+
+    <div class="dropdown js-dropdown">
+        <div class="dropdown__inner">
+            <div class="top-menu">
+                <div class="top-menu__main">
+                    <div class="menu-column">
+
+                        <div class="menu-column__content">
+
+                            <h2 class="menu-column__heading d-lg-none"><strong>Môn Thể Thao</strong></h2>
+                            <ul class="menu-column__list js-menu-list">
+                                @foreach (var parentSport in Model.TopLevelSports)
+                                {
+
+                                    <li class="menu-column__item">
+                                        @* Tên Sport Cha *@
+                                        <a href="#!" class="menu-column__link">
+                                            @parentSport.Name
+                                        </a>
+                                        @*SubMenu*@
+                                        <div class="sub-menu">
+                                            @if (parentSport.SubSports.Any())
+                                            {
+                                                @foreach (var subSport in parentSport.SubSports)
+                                                {
+                                                    <div class="menu-column">
+                                                        <div class="menu-column__icon d-lg-none">
+                                                            @* <img src="~/image/categoryImage/cate-1.1.svg"
+                                                                 alt=""
+                                                                 class="menu-column__icon-1" /> *@
+                                                            <img src="@subSport.IconUrl"
+                                                                 alt=""
+                                                                 class="menu-column__icon-1"
+                                                                 asp-append-version="true"
+                                                                 style="filter: invert(19%) sepia(85%) saturate(3015%) hue-rotate(222deg) brightness(97%) contrast(98%);" />
+                                                        </div>
+                                                        <div class="menu-column__content">
+                                                            <h2 class="menu-column__heading">
+                                                                <strong><a href="#!"> @subSport.Name</a></strong>
+                                                            </h2>
+                                                            <ul class="menu-column__list">
+                                                                @foreach (var category in subSport.Categories)
+                                                                {
+                                                                    <li class="menu-column__item">
+                                                                        <a href="#!"
+                                                                           class="menu-column__link">
+                                                                            @category.Name
+                                                                        </a>
+                                                                    </li>
+                                                                }
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                            <!-- Advert placeholder: shown when not hovering any sport item -->
+                            <div class="menu-advert">
+                                <a href="#!"><img src="~/image/advert-action/mon-the-theo-act.webp" alt="Môn thể thao quảng cáo" asp-append-version="true" /></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</li>

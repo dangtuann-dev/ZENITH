@@ -23,7 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\image\categoryImage\" />
+    <Folder Include="Migrations\" />
+    <Folder Include="wwwroot\image\categoryImage\sport\" />
+    <Folder Include="wwwroot\image\advert-action\" />
     <Folder Include="wwwroot\image\productImage\" />
   </ItemGroup>
 

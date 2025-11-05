@@ -18,7 +18,7 @@ namespace ZENITH.AppData
         public DbSet<Address> Addresses { get; set; }
         public DbSet<PaymentMethod> PaymentMethods { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Sport> sports { get; set; }
+        public DbSet<Sport> Sports { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductVariant> ProductVariants { get; set; }
@@ -31,6 +31,7 @@ namespace ZENITH.AppData
         public DbSet<Favorite> Favorites { get; set; }
         public DbSet<Voucher> Vouchers { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<SportCategory> SportCategories { get; set; } = null!;
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<OrderVoucher> OrderVouchers { get; set; }
         public DbSet<OrderStatusHistory> OrderStatusHistories { get; set; }
@@ -40,6 +41,20 @@ namespace ZENITH.AppData
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<SportCategory>()
+            .HasKey(sc => new { sc.SportId, sc.CategoryId });
+
+            // Cấu hình mối quan hệ (Tùy chọn)
+            modelBuilder.Entity<SportCategory>()
+                .HasOne(sc => sc.Sport)
+                .WithMany(s => s.SportCategories)
+                .HasForeignKey(sc => sc.SportId);
+
+            modelBuilder.Entity<SportCategory>()
+                .HasOne(sc => sc.Category)
+                .WithMany(c => c.SportCategories)
+                .HasForeignKey(sc => sc.CategoryId);
 
             // ==================== IDENTITY CONFIGURATION ====================
 
@@ -177,7 +192,10 @@ namespace ZENITH.AppData
                 entity.Property(e => e.IsActive).HasDefaultValue(true);
                 entity.Property(e => e.DisplayOrder).HasDefaultValue(0);
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
-
+                entity.HasOne(e => e.ParentSport)
+    .WithMany(s => s.SubSports)
+    .HasForeignKey(e => e.ParentSportId)
+    .OnDelete(DeleteBehavior.Restrict);
                 entity.HasIndex(e => e.SportName).IsUnique();
                 entity.HasIndex(e => e.DisplayOrder);
             });
@@ -549,108 +567,9 @@ namespace ZENITH.AppData
                 entity.HasIndex(e => new { e.IsApproved, e.CreatedAt });
             });
 
-            // ==================== SEED DATA ====================
-
-            //SeedData(modelBuilder);
+          
         }
 
-        //private void SeedData(ModelBuilder modelBuilder)
-        //{
-        //    // Seed Roles
-        //    modelBuilder.Entity<ApplicationRole>().HasData(
-        //        new ApplicationRole
-        //        {
-        //            Id = "1",
-        //            Name = "Admin",
-        //            NormalizedName = "ADMIN",
-        //            Description = "Full system access",
-        //            ConcurrencyStamp = Guid.NewGuid().ToString()
-        //        },
-        //        new ApplicationRole
-        //        {
-        //            Id = "2",
-        //            Name = "Manager",
-        //            NormalizedName = "MANAGER",
-        //            Description = "Store and inventory management",
-        //            ConcurrencyStamp = Guid.NewGuid().ToString()
-        //        },
-        //        new ApplicationRole
-        //        {
-        //            Id = "3",
-        //            Name = "Staff",
-        //            NormalizedName = "STAFF",
-        //            Description = "Order processing and customer support",
-        //            ConcurrencyStamp = Guid.NewGuid().ToString()
-        //        },
-        //        new ApplicationRole
-        //        {
-        //            Id = "4",
-        //            Name = "Customer",
-        //            NormalizedName = "CUSTOMER",
-        //            Description = "Regular customer",
-        //            ConcurrencyStamp = Guid.NewGuid().ToString()
-        //        }
-        //    );
-
-        //    // Seed Categories
-        //    modelBuilder.Entity<Category>().HasData(
-        //        new Category { CategoryId = 1, CategoryName = "Vegetables", DisplayOrder = 1 },
-        //        new Category { CategoryId = 2, CategoryName = "Fruits", DisplayOrder = 2 },
-        //        new Category { CategoryId = 3, CategoryName = "Dairy & Eggs", DisplayOrder = 3 },
-        //        new Category { CategoryId = 4, CategoryName = "Meat & Seafood", DisplayOrder = 4 },
-        //        new Category { CategoryId = 5, CategoryName = "Beverages", DisplayOrder = 5 },
-        //        new Category { CategoryId = 6, CategoryName = "Bakery", DisplayOrder = 6 }
-        //    );
-
-        //    // Seed Attributes
-        //    modelBuilder.Entity<Models.Attribute>().HasData(
-        //        new Models.Attribute
-        //        {
-        //            AttributeId = 1,
-        //            AttributeName = "size",
-        //            DisplayName = "Size",
-        //            InputType = "select",
-        //            IsRequired = true,
-        //            DisplayOrder = 1
-        //        },
-        //        new Models.Attribute
-        //        {
-        //            AttributeId = 2,
-        //            AttributeName = "color",
-        //            DisplayName = "Color",
-        //            InputType = "color",
-        //            IsRequired = false,
-        //            DisplayOrder = 2
-        //        },
-        //        new Models.Attribute
-        //        {
-        //            AttributeId = 3,
-        //            AttributeName = "weight",
-        //            DisplayName = "Weight",
-        //            InputType = "select",
-        //            IsRequired = false,
-        //            DisplayOrder = 3
-        //        }
-        //    );
-
-        //    // Seed Attribute Values for Size
-        //    modelBuilder.Entity<AttributeValue>().HasData(
-        //        new AttributeValue { ValueId = 1, AttributeId = 1, ValueName = "S", DisplayOrder = 1 },
-        //        new AttributeValue { ValueId = 2, AttributeId = 1, ValueName = "M", DisplayOrder = 2 },
-        //        new AttributeValue { ValueId = 3, AttributeId = 1, ValueName = "L", DisplayOrder = 3 },
-        //        new AttributeValue { ValueId = 4, AttributeId = 1, ValueName = "XL", DisplayOrder = 4 },
-
-        //        // Color values
-        //        new AttributeValue { ValueId = 5, AttributeId = 2, ValueName = "Red", ColorCode = "#FF0000", DisplayOrder = 1 },
-        //        new AttributeValue { ValueId = 6, AttributeId = 2, ValueName = "Blue", ColorCode = "#0000FF", DisplayOrder = 2 },
-        //        new AttributeValue { ValueId = 7, AttributeId = 2, ValueName = "Green", ColorCode = "#00FF00", DisplayOrder = 3 },
-        //        new AttributeValue { ValueId = 8, AttributeId = 2, ValueName = "White", ColorCode = "#FFFFFF", DisplayOrder = 4 },
-
-        //        // Weight values
-        //        new AttributeValue { ValueId = 9, AttributeId = 3, ValueName = "500g", DisplayOrder = 1 },
-        //        new AttributeValue { ValueId = 10, AttributeId = 3, ValueName = "1kg", DisplayOrder = 2 },
-        //        new AttributeValue { ValueId = 11, AttributeId = 3, ValueName = "2kg", DisplayOrder = 3 }
-        //    );
-        //}
+        
     }
 }
