@@ -1,4 +1,25 @@
-﻿.arrow-icon {
+﻿/* Slideshow: đảm bảo các slide nằm ngang và hiển thị đúng */
+.slideshow {
+  overflow: hidden;
+  width: 100vw; /* Chiếm toàn bộ chiều ngang màn hình */
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.slideshow__inner {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  transition: transform 0.6s ease;
+  overflow: visible !important;
+}
+
+.slideshow__item {
+  width: 100%;
+}
+
+.arrow-icon {
         width: 24px;
     height: 24px;
     -webkit-mask: url("~/image/auth/intro-arrow.svg") no-repeat center;
@@ -14,4 +35,61 @@
 }
 .sub-menu--not-main {
     grid-template-columns: 1fr;
+}
+/* Overlay mờ nền khi submenu mở */
+.menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(2px);
+    z-index: 900; /* Bên dưới dropdown nhưng phủ nội dung trang */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+}
+
+.menu-overlay.is-active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Header sticky trên cùng màn hình */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--header-bg-color, #fff);
+}
+
+/* Đảm bảo dropdown nổi trên overlay */
+.dropdown__inner {
+  z-index: 950;
+}
+
+/* Slideshow Dots */
+.slideshow__dots {
+    position: absolute;
+    bottom: -40px; /* Hạ thấp vị trí của các nút tròn */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    column-gap: 12px;
+}
+
+.slideshow__dot-input {
+    display: none; /* Ẩn radio input gốc */
+}
+
+.slideshow__dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #ccc;
+    cursor: pointer;
+    transition: background-color 3s ease;
+    border: none; /* Bỏ viền xám */
+}
+
+.slideshow__dot.is-active {
+    background-color: #3643BA;
 }

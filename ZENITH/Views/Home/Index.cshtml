@@ -1,25 +1,46 @@
 ﻿@{
     ViewData["Title"] = "| Cửa Hàng Thể Thao Dành Cho Sinh Viên Việt Nam";
 }
-
-<div class="container mt-5">
-    <h1>Trạng thái CSDL</h1>
-
-    @if (ViewBag.Status.Contains("THÀNH CÔNG"))
-    {
-        <div class="alert alert-success" role="alert">
-            <strong>@ViewBag.Status</strong>
-            <p>@ViewBag.Message</p>
-            <p>Database đang nằm ở thư mục: <code>/bin/Debug/.../App_Data</code></p>
+<!-- Slideshow -->
+<div class="home__container">
+    <div class="slideshow js-home-slideshow" aria-label="Trang trình chiếu">
+        <div class="slideshow__inner">
+            <div class="slideshow__item">
+                <a href="#!" class="slideshow__link">
+                    <img src="~/image/advert-action/home-slide-show-1.webp" alt="Slideshow 1" class="slideshow__img" /> 
+                </a>
+            </div>
+            <div class="slideshow__item">
+                <a href="#!" class="slideshow__link">
+                    <img src="~/image/advert-action/home-slide-show-2.webp" alt="Slideshow 2" class="slideshow__img" />
+                </a>
+            </div>
+            <div class="slideshow__item">
+                <a href="#!" class="slideshow__link">
+                    <img src="~/image/advert-action/home-slide-show-3.webp" alt="Slideshow 3" class="slideshow__img" />
+                </a>
+            </div>
+            <div class="slideshow__item">
+                <a href="#!" class="slideshow__link">
+                    <img src="~/image/advert-action/home-slide-show-4.webp" alt="Slideshow 4" class="slideshow__img" />
+                </a>
+            </div>
         </div>
-    }
-    else
-    {
-        <div class="alert alert-danger" role="alert">
-            <strong>@ViewBag.Status</strong>
-            <p>@ViewBag.Message</p>
-        </div>
-    }
 
-    <p>Bây giờ bạn đã có thể bắt đầu thêm dữ liệu mẫu và logic nghiệp vụ.</p>
+        <div class="slideshow__page" aria-live="polite">
+            <div class="slideshow__dots js-slide-dots" role="radiogroup" aria-label="Chọn slide">
+                <input type="radio" id="home-slide-dot-1" name="home-slideshow" class="slideshow__dot-input" checked />
+                <label for="home-slide-dot-1" class="slideshow__dot is-active" data-index="0" aria-label="Ảnh 1"></label>
+
+                <input type="radio" id="home-slide-dot-2" name="home-slideshow" class="slideshow__dot-input" />
+                <label for="home-slide-dot-2" class="slideshow__dot" data-index="1" aria-label="Ảnh 2"></label>
+
+                <input type="radio" id="home-slide-dot-3" name="home-slideshow" class="slideshow__dot-input" />
+                <label for="home-slide-dot-3" class="slideshow__dot" data-index="2" aria-label="Ảnh 3"></label>
+
+                <input type="radio" id="home-slide-dot-4" name="home-slideshow" class="slideshow__dot-input" />
+                <label for="home-slide-dot-4" class="slideshow__dot" data-index="3" aria-label="Ảnh 4"></label>
+            </div>
+        </div>
+    </div>
 </div>

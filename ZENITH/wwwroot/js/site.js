@@ -219,6 +219,48 @@ window.addEventListener("template-loaded", () => {
     });
 });
 
+// Bật/tắt overlay mờ nền khi submenu mở
+function setupNavbarOverlay() {
+    const overlay = document.getElementById("menu-overlay");
+    if (!overlay) return;
+
+    const navbarItems = document.querySelectorAll(".navbar__list > .navbar__item");
+    let hoverTimeout;
+    const HOVER_DELAY = 100;
+
+    navbarItems.forEach((item) => {
+        const dropdown = item.querySelector(".dropdown");
+        if (!dropdown) return;
+
+        item.addEventListener("mouseenter", () => {
+            clearTimeout(hoverTimeout);
+            if (window.innerWidth > 991) overlay.classList.add("is-active");
+        });
+
+        item.addEventListener("mouseleave", () => {
+            hoverTimeout = setTimeout(() => {
+                overlay.classList.remove("is-active");
+            }, HOVER_DELAY);
+        });
+
+        dropdown.addEventListener("mouseenter", () => clearTimeout(hoverTimeout));
+        dropdown.addEventListener("mouseleave", () => {
+            hoverTimeout = setTimeout(() => overlay.classList.remove("is-active"), HOVER_DELAY);
+        });
+    });
+
+    document.addEventListener("click", (e) => {
+        const isOutsideNavbar = !e.target.closest(".navbar");
+        const isInsideOverlay = e.target.id === "menu-overlay" || e.target.classList.contains("menu-overlay");
+        if (isOutsideNavbar || isInsideOverlay) {
+            if (!e.target.closest(".dropdown")) overlay.classList.remove("is-active");
+        }
+    });
+}
+
+window.addEventListener("template-loaded", setupNavbarOverlay);
+document.addEventListener("DOMContentLoaded", setupNavbarOverlay);
+
 window.addEventListener("template-loaded", () => {
     const tabsSelector = "prod-tab__item";
     const contentsSelector = "prod-tab__content";
@@ -265,3 +307,60 @@ window.addEventListener("template-loaded", () => {
 
 const isDark = localStorage.dark === "true";
 document.querySelector("html").classList.toggle("dark", isDark);
+
+// Slideshow trang chủ: tự động chuyển slide mỗi 2s, trượt ngang
+function initHomeSlideshow() {
+    const slideshow = document.querySelector(".js-home-slideshow");
+    if (!slideshow) return;
+
+    const inner = slideshow.querySelector(".slideshow__inner");
+    const items = inner ? inner.querySelectorAll(".slideshow__item") : [];
+    const total = items.length;
+    if (!inner || total <= 1) return;
+    // Dots manual navigation
+    const dots = slideshow.querySelectorAll(".slideshow__dot");
+    const dotInputs = slideshow.querySelectorAll(".slideshow__dot-input");
+
+    let index = 0;
+
+    const setActiveDot = (i) => {
+        dots.forEach((dot, idx) => dot.classList.toggle("is-active", idx === i));
+        const input = slideshow.querySelector(`#home-slide-dot-${i + 1}`);
+        if (input) input.checked = true;
+    };
+
+    const update = (i) => {
+        index = i % total;
+        const offset = index * 100;
+        inner.style.transform = `translateX(-${offset}%)`;
+        setActiveDot(index);
+    };
+
+    update(0);
+
+    // Tự động chuyển slide mỗi 2s
+    const SLIDE_DELAY = 2000;
+    let timer;
+    const startTimer = () => {
+        timer = setInterval(() => update(index + 1), SLIDE_DELAY);
+    };
+    const stopTimer = () => {
+        if (timer) clearInterval(timer);
+    };
+    startTimer();
+
+    // Click dot to navigate
+    dots.forEach((dot, i) => {
+        dot.addEventListener("click", () => {
+            stopTimer();
+            update(i);
+            startTimer();
+        });
+    });
+
+    // Dừng khi rời trang hoặc template thay đổi
+    window.addEventListener("beforeunload", stopTimer);
+}
+
+window.addEventListener("template-loaded", initHomeSlideshow);
+document.addEventListener("DOMContentLoaded", initHomeSlideshow);

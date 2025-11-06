@@ -18,7 +18,7 @@
             asp-append-version="true"></script>
 </head>
 <body>
-    <header>
+    <header class="site-header">
         <div class="container">
             <div class="top-bar">
                 <!-- More -->
@@ -61,7 +61,9 @@
         </div>
 
     </header>
-    <main role="main" class="pb-3" style="height:1000px">
+    <!-- Site overlay for dim/blur background when submenu opens -->
+    <div id="menu-overlay" class="menu-overlay" aria-hidden="true"></div>
+    <main role="main" class="container home" style="height:1000px">
         @RenderBody()
     </main>
 
@@ -172,7 +174,7 @@
                 </div>
             </div>
             <div class="footer__bottom">
-                <p class="footer__copyright">© 2010 - 2025 Grocery Mart. All rights reserved.</p>
+                <p class="footer__copyright">© 2025 Zenith. All rights reserved.</p>
 
                 <div class="footer__socials">
                     <a href="#!" class="footer__social-link footer__social-link--facebook">
