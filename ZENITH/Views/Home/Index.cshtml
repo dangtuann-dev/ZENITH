@@ -1,4 +1,5 @@
-﻿@{
+﻿@model List<ZENITH.Models.Category>
+@{
     ViewData["Title"] = "| Cửa Hàng Thể Thao Dành Cho Sinh Viên Việt Nam";
 }
 <!-- Slideshow -->
@@ -44,3 +45,30 @@
         </div>
     </div>
 </div>
+<!-- Categories -->
+
+<section class="home__container home-categories__container">
+    <div class="home__row">
+        <h2 class="home__heading">Danh Mục Sản Phẩm</h2>
+    </div>
+    <div class="home__cate row row-cols-3 row-cols-md-1">
+       <div class="category-list">
+          @foreach (var category in Model)
+            {
+                <a href="#!">
+                    <div class="category-item">
+                        <div class="category-image">
+                            <img src="@category.ImageUrl" asp-append-version="true" />
+                        </div>
+                        <div class="cate-item__info">
+                            <p class="cate-item__desc clip-text">
+                                @category.CategoryName
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            }
+           
+       </div>
+    </div>
+</section>

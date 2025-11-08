@@ -1,0 +1,16 @@
+﻿﻿/* Overlay mờ nền khi submenu mở */
+.menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(2px);
+    z-index: 1200; /* Cao hơn header để đảm bảo nhìn thấy overlay */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+}
+
+.menu-overlay.is-active {
+    opacity: 1;
+    pointer-events: auto;
+}

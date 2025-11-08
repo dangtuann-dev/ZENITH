@@ -1,5 +1,6 @@
-﻿const $ = document.querySelector.bind(document);
-const $$ = document.querySelectorAll.bind(document);
+﻿// Tránh xung đột với BrowserLink/jQuery: không dùng ký hiệu $ toàn cục
+const qs = document.querySelector.bind(document);
+const qsa = document.querySelectorAll.bind(document);
 
 /**
  * Hàm tải template
@@ -13,14 +14,14 @@ const $$ = document.querySelectorAll.bind(document);
 function load(selector, path) {
     const cached = localStorage.getItem(path);
     if (cached) {
-        $(selector).innerHTML = cached;
+        qs(selector).innerHTML = cached;
     }
 
     fetch(path)
         .then((res) => res.text())
         .then((html) => {
             if (html !== cached) {
-                $(selector).innerHTML = html;
+                qs(selector).innerHTML = html;
                 localStorage.setItem(path, html);
             }
         })
@@ -73,9 +74,9 @@ function debounce(func, timeout = 300) {
  * 2. CSS "left" cho arrow qua biến "--arrow-left-pos"
  */
 const calArrowPos = debounce(() => {
-    if (isHidden($(".js-dropdown-list"))) return;
+    if (isHidden(qs(".js-dropdown-list"))) return;
 
-    const items = $$(".js-dropdown-list > li");
+    const items = qsa(".js-dropdown-list > li");
 
     items.forEach((item) => {
         const arrowPos = item.offsetLeft + item.offsetWidth / 2;
@@ -100,8 +101,8 @@ window.addEventListener("template-loaded", calArrowPos);
 window.addEventListener("template-loaded", handleActiveMenu);
 
 function handleActiveMenu() {
-    const dropdowns = $$(".js-dropdown");
-    const menus = $$(".js-menu-list");
+    const dropdowns = qsa(".js-dropdown");
+    const menus = qsa(".js-menu-list");
     const activeClass = "menu-column__item--active";
     const removeActive = (menu) => {
         const activeItems = menu.querySelectorAll(`.${activeClass}`);
@@ -176,9 +177,10 @@ function handleActiveMenu() {
  * <div id="box">Content show/hide</div>
  */
 window.addEventListener("template-loaded", initJsToggle);
+document.addEventListener("DOMContentLoaded", initJsToggle);
 
 function initJsToggle() {
-    $$(".js-toggle").forEach((button) => {
+    qsa(".js-toggle").forEach((button) => {
         const target = button.getAttribute("toggle-target");
         if (!target) {
             document.body.innerText = `Cần thêm toggle-target cho: ${button.outerHTML}`;
@@ -186,19 +188,19 @@ function initJsToggle() {
         button.onclick = (e) => {
             e.preventDefault();
 
-            if (!$(target)) {
+            if (!qs(target)) {
                 return (document.body.innerText = `Không tìm thấy phần tử "${target}"`);
             }
-            const isHidden = $(target).classList.contains("hide");
+            const isHidden = qs(target).classList.contains("hide");
 
             requestAnimationFrame(() => {
-                $(target).classList.toggle("hide", !isHidden);
-                $(target).classList.toggle("show", isHidden);
+                qs(target).classList.toggle("hide", !isHidden);
+                qs(target).classList.toggle("show", isHidden);
             });
         };
         document.onclick = function (e) {
             if (!e.target.closest(target)) {
-                const isHidden = $(target).classList.contains("hide");
+                const isHidden = qs(target).classList.contains("hide");
                 if (!isHidden) {
                     button.click();
                 }
@@ -208,7 +210,7 @@ function initJsToggle() {
 }
 
 window.addEventListener("template-loaded", () => {
-    const links = $$(".js-dropdown-list > li > a");
+    const links = qsa(".js-dropdown-list > li > a");
 
     links.forEach((link) => {
         link.onclick = () => {
@@ -224,31 +226,26 @@ function setupNavbarOverlay() {
     const overlay = document.getElementById("menu-overlay");
     if (!overlay) return;
 
-    const navbarItems = document.querySelectorAll(".navbar__list > .navbar__item");
+    const navbar = document.querySelector(".navbar");
+    if (!navbar) return;
+
     let hoverTimeout;
-    const HOVER_DELAY = 100;
+    const HOVER_DELAY = 80;
 
-    navbarItems.forEach((item) => {
-        const dropdown = item.querySelector(".dropdown");
-        if (!dropdown) return;
-
-        item.addEventListener("mouseenter", () => {
+    // Bật overlay khi hover toàn bộ khu vực navbar (desktop)
+    navbar.addEventListener("mouseenter", () => {
+        if (window.innerWidth > 991) {
             clearTimeout(hoverTimeout);
-            if (window.innerWidth > 991) overlay.classList.add("is-active");
-        });
-
-        item.addEventListener("mouseleave", () => {
-            hoverTimeout = setTimeout(() => {
-                overlay.classList.remove("is-active");
-            }, HOVER_DELAY);
-        });
-
-        dropdown.addEventListener("mouseenter", () => clearTimeout(hoverTimeout));
-        dropdown.addEventListener("mouseleave", () => {
-            hoverTimeout = setTimeout(() => overlay.classList.remove("is-active"), HOVER_DELAY);
-        });
+            overlay.classList.add("is-active");
+        }
     });
 
+    // Tắt overlay khi rời khỏi navbar (desktop)
+    navbar.addEventListener("mouseleave", () => {
+        hoverTimeout = setTimeout(() => overlay.classList.remove("is-active"), HOVER_DELAY);
+    });
+
+    // Click ngoài để tắt overlay
     document.addEventListener("click", (e) => {
         const isOutsideNavbar = !e.target.closest(".navbar");
         const isInsideOverlay = e.target.id === "menu-overlay" || e.target.classList.contains("menu-overlay");
