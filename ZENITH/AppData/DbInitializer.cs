@@ -17,173 +17,403 @@ public static class DbInitializer
 
     // MẢNG DỮ LIỆU SẢN PHẨM: productData (Đã xác nhận là đúng và hoàn chỉnh)
     public static readonly dynamic[] productData = new[]
-    {
-        //sport Hiking & Trekking
-        //category Balo & Túi
-        //HT001
-        new {
-            Name = "Balo du lịch nhỏ gọn 10 L - NH Arpenaz 50 xanh navy",
-            Desc = "Mục tiêu của chúng tôi là mang đến cho bạn chiếc balo 10 L với mức giá hợp lý, giúp bạn bảo quản những vật dụng thiết yếu an toàn trên mọi cung đường núi có độ dốc vừa phải.",
-            CategoryName = "Balo & Túi",
-            SportName = "Hiking & Trekking",
-            SkuBase = "HT-001",
-            IsFeat = true,
-            Variants = new[] {
-                new { Sku = "HT-001-10L", Stock = 150, Price = 79000, SalePrice = 69000, Attributes = "10L" },
-            },
-            ImageCount = 4
+  {
+    //sport Hiking & Trekking
+    //category Balo & Túi
+    //HT001
+    new {
+        Name = "Balo du lịch nhỏ gọn 10 L - NH Arpenaz 50 xanh navy",
+        Desc = "Mục tiêu của chúng tôi là mang đến cho bạn chiếc balo 10 L với mức giá hợp lý, giúp bạn bảo quản những vật dụng thiết yếu an toàn trên mọi cung đường núi có độ dốc vừa phải.",
+        CategoryName = "Balo & Túi",
+        SportName = "Hiking & Trekking",
+        SkuBase = "HT-001",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-001-10L", Stock = 150, Price = 79000, SalePrice = 69000, Attributes = "10L" },
         },
-        //HT002
-        new {
-            Name = "Balo leo núi du lịch 30L - Arpenaz NH100 đen",
-            Desc = "Mẫu NH Arpenaz100 30 L tiện nghi và đầy đủ phụ kiện của chúng tôi là người bạn đồng hành lý tưởng cho những chuyến đi bộ với địa hình hơi gồ ghề của bạn.",
-            CategoryName = "Balo & Túi",
-            SportName = "Hiking & Trekking",
-            SkuBase = "HT-002",
-            IsFeat = true,
-            Variants = new[] {
-                new { Sku = "HT-002-30L", Stock = 150, Price = 199000, SalePrice = 199000, Attributes = "30L" },
-            },
-            ImageCount = 4
+        ImageCount = 4
+    },
+    //HT002
+    new {
+        Name = "Balo leo núi du lịch 30L - Arpenaz NH100 đen",
+        Desc = "Mẫu NH Arpenaz100 30 L tiện nghi và đầy đủ phụ kiện của chúng tôi là người bạn đồng hành lý tưởng cho những chuyến đi bộ với địa hình hơi gồ ghề của bạn.",
+        CategoryName = "Balo & Túi",
+        SportName = "Hiking & Trekking",
+        SkuBase = "HT-002",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-002-30L", Stock = 150, Price = 199000, SalePrice = 199000, Attributes = "30L" },
         },
-        //HT003
-        new {
-            Name = "Balo dã ngoại 32L - NH Escape 500 đen",
-            Desc = "Balo mang lại sự thoải mái nhờ đệm lót êm ái, tiện dụng với 3 ngăn lớn và 15 túi nhỏ, thông minh với kích thước hành lý xách tay và các tính năng tiện lợi.",
-            CategoryName = "Balo & Túi",
-            SportName = "Hiking & Trekking",
-            SkuBase = "HT-003",
-            IsFeat = true,
-            Variants = new[] {
-                new { Sku = "HT-003-32L", Stock = 150, Price = 999000, SalePrice = 999000, Attributes = "32L" },
-            },
-            ImageCount = 4
+        ImageCount = 4
+    },
+    //HT003
+    new {
+        Name = "Balo dã ngoại 32L - NH Escape 500 đen",
+        Desc = "Balo mang lại sự thoải mái nhờ đệm lót êm ái, tiện dụng với 3 ngăn lớn và 15 túi nhỏ, thông minh với kích thước hành lý xách tay và các tính năng tiện lợi.",
+        CategoryName = "Balo & Túi",
+        SportName = "Hiking & Trekking",
+        SkuBase = "HT-003",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-003-32L", Stock = 150, Price = 999000, SalePrice = 999000, Attributes = "32L" },
         },
-        //HT004
-        new {
-            Name = "Balo leo núi 38L - MH500 nâu",
-            Desc = "Balo nhẹ với phần khung có thể điều chỉnh. Phần lưng được thiết kế thoáng khí tối ưu, giúp mang lại cảm giác thoải mái vượt trội trong các chuyến hiking.",
-            CategoryName = "Balo & Túi",
-            SportName = "Hiking & Trekking",
-            SkuBase = "HT-004",
-            IsFeat = true,
-            Variants = new[] {
-                new { Sku = "HT-004-38L", Stock = 150, Price = 2399000, SalePrice = 2399000, Attributes = "38L" },
-            },
-            ImageCount = 4
+        ImageCount = 4
+    },
+    //HT004
+    new {
+        Name = "Balo leo núi 38L - MH500 nâu",
+        Desc = "Balo nhẹ với phần khung có thể điều chỉnh. Phần lưng được thiết kế thoáng khí tối ưu, giúp mang lại cảm giác thoải mái vượt trội trong các chuyến hiking.",
+        CategoryName = "Balo & Túi",
+        SportName = "Hiking & Trekking",
+        SkuBase = "HT-004",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-004-38L", Stock = 150, Price = 2399000, SalePrice = 2399000, Attributes = "38L" },
         },
-        //Quần Áo Leo Núi
-        //HT005
-        new {
-            Name = "Quần dài trekking tháo ống bền bỉ - MT100 xám",
-            Desc = "Quần dài trekking có thể tháo ống nhanh chóng để chuyển thành quần short để phù hợp với các điều kiện thời tiết khác nhau.",
-            CategoryName = "Quần Áo Leo Núi",
-            SportName = "Hiking & Trekking",
-            SkuBase = "HT-005",
-            IsFeat = true,
-            Variants = new[] {
-                new { Sku = "HT-005-S", Stock = 150, Price = 539000, SalePrice = 499000, Attributes = "S / W30 L33 " },
-                new { Sku = "HT-005-M", Stock = 150, Price = 539000, SalePrice = 499000, Attributes = "M / W32 L33 " },
-                new { Sku = "HT-005-ML", Stock = 150, Price = 539000, SalePrice = 499000, Attributes = "M/L / W33 L33 " },
-                new { Sku = "HT-005-L", Stock = 150, Price = 539000, SalePrice = 499000, Attributes = "L / W34 L34 " },
-                new { Sku = "HT-005-XL", Stock = 150, Price = 539000, SalePrice = 499000, Attributes = "XL / W37 L34 " }
-            },
-            ImageCount = 4
+        ImageCount = 4
+    },
+    //Quần Áo Leo Núi
+    //HT005
+    new {
+        Name = "Quần dài trekking tháo ống bền bỉ - MT100 xám",
+        Desc = "Quần dài trekking có thể tháo ống nhanh chóng để chuyển thành quần short để phù hợp với các điều kiện thời tiết khác nhau.",
+        CategoryName = "Quần Áo Leo Núi",
+        SportName = "Hiking & Trekking",
+        SkuBase = "HT-005",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-005-S", Stock = 150, Price = 539000, SalePrice = 499000, Attributes = "S / W30 L33 " },
+            new { Sku = "HT-005-M", Stock = 150, Price = 539000, SalePrice = 499000, Attributes = "M / W32 L33 " },
+            new { Sku = "HT-005-ML", Stock = 150, Price = 539000, SalePrice = 499000, Attributes = "M/L / W33 L33 " },
+            new { Sku = "HT-005-L", Stock = 150, Price = 539000, SalePrice = 499000, Attributes = "L / W34 L34 " },
+            new { Sku = "HT-005-XL", Stock = 150, Price = 539000, SalePrice = 499000, Attributes = "XL / W37 L34 " }
         },
-        //HT006
-        new {
-            Name = "Áo khoác chống nắng nam - Helium MH500 xanh dương/trắng",
-            Desc = "Áo khoác gió với chỉ số UPF 50+, nhẹ, từng đạt giải. Trợ thủ chống nắng gió cho những chuyến đi ngoài trời.Được thiết kế cho những chuyến đi dưới trời nắng. Bảo vệ bạn trước tia UVA/UAB từ ánh nắng mặt trời, kèm theo khả năng cản gió, nhẹ, vải co giãn và thoáng khí.",
-            CategoryName = "Quần Áo Leo Núi",
-            SportName = "Hiking & Trekking",
-            SkuBase = "HT-006",
-            IsFeat = true,
-            Variants = new[] {
-                new { Sku = "HT-006-S", Stock = 150, Price = 1199000, SalePrice = 899000, Attributes = "S" },
-                new { Sku = "HT-006-M", Stock = 150, Price = 1199000, SalePrice = 899000, Attributes = "M" },
-                new { Sku = "HT-006-ML", Stock = 150, Price = 1199000, SalePrice = 899000, Attributes = "ML" },
-                new { Sku = "HT-006-L", Stock = 150, Price = 1199000, SalePrice = 899000, Attributes = "L" },
-                new { Sku = "HT-006-XL", Stock = 150, Price = 1199000, SalePrice = 899000, Attributes = "XL" }
-            },
-            ImageCount = 4
+        ImageCount = 4
+    },
+    //HT006
+    new {
+        Name = "Áo khoác chống nắng nam - Helium MH500 xanh dương/trắng",
+        Desc = "Áo khoác gió với chỉ số UPF 50+, nhẹ, từng đạt giải. Trợ thủ chống nắng gió cho những chuyến đi ngoài trời.Được thiết kế cho những chuyến đi dưới trời nắng. Bảo vệ bạn trước tia UVA/UAB từ ánh nắng mặt trời, kèm theo khả năng cản gió, nhẹ, vải co giãn và thoáng khí.",
+        CategoryName = "Quần Áo Leo Núi",
+        SportName = "Hiking & Trekking",
+        SkuBase = "HT-006",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-006-S", Stock = 150, Price = 1199000, SalePrice = 899000, Attributes = "S" },
+            new { Sku = "HT-006-M", Stock = 150, Price = 1199000, SalePrice = 899000, Attributes = "M" },
+            new { Sku = "HT-006-ML", Stock = 150, Price = 1199000, SalePrice = 899000, Attributes = "ML" },
+            new { Sku = "HT-006-L", Stock = 150, Price = 1199000, SalePrice = 899000, Attributes = "L" },
+            new { Sku = "HT-006-XL", Stock = 150, Price = 1199000, SalePrice = 899000, Attributes = "XL" }
         },
-        //HT007
-        new {
-            Name = "Áo khoác chống nắng - 900 đen",
-            Desc = "Áo khoác gió hiking nhẹ, được làm từ sợi chống UV và đạt giải thưởng. Trợ thủ chống nắng gió cho những chuyến đi ngoài trời.Được thiết kế cho những chuyến đi dưới trời nắng. Bảo vệ bạn trước tia UVA/UAB từ ánh nắng mặt trời, kèm theo khả năng cản gió, nhẹ và thoáng khí.",
-            CategoryName = "Quần Áo Leo Núi",
-            SportName = "Hiking & Trekking",
-            SkuBase = "HT-007",
-            IsFeat = true,
-            Variants = new[] {
-                new { Sku = "HT-007-S", Stock = 150, Price = 1399000, SalePrice = 1299000, Attributes = "S" },
-                new { Sku = "HT-007-M", Stock = 150, Price = 1399000, SalePrice = 1299000, Attributes = "M" },
-                new { Sku = "HT-007-ML", Stock = 150, Price = 1399000, SalePrice = 1299000, Attributes = "ML" },
-                new { Sku = "HT-007-L", Stock = 150, Price = 1399000, SalePrice = 1299000, Attributes = "L" },
-                new { Sku = "HT-007-XL", Stock = 150, Price = 1399000, SalePrice = 1299000, Attributes = "XL" },
-            },
-            ImageCount = 4
+        ImageCount = 4
+    },
+    //HT007
+    new {
+        Name = "Áo khoác chống nắng - 900 đen",
+        Desc = "Áo khoác gió hiking nhẹ, được làm từ sợi chống UV và đạt giải thưởng. Trợ thủ chống nắng gió cho những chuyến đi ngoài trời.Được thiết kế cho những chuyến đi dưới trời nắng. Bảo vệ bạn trước tia UVA/UAB từ ánh nắng mặt trời, kèm theo khả năng cản gió, nhẹ và thoáng khí.",
+        CategoryName = "Quần Áo Leo Núi",
+        SportName = "Hiking & Trekking",
+        SkuBase = "HT-007",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-007-S", Stock = 150, Price = 1399000, SalePrice = 1299000, Attributes = "S" },
+            new { Sku = "HT-007-M", Stock = 150, Price = 1399000, SalePrice = 1299000, Attributes = "M" },
+            new { Sku = "HT-007-ML", Stock = 150, Price = 1399000, SalePrice = 1299000, Attributes = "ML" },
+            new { Sku = "HT-007-L", Stock = 150, Price = 1399000, SalePrice = 1299000, Attributes = "L" },
+            new { Sku = "HT-007-XL", Stock = 150, Price = 1399000, SalePrice = 1299000, Attributes = "XL" },
         },
-        //Giày Leo Núi
-        //HT008
-        new {
-            Name = "Giày leo núi hiking cổ lửng - NH100 đen",
-            Desc = "Giày nhẹ, được thiết kế với dây buộc chính xác, mang lại cảm giác thoải mái và nâng đỡ chân hiệu quả trên mọi địa hình gồ ghề. Mẫu giày thân thiện với môi trường và đồng hành cùng bạn trong những chuyến hiking vùng thấp, trong rừng hoặc trên bờ biển giữa tiết trời khô ráo.",
-            CategoryName = "Giày Leo Núi",
-            SportName = "Hiking & Trekking",
-            SkuBase = "HT-008",
-            IsFeat = true,
-            Variants = new[] {
-                new { Sku = "HT-008-40", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "40" },
-                new { Sku = "HT-008-41", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "41" },
-                new { Sku = "HT-008-42", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "42" },
-                new { Sku = "HT-008-43", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "43" },
-                new { Sku = "HT-008-44", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "44" },
-                new { Sku = "HT-008-45", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "45" },
-                new { Sku = "HT-008-46", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "46" }
-            },
-            ImageCount = 4
+        ImageCount = 4
+    },
+    //Giày Leo Núi
+    //HT008
+    new {
+        Name = "Giày leo núi hiking cổ lửng - NH100 đen",
+        Desc = "Giày nhẹ, được thiết kế với dây buộc chính xác, mang lại cảm giác thoải mái và nâng đỡ chân hiệu quả trên mọi địa hình gồ ghề. Mẫu giày thân thiện với môi trường và đồng hành cùng bạn trong những chuyến hiking vùng thấp, trong rừng hoặc trên bờ biển giữa tiết trời khô ráo.",
+        CategoryName = "Giày Leo Núi",
+        SportName = "Hiking & Trekking",
+        SkuBase = "HT-008",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-008-40", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "40" },
+            new { Sku = "HT-008-41", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "41" },
+            new { Sku = "HT-008-42", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "42" },
+            new { Sku = "HT-008-43", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "43" },
+            new { Sku = "HT-008-44", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "44" },
+            new { Sku = "HT-008-45", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "45" },
+            new { Sku = "HT-008-46", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "46" }
         },
-        //HT009
-        new {
-            Name = "Giày leo núi nữ chống thấm cổ lửng - MH100 xám/xanh dương",
-            Desc = "Mang lại cho đôi chân sự thoải mái và bảo vệ nhờ khả năng giảm chấn dọc đế giày, nâng đỡ từ thân giày cao và lớp màng chống thấm tuyệt đối để giữ chân luôn khô ráo. Giày thể thao chống thấm dành cho những chuyến đi bộ leo núi không thường xuyên, được thiết kế tại chân núi Mont Blanc!\r\n",
-            CategoryName = "Giày Leo Núi",
-            SportName = "Hiking & Trekking",
-            SkuBase = "HT-009",
-            IsFeat = true,
-            Variants = new[] {
-                new { Sku = "HT-009-40", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "40" },
-                new { Sku = "HT-009-41", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "41" },
-                new { Sku = "HT-009-42", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "42" },
-                new { Sku = "HT-009-43", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "43" },
-                new { Sku = "HT-009-44", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "44" },
-                new { Sku = "HT-009-45", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "45" },
-                new { Sku = "HT-009-46", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "46" },
-            },
-            ImageCount = 4
+        ImageCount = 4
+    },
+    //HT009
+    new {
+        Name = "Giày leo núi nữ chống thấm cổ lửng - MH100 xám/xanh dương",
+        Desc = "Mang lại cho đôi chân sự thoải mái và bảo vệ nhờ khả năng giảm chấn dọc đế giày, nâng đỡ từ thân giày cao và lớp màng chống thấm tuyệt đối để giữ chân luôn khô ráo. Giày thể thao chống thấm dành cho những chuyến đi bộ leo núi không thường xuyên, được thiết kế tại chân núi Mont Blanc!\r\n",
+        CategoryName = "Giày Leo Núi",
+        SportName = "Hiking & Trekking",
+        SkuBase = "HT-009",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-009-40", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "40" },
+            new { Sku = "HT-009-41", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "41" },
+            new { Sku = "HT-009-42", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "42" },
+            new { Sku = "HT-009-43", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "43" },
+            new { Sku = "HT-009-44", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "44" },
+            new { Sku = "HT-009-45", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "45" },
+            new { Sku = "HT-009-46", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "46" },
         },
-        //HT010
-        new {
-            Name = "Giày dã ngoại cổ lửng chống thấm - SH 500 trắng/xám",
-            Desc = "Bạn đang tìm giày hiking hay giày thể thao thoải mái cho chuyến dã ngoại mùa đông? Giày 2 trong 1. Kiểu dáng hiện đại của giày giúp bạn dễ dàng kết hợp giữa đi hiking và các hoạt động hàng ngày. Giày dã ngoại giữ ấm và chống thấm cho những chuyến đi vào mùa đông. Giày kết hợp giữa sự thoải mái, độ bám và phong cách.",
-            CategoryName = "Giày Leo Núi",
-            SportName = "Hiking & Trekking",
-            SkuBase = "HT-010",
-            IsFeat = true,
-            // Dữ liệu Variants
-            Variants = new[] {
-                new { Sku = "HT-010-40", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "40" },
-                new { Sku = "HT-010-41", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "41" },
-                new { Sku = "HT-010-42", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "42" },
-                new { Sku = "HT-010-43", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "43" },
-                new { Sku = "HT-010-44", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "44" },
-                new { Sku = "HT-010-45", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "45" },
-                new { Sku = "HT-010-46", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "46" },
-            },
-            ImageCount = 4
-        }
-    };
+        ImageCount = 4
+    },
+    //HT010
+    new {
+        Name = "Giày dã ngoại cổ lửng chống thấm - SH 500 trắng/xám",
+        Desc = "Bạn đang tìm giày hiking hay giày thể thao thoải mái cho chuyến dã ngoại mùa đông? Giày 2 trong 1. Kiểu dáng hiện đại của giày giúp bạn dễ dàng kết hợp giữa đi hiking và các hoạt động hàng ngày. Giày dã ngoại giữ ấm và chống thấm cho những chuyến đi vào mùa đông. Giày kết hợp giữa sự thoải mái, độ bám và phong cách.",
+        CategoryName = "Giày Leo Núi",
+        SportName = "Hiking & Trekking",
+        SkuBase = "HT-010",
+        IsFeat = true,
+        // Dữ liệu Variants
+        Variants = new[] {
+            new { Sku = "HT-010-40", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "40" },
+            new { Sku = "HT-010-41", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "41" },
+            new { Sku = "HT-010-42", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "42" },
+            new { Sku = "HT-010-43", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "43" },
+            new { Sku = "HT-010-44", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "44" },
+            new { Sku = "HT-010-45", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "45" },
+            new { Sku = "HT-010-46", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "46" },
+        },
+        ImageCount = 4
+    },
+    //Phụ Kiện Leo Núi
+    //HT011
+    new {
+        Name = "Mũ lưỡi trai trekking - Travel 100 xanh đen",
+        Desc = "Nếu bạn đang tìm kiếm một chiếc mũ đơn giản với mức giá phải chăng để bảo vệ bạn khỏi ánh nắng mặt trời, chiếc mũ này chính là dành cho bạn! Mũ lưỡi trai trekking đảm bảo tất cả tính năng cần thiết khi cho chuyến đi ngoài trời với giá tốt!",
+        CategoryName = "Phụ Kiện Leo Núi",
+        SportName = "Hiking & Trekking",
+        SkuBase = "HT-011",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-011", Stock = 150, Price = 53000, SalePrice = 53000, Attributes = "Một Cỡ Duy Nhất" },
+        },
+        ImageCount = 4
+    },
+    //HT012
+    new {
+        Name = "Khăn đa năng TREK 100 - Xám",
+        Desc = "Khăn chui đầu này bảo vệ đầu khỏi nắng, che cổ khi trời lạnh hoặc thấm nước mưa trên trán. Không thể thiếu trong balô của bạn. Chúng tôi thiết kế mẫu khăn đa năng này để đồng hành cùng bạn trong mọi chuyến đi!",
+        CategoryName = "Phụ Kiện Leo Núi",
+        SportName = "Hiking & Trekking",
+        SkuBase = "HT-012",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-012", Stock = 150, Price = 79000, SalePrice = 79000, Attributes = "Một Cỡ Duy Nhất" },
+
+        },
+        ImageCount = 4
+    },
+    //HT013
+    new {
+        Name = "Kính mát thể thao tròng kính phân cực - MH 530 đen",
+        Desc = "Tròng kính chống tia cực tím loại 3 ngăn 100% các tia độc hại từ mặt trời giúp bạn không bị chói mắt. Nhờ trọng lượng nhẹ và bám tốt, kính mát bảo vệ bạn tối đa khi đi hiking. Kính mát chống tia UV, đồng hành cùng bạn trong các chuyến hiking. Sản phẩm lý tưởng dành cho người leo núi thường xuyên nhờ trọng lượng nhẹ.",
+        CategoryName = "Phụ Kiện Leo Núi",
+        SportName = "Hiking & Trekking",
+        SkuBase = "HT-013",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-013", Stock = 150, Price = 399000, SalePrice = 369000, Attributes = "Một Cỡ Duy Nhất" },
+
+        },
+        ImageCount = 4
+    },
+    //HT014
+    new {
+        Name = "Bộ sơ cứu 47 món - 500 UL",
+        Desc = "Các vật dụng trong bộ sơ cứu giúp xử lý các vết thương nhẹ hoặc bong gân. Bộ sơ cứu có đầy đủ các vật dụng đa dạng để sử dụng khi cần.  Bộ sơ cứu được thiết kế giúp xử lý vết thương, vết cắt và thực hiện những biện pháp sơ cứu cơ bản trong các chuyến trekking.",
+        CategoryName = "Phụ Kiện Leo Núi",
+        SportName = "Hiking & Trekking",
+        SkuBase = "HT-014",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-014", Stock = 150, Price = 499000, SalePrice = 399000, Attributes = "Một Cỡ Duy Nhất" },
+
+        },
+        ImageCount = 4
+    },
+    //Vớ Leo Núi
+    //HT015
+    new {
+        Name = "Set 2 đôi tất cổ cao - Hike 50 xám",
+        Desc = "Tất mang lại sự thoải mái tối đa khi đi dã ngoại, dù mang với giày cổ thấp, vừa hay cao. Bán theo bộ 2 đôi cùng màu. Sản phẩm được thiết kế để sử dụng hàng ngày, cũng như đồng hành cùng bạn trong các chuyến hiking.",
+        CategoryName = "Vớ Leo Núi",
+        SportName = "Hiking & Trekking",
+        SkuBase = "HT-015",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-015-35-38", Stock = 150, Price = 129000, SalePrice = 129000, Attributes = "35/38" },
+            new { Sku = "HT-015-39-42", Stock = 150, Price = 129000, SalePrice = 129000, Attributes = "39/42" },
+            new { Sku = "HT-015-42-46", Stock = 150, Price = 129000, SalePrice = 129000, Attributes = "43/46" },
+
+        },
+        ImageCount = 4
+    },
+    //HT016
+    new {
+        Name = "Tất dã ngoại cổ vừa ấm áp - SH500 đen",
+        Desc = "Mặt trong tất được dệt bằng len Merino cho khả năng giữ nhiệt tối đa, từ đó mang lại cảm giác thoải mái và ấm áp vượt trội. Mặt ngoài tất được làm từ sợi acrylic giúp tăng độ bền. Sản phẩm thiết thực, giúp mang lại cảm giác ấm áp, đồng hành cùng bạn trong những chuyến dã ngoại giữa thời tiết lạnh giá.",
+        CategoryName = "Vớ Leo Núi",
+        SportName = "Hiking & Trekking",
+        SkuBase = "HT-016",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-016-35-38", Stock = 150, Price = 399000, SalePrice = 399000, Attributes = "35/38" },
+            new { Sku = "HT-016-39-42", Stock = 150, Price = 399000, SalePrice = 339000, Attributes = "39/42" },
+            new { Sku = "HT-016-43-46", Stock = 150, Price = 399000, SalePrice = 339000, Attributes = "43/46" }
+        },
+        ImageCount = 4
+    },
+    //HT017
+    new {
+        Name = "Xà cạp trekking cổ cao - MT 500 đen",
+        Desc = "Xà cạp cổ cao siêu bền, được thiết kế với dáng suông ôm chân vừa vặn, là sự lựa chọn hoàn hảo cho các chuyến hiking hoặc đi bộ trên mặt đất ẩm ướt. Xà cạp được thiết kế giúp ngăn đất đá chui vào giày, đồng hành cùng bạn trong các chuyến trekking.",
+        CategoryName = "Vớ Leo Núi",
+        SportName = "Hiking & Trekking",
+        SkuBase = "HT-017",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-017-SM", Stock = 150, Price = 699000, SalePrice = 699000, Attributes = "S/M" },
+            new { Sku = "HT-017-LXL", Stock = 150, Price = 699000, SalePrice = 699000, Attributes = "L/XL" }
+        },
+        ImageCount = 4
+    },
+    //Cắm Trại
+    //Lều Cắm Trại
+    //HT018
+    new {
+        Name = "Lều cắm trại 2 người - MH100 xám",
+        Desc = "Giá cả phải chăng. Với trọng lượng 4,1kg, kích thước 197cm x 210cm và chiều cao 116cm. Sự lựa chọn hoàn hảo cho lần đầu cắm trại.Lều cắm trại cho 2 người, đơn giản và dễ dựng.",
+        CategoryName = "Lều Cắm Trại",
+        SportName = "Cắm Trại",
+        SkuBase = "HT-018",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-018", Stock = 150, Price = 769000, SalePrice = 699000, Attributes = "Một Cỡ Duy Nhất" },
+        },
+        ImageCount = 4
+    },
+     //HT019
+    new {
+        Name = "Lều cắm trại 3 người - MH100 Fresh&Black trắng",
+        Desc = "Công nghệ Fresh & Black cho giấc ngủ ngon nhờ khả năng thông gió và ngăn ánh sáng. Lều cắm trại Fresh & Black MH100 cho 3 người phù hợp mọi thời tiết.",
+        CategoryName = "Lều Cắm Trại",
+        SportName = "Cắm Trại",
+        SkuBase = "HT-019",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-019", Stock = 150, Price = 1499000, SalePrice = 1499000, Attributes = "Một Cỡ Duy Nhất" },
+        },
+        ImageCount = 4
+    },
+     //HT020
+    new {
+        Name = "Lều dã ngoại bơm hơi Fresh & Black 4 người - Air Seconds 4.1 xanh dương/trắng",
+        Desc = "Động lực của chúng tôi? Mang đến cho bạn một chiếc lều tự bơm hơi dựng nhanh công nghệ Fresh&Black của chúng tôi. Giảm nhiệt và ánh sáng trong lều, do vậy bạn có thể thức dậy bất kỳ khi nào bạn muốn! Lều dã ngoại bơm hơi dành cho 4 người, mang đến sự thoải mái tối đa với không gian ngủ và sinh hoạt rộng rãi.",
+        CategoryName = "Lều Cắm Trại",
+        SportName = "Cắm Trại",
+        SkuBase = "HT-020",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-020", Stock = 150, Price = 9999000, SalePrice = 9999000, Attributes = "Một Cỡ Duy Nhất" },
+        },
+        ImageCount = 4
+    },
+    //Túi Ngủ & Đệm Hơi
+     //HT021
+    new {
+        Name = "Túi ngủ cắm trại Arpenaz 20° - Xanh lá",
+        Desc = "20°C. Mục tiêu của chúng tôi? Mang đến cho bạn một chiếc túi ngủ thân thiện với môi trường với khóa kéo gắn sẵn, dễ dàng đóng mở. Có thể sử dụng như vỏ chăn. Bảo hành 5 năm! Túi ngủ Arpenaz 20° được thiết kế thân thiện với môi trường, mang đến cho bạn những giấc ngủ thoải mái ở nhiệt độ gần 20°C trong các chuyến cắm trại.",
+        CategoryName = "Túi Ngủ & Đệm Hơi",
+        SportName = "Cắm Trại",
+        SkuBase = "HT-021",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-021", Stock = 150, Price = 499000, SalePrice = 399000, Attributes = "Một Cỡ Duy Nhất" },
+        },
+        ImageCount = 4
+    },
+     //HT022
+    new {
+        Name = "Túi ngủ trekking 5°C vải tổng hợp - MT500 đen",
+        Desc = "Túi ngủ có đệm này được thiết kế lại để nhẹ hơn và nhỏ gọn hơn, do đó phù hợp hơn với nhu cầu của bạn. Để dễ sử dụng hơn, túi mở ra dọc theo 3/4 chiều dài.  Với hình dạng \"xác ướp\" và mũ trùm đầu, mẫu túi ngủ trekking này sẽ giúp bạn ngủ ngon vào ban đêm ở nhiệt độ từ 5°C trở lên.",
+        CategoryName = "Túi Ngủ & Đệm Hơi",
+        SportName = "Cắm Trại",
+        SkuBase = "HT-022",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-022", Stock = 150, Price = 2399000, SalePrice = 2399000, Attributes = "Một Cỡ Duy Nhất" },
+        },
+        ImageCount = 4
+    },
+     //HT023
+    new {
+        Name = "Túi ngủ cắm trại đa dụng Arpenaz 15°",
+        Desc = "Nhiệt độ thoải mái 15°C. Động lực của chúng tôi? Là mang đến cho bạn chiếc túi ngủ thân thiện môi trường, có khóa kéo dọc túi. Túi có thể biến thành chăn bông và có thể ghép 2 túi. Bảo hành 5 năm Túi ngủ Arpenaz 15° thân thiện với môi trường để bạn có thể ngủ thoải mái khi cắm trại dưới nhiệt độ xấp xỉ 15°C.",
+        CategoryName = "Túi Ngủ & Đệm Hơi",
+        SportName = "Cắm Trại",
+        SkuBase = "HT-023",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-023", Stock = 150, Price = 639000, SalePrice = 639000, Attributes = "Một Cỡ Duy Nhất" },
+        },
+        ImageCount = 4
+    },
+    //Ghế Cắm Trại
+     //HT024
+    new {
+        Name = "Ghế cắm trại gấp gọn chân thấp - 100 nâu",
+        Desc = "Ghế có trọng lượng chỉ 1,2 kg siêu nhỏ gọn, dễ dàng vận chuyển với dây đeo tích hợp. Siêu nhỏ gọn, bạn có thể quên là đang mang theo ghế. Ghế cắm trại được thiết kế với chiều cao lý tưởng 25 cm, mang lại cảm giác thoải mái và chắc chắn khi ngồi. Mang lại những phút giây thư giãn ngoài trời.",
+        CategoryName = "Ghế Cắm Trại",
+        SportName = "Cắm Trại",
+        SkuBase = "HT-024",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-024", Stock = 150, Price = 459000, SalePrice = 399000, Attributes = "Một Cỡ Duy Nhất" },
+        },
+        ImageCount = 4
+    },
+    //HT025
+    new {
+        Name = "Ghế tựa cắm trại 5 tư thế thoải mái và nhỏ gọn - Màu be",
+        Desc = "Ghế nhỏ gọn và tiện lợi, có thể gấp gọn để mang theo bất cứ đâu. Có thể xách tay với tay cầm hoặc đeo trên vai với dây đeo. Ghế tựa cắm trại kèm túi đựng, được thiết kế với 2 tay vịn và 5 tư thế, đầu tựa có thể điều chỉnh. Tiện lợi, mang lại những phút giây thư giãn ngoài trời!",
+        CategoryName = "Ghế Cắm Trại",
+        SportName = "Cắm Trại",
+        SkuBase = "HT-025",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-025", Stock = 150, Price = 2199000, SalePrice = 2199000, Attributes = "Một Cỡ Duy Nhất" },
+        },
+        ImageCount = 4
+    },
+    //HT026
+    new {
+        Name = "Ghế cắm trại gấp gọn dáng thấp - 500 vàng/xám/đen",
+        Desc = "Ghế xếp gọn tiết kiệm không gian, là sự lựa chọn hoàn hảo cho buổi cắm trại. Ghế cắm trại dã ngoại gấp gọn MH500 siêu gọn nhẹ cho chuyến đi cuối tuần.",
+        CategoryName = "Ghế Cắm Trại",
+        SportName = "Cắm Trại",
+        SkuBase = "HT-026",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-026", Stock = 150, Price = 1499000, SalePrice = 1299000, Attributes = "Một Cỡ Duy Nhất" },
+        },
+        ImageCount = 4
+    }
+    //HT027
+   
+
+
+
+};
+
+
 
     // Dictionary cho Sport Icon (Sử dụng ký hiệu ~/ dẫn đến wwwroot)
     private static Dictionary<string, string> SportIcons = new Dictionary<string, string>()

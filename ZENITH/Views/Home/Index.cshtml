@@ -84,17 +84,21 @@
 <!--SẢN PHẨM BÁN CHẠY-->
 <section class="home__container">
     <div class="home__row">
-        <h2 class="home__heading">Sản Phẩm Bán Chạy Nhất (@Model.TopSellingProducts.Count)</h2>
+        <h2 class="home__heading">Sản Phẩm Bán Chạy</h2>
     </div>
-    <div class="row row-cols-5 row-cols-lg-2 row-cols-sm-1 g-3">
-        @if (Model.TopSellingProducts.Any())
-        {
-            @await Html.PartialAsync("_ProductCardList", Model.TopSellingProducts)
-        }
-        else
-        {
-            <div class="col-12"><p>Không có sản phẩm bán chạy để hiển thị.</p></div>
-        }
+    <div class="product-carousel">
+        <button class="carousel-button prev-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M169.4 297.4C156.9 309.9 156.9 330.2 169.4 342.7L361.4 534.7C373.9 547.2 394.2 547.2 406.7 534.7C419.2 522.2 419.2 501.9 406.7 489.4L237.3 320L406.6 150.6C419.1 138.1 419.1 117.8 406.6 105.3C394.1 92.8 373.8 92.8 361.3 105.3L169.3 297.3z" /></svg></button>
+        <div class="product-carousel-inner">
+            @if (Model.TopSellingProducts.Any())
+            {
+                @await Html.PartialAsync("_ProductCardList", Model.TopSellingProducts)
+            }
+            else
+            {
+                <div class="col-12"><p>Không có sản phẩm bán chạy để hiển thị.</p></div>
+            }
+        </div>
+        <button class="carousel-button next-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M471.1 297.4C483.6 309.9 483.6 330.2 471.1 342.7L279.1 534.7C266.6 547.2 246.3 547.2 233.8 534.7C221.3 522.2 221.3 501.9 233.8 489.4L403.2 320L233.9 150.6C221.4 138.1 221.4 117.8 233.9 105.3C246.4 92.8 266.7 92.8 279.2 105.3L471.2 297.3z" /></svg></button>
     </div>
 </section>
 <!--Sport cha-->
@@ -143,15 +147,19 @@
     <div class="home__row">
         <h2 class="home__heading">Giày chạy bộ, thể thao, leo núi</h2>
     </div>
-    <div class="row row-cols-5 row-cols-lg-2 row-cols-sm-1 g-3">
-        @if (Model.FootwearCollection.Any())
-        {
-            @await Html.PartialAsync("_ProductCardList", Model.FootwearCollection)
-        }
-        else
-        {
-            <div class="col-12"><p>Không có sản phẩm Giày chạy bộ, thể thao, leo núi hiển thị.</p></div>
-        }
+    <div class="product-carousel">
+        <button class="carousel-button prev-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M169.4 297.4C156.9 309.9 156.9 330.2 169.4 342.7L361.4 534.7C373.9 547.2 394.2 547.2 406.7 534.7C419.2 522.2 419.2 501.9 406.7 489.4L237.3 320L406.6 150.6C419.1 138.1 419.1 117.8 406.6 105.3C394.1 92.8 373.8 92.8 361.3 105.3L169.3 297.3z" /></svg></button>
+        <div class="product-carousel-inner">
+            @if (Model.FootwearCollection.Any())
+            {
+                @await Html.PartialAsync("_ProductCardList", Model.FootwearCollection)
+            }
+            else
+            {
+                <div class="col-12"><p>Không có sản phẩm Giày chạy bộ, thể thao, leo núi hiển thị.</p></div>
+            }
+        </div>
+        <button class="carousel-button next-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M471.1 297.4C483.6 309.9 483.6 330.2 471.1 342.7L279.1 534.7C266.6 547.2 246.3 547.2 233.8 534.7C221.3 522.2 221.3 501.9 233.8 489.4L403.2 320L233.9 150.6C221.4 138.1 221.4 117.8 233.9 105.3C246.4 92.8 266.7 92.8 279.2 105.3L471.2 297.3z" /></svg></button>
     </div>
 </section>
 
@@ -160,15 +168,19 @@
     <div class="home__row">
         <h2 class="home__heading">Khám phá leo núi - cắm trại - du lịch</h2>
     </div>
-    <div class="row row-cols-5 row-cols-lg-2 row-cols-sm-1 g-3">
-        @if (Model.ClimbingProducts.Any())
-        {
-            @await Html.PartialAsync("_ProductCardList", Model.ClimbingProducts)
-        }
-        else
-        {
-            <div class="col-12"><p>Không có sản phẩm liên quan tới Khám phá leo núi - cắm trại - du lịch để hiển thị.</p></div>
-        }
+    <div class="product-carousel">
+        <button class="carousel-button prev-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M169.4 297.4C156.9 309.9 156.9 330.2 169.4 342.7L361.4 534.7C373.9 547.2 394.2 547.2 406.7 534.7C419.2 522.2 419.2 501.9 406.7 489.4L237.3 320L406.6 150.6C419.1 138.1 419.1 117.8 406.6 105.3C394.1 92.8 373.8 92.8 361.3 105.3L169.3 297.3z" /></svg></button>
+        <div class="product-carousel-inner">
+            @if (Model.ClimbingProducts.Any())
+            {
+                @await Html.PartialAsync("_ProductCardList", Model.ClimbingProducts)
+            }
+            else
+            {
+                <div class="col-12"><p>Không có sản phẩm liên quan tới Khám phá leo núi - cắm trại - du lịch để hiển thị.</p></div>
+            }
+        </div>
+        <button class="carousel-button next-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M471.1 297.4C483.6 309.9 483.6 330.2 471.1 342.7L279.1 534.7C266.6 547.2 246.3 547.2 233.8 534.7C221.3 522.2 221.3 501.9 233.8 489.4L403.2 320L233.9 150.6C221.4 138.1 221.4 117.8 233.9 105.3C246.4 92.8 266.7 92.8 279.2 105.3L471.2 297.3z" /></svg></button>
     </div>
 </section>
 <!--VỢT-->
@@ -176,15 +188,19 @@
     <div class="home__row">
         <h2 class="home__heading">Vợt pickleball, tennis, cầu lông</h2>
     </div>
-    <div class="row row-cols-5 row-cols-lg-2 row-cols-sm-1 g-3">
-        @if (Model.RacketSportsProducts.Any())
-        {
-            @await Html.PartialAsync("_ProductCardList", Model.RacketSportsProducts)
-        }
-        else
-        {
-            <div class="col-12"><p>Không có sản phẩm Vợt pickleball, tennis, cầu lông để hiển thị.</p></div>
-        }
+    <div class="product-carousel">
+        <button class="carousel-button prev-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M169.4 297.4C156.9 309.9 156.9 330.2 169.4 342.7L361.4 534.7C373.9 547.2 394.2 547.2 406.7 534.7C419.2 522.2 419.2 501.9 406.7 489.4L237.3 320L406.6 150.6C419.1 138.1 419.1 117.8 406.6 105.3C394.1 92.8 373.8 92.8 361.3 105.3L169.3 297.3z" /></svg></button>
+        <div class="product-carousel-inner">
+            @if (Model.RacketSportsProducts.Any())
+            {
+                @await Html.PartialAsync("_ProductCardList", Model.RacketSportsProducts)
+            }
+            else
+            {
+                <div class="col-12"><p>Không có sản phẩm Vợt pickleball, tennis, cầu lông để hiển thị.</p></div>
+            }
+        </div>
+        <button class="carousel-button next-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M471.1 297.4C483.6 309.9 483.6 330.2 471.1 342.7L279.1 534.7C266.6 547.2 246.3 547.2 233.8 534.7C221.3 522.2 221.3 501.9 233.8 489.4L403.2 320L233.9 150.6C221.4 138.1 221.4 117.8 233.9 105.3C246.4 92.8 266.7 92.8 279.2 105.3L471.2 297.3z" /></svg></button>
     </div>
 </section>
 <!--QUẦN ÁO BÓNG ĐÁ-->
@@ -192,14 +208,18 @@
     <div class="home__row">
         <h2 class="home__heading">Quần áo bóng đá, bóng rổ, bóng chuyền</h2>
     </div>
-    <div class="row row-cols-5 row-cols-lg-2 row-cols-sm-1 g-3">
-        @if (Model.TeamSportsProducts.Any())
-        {
-            @await Html.PartialAsync("_ProductCardList", Model.TeamSportsProducts)
-        }
-        else
-        {
-            <div class="col-12"><p>Không có sản phẩm Quần áo bóng đá, bóng rổ, bóng chuyền để hiển thị.</p></div>
-        }
+    <div class="product-carousel">
+        <button class="carousel-button prev-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M169.4 297.4C156.9 309.9 156.9 330.2 169.4 342.7L361.4 534.7C373.9 547.2 394.2 547.2 406.7 534.7C419.2 522.2 419.2 501.9 406.7 489.4L237.3 320L406.6 150.6C419.1 138.1 419.1 117.8 406.6 105.3C394.1 92.8 373.8 92.8 361.3 105.3L169.3 297.3z" /></svg></button>
+        <div class="product-carousel-inner">
+            @if (Model.TeamSportsProducts.Any())
+            {
+                @await Html.PartialAsync("_ProductCardList", Model.TeamSportsProducts)
+            }
+            else
+            {
+                <div class="col-12"><p>Không có sản phẩm Quần áo bóng đá, bóng rổ, bóng chuyền để hiển thị.</p></div>
+            }
+        </div>
+        <button class="carousel-button next-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M471.1 297.4C483.6 309.9 483.6 330.2 471.1 342.7L279.1 534.7C266.6 547.2 246.3 547.2 233.8 534.7C221.3 522.2 221.3 501.9 233.8 489.4L403.2 320L233.9 150.6C221.4 138.1 221.4 117.8 233.9 105.3C246.4 92.8 266.7 92.8 279.2 105.3L471.2 297.3z" /></svg></button>
     </div>
 </section>

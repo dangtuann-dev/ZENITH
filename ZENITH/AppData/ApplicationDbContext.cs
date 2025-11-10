@@ -230,7 +230,7 @@ namespace ZENITH.AppData
                 entity.HasIndex(e => e.Sku).IsUnique();
                 entity.HasIndex(e => e.ProductName);
                 entity.HasIndex(e => e.CategoryId);
-                entity.HasIndex(e => e.SportId); 
+                entity.HasIndex(e => e.SportId);
                 entity.HasIndex(e => new { e.IsActive, e.IsFeatured });
             });
 
@@ -566,9 +566,9 @@ namespace ZENITH.AppData
                 entity.HasIndex(e => new { e.IsApproved, e.CreatedAt });
             });
 
-          
+
         }
 
-        
+
     }
 }

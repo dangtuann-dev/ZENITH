@@ -75,26 +75,27 @@ namespace ZENITH.Controllers
                 .ToListAsync();
 
             // --- 3. SẢN PHẨM LEO NÚI (CLIMBING/HIKING - 20 SP) ---
-            var climbingKeywords = new[] { "Quần Áo Leo Núi", "Giày Leo Núi", "Balo & Túi" };
+            var climbingKeywords = new[] { "Quần Áo Leo Núi", "Giày Leo Núi", "Balo & Túi", "Phụ Kiện Leo Núi", "Lều Cắm Trại", "Túi Ngủ & Đệm Hơi" , "Ghế Cắm Trại", "Bàn Cắm Trại", "Vệ Sinh Cá Nhân" };
             var climbingProducts = await GetBaseProductQuery()
                 .Where(p => climbingKeywords.Contains(p.Category.CategoryName))
-                .OrderBy(p => Guid.NewGuid())
+                //.OrderBy(p => Guid.NewGuid()) random
+                 .OrderByDescending(p => p.ViewCount)
                 .Take(20)
                 .ToListAsync();
 
-            // --- 4. SẢN PHẨM THỂ THAO ĐỒNG ĐỘI (TEAM SPORTS - 10 SP) ---
-            var teamSportKeywords = new[] { "Bóng Đá", "Bóng Rổ", "Bóng Chuyền" };
+            // --- 4. SẢN PHẨM QUẦN ÁO THỂ THAO ĐỒNG ĐỘI (TEAM SPORTS - 10 SP) ---
+            var teamSportKeywords = new[] { "Quần Áo Bóng Đá", "Quần Áo bóng rổ", "Quần Áo Bóng Chuyền" };
             var teamSportsProducts = await GetBaseProductQuery()
                 .Where(p => teamSportKeywords.Contains(p.Category.CategoryName))
-                .OrderByDescending(p => p.CreatedAt)
-                .Take(10)
+                 .OrderByDescending(p => p.ViewCount)
+                .Take(20)
                 .ToListAsync();
             //Giaỳ
-            var footwearKeywords = new[] { "Giày Chạy Bộ", "Giày Chạy Trail", "Giày Leo Núi", "Giày Đi Bộ" };
+            var footwearKeywords = new[] { "Giày Leo Núi", "Giày Chạy Bộ", "Giày Chạy Trail", "Giày Đi Bộ" , "Giày & tất cầu lông" , "Giày & Tất Tennis", "Giày Bóng Đá & Futsal", "Giày bóng rổ" };
             var footwearCollection = await GetBaseProductQuery()
                 .Where(p => footwearKeywords.Contains(p.Category.CategoryName))
                 .OrderByDescending(p => p.ViewCount) // Sắp xếp theo mức độ phổ biến
-                .Take(15)
+                .Take(20)
                 .ToListAsync();
 
 
@@ -104,6 +105,7 @@ namespace ZENITH.Controllers
                 TotalCount = totalCount,
                 Categories = parentCategories, // Dùng cho row Danh Mục
 
+                FootwearCollection = MapToCardViewModel(footwearCollection),
                 TopSellingProducts = MapToCardViewModel(topSellingProducts),
                 RacketSportsProducts = MapToCardViewModel(racketProducts),
                 ClimbingProducts = MapToCardViewModel(climbingProducts),

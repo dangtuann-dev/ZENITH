@@ -8,7 +8,6 @@
 
 @foreach (var product in Model)
 {
-    <div class="col">
         <article class="product-card">
             <div class="product-card__img-wrap">
                 @* Link đến trang chi tiết sản phẩm *@
@@ -16,7 +15,7 @@
                     @* Sử dụng ImageUrl động từ ViewModel *@
                     <img src="@Url.Content(product.ImageUrl)"
                          alt="@product.ProductName"
-                         class="product-card__thumb"
+                     class="product-card__thumb "
                          asp-append-version="true" />
                 </a>
 
@@ -27,8 +26,8 @@
                 </button>
             </div>
 
-            <h3 class="product-card__title">
-                <a asp-controller="Product" asp-action="Detail" asp-route-id="@product.ProductId">@product.ProductName</a>
+        <h3 class="product-card__title">
+            <a asp-controller="Product" asp-action="Detail" asp-route-id="@product.ProductId" class="clip-text">@product.ProductName</a>
             </h3>
 
             @* Brand/Supplier *@
@@ -53,5 +52,4 @@
                 <span class="product-card__score">@product.Rating.ToString("F1")</span>
             </div>
         </article>
-    </div>
 }
