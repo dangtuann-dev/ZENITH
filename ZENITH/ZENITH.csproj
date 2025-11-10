@@ -55,6 +55,24 @@
     <Folder Include="wwwroot\image\productImage\HT-028\" />
     <Folder Include="wwwroot\image\productImage\HT-029\" />
     <Folder Include="wwwroot\image\productImage\HT-030\" />
+    <Folder Include="wwwroot\image\productImage\HT-031\" />
+    <Folder Include="wwwroot\image\productImage\HT-032\" />
+    <Folder Include="wwwroot\image\productImage\HT-033\" />
+    <Folder Include="wwwroot\image\productImage\HT-034\" />
+    <Folder Include="wwwroot\image\productImage\HT-035\" />
+    <Folder Include="wwwroot\image\productImage\HT-036\" />
+    <Folder Include="wwwroot\image\productImage\HT-037\" />
+    <Folder Include="wwwroot\image\productImage\HT-038\" />
+    <Folder Include="wwwroot\image\productImage\HT-039\" />
+    <Folder Include="wwwroot\image\productImage\HT-040\" />
+    <Folder Include="wwwroot\image\productImage\HT-041\" />
+    <Folder Include="wwwroot\image\productImage\HT-042\" />
+    <Folder Include="wwwroot\image\productImage\HT-043\" />
+    <Folder Include="wwwroot\image\productImage\HT-044\" />
+    <Folder Include="wwwroot\image\productImage\HT-045\" />
+    <Folder Include="wwwroot\image\productImage\HT-046\" />
+    <Folder Include="wwwroot\image\productImage\HT-047\" />
+    <Folder Include="wwwroot\image\productImage\HT-048\" />
   </ItemGroup>
 
 </Project>

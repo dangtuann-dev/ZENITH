@@ -418,7 +418,6 @@ D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\ftuktk4i20-jjbwa2nalx.g
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\y004060gfb-5id264paoq.gz
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\1cjq1fm9fj-3qcngug300.gz
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\8nbhf6lr44-2l551b9060.gz
-D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\19ytycuyou-ku4law844m.gz
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\0l544wjt4g-bqjiyaj88i.gz
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\qo6r6ccnjy-c2jlpeoesf.gz
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\a6ir93lr01-erw9l3u2r3.gz
@@ -484,7 +483,6 @@ D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\staticwebassets.build.json
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\staticwebassets.build.json.cache
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\staticwebassets.development.json
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\staticwebassets.build.endpoints.json
-D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\ZENITH.csproj.Up2Date
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\ZENITH.dll
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\refint\ZENITH.dll
@@ -492,4 +490,6 @@ D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\ZENITH.pdb
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\ZENITH.genruntimeconfig.cache
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\ref\ZENITH.dll
 D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\x7fc027y5i-u81nsauqve.gz
-D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\oes6w6bwv2-7187ew964v.gz
+D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\oes6w6bwv2-z3y5svi49y.gz
+D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
+D:\Web Profile\ZENITH\ZENITH\obj\Debug\net9.0\compressed\19ytycuyou-w4b0mi5vyz.gz

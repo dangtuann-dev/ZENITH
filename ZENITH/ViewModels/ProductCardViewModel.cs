@@ -10,6 +10,7 @@ namespace ZENITH.ViewModels
         public string SkuBase { get; set; } = string.Empty;
 
         // Thông tin từ bảng ProductVariants
+        public int VariantId { get; set; }
         public decimal Price { get; set; } // Giá niêm yết
         public decimal SalePrice { get; set; } // Giá bán (dùng để hiển thị)
 

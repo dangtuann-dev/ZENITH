@@ -1,4 +1,8 @@
 ﻿
+@using Microsoft.AspNetCore.Identity
+@using ZENITH.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -20,6 +24,9 @@
     <link rel="stylesheet" href="~/ZENITH.styles.css" asp-append-version="true" />
     <script src="~/js/site.js"
             asp-append-version="true"></script>
+    <script>
+        var isUserLoggedIn = @(SignInManager.IsSignedIn(User) ? "true" : "false");
+    </script>
 </head>
 <body>
     <header class="site-header">

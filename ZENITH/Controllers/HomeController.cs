@@ -14,7 +14,7 @@ namespace ZENITH.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public HomeController(ApplicationDbContext context) // DI hoạt động là CSDL được tìm thấy
+        public HomeController(ApplicationDbContext context) 
         {
             _context = context;
         }

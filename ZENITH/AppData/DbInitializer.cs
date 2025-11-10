@@ -405,12 +405,60 @@ public static class DbInitializer
             new { Sku = "HT-026", Stock = 150, Price = 1499000, SalePrice = 1299000, Attributes = "Một Cỡ Duy Nhất" },
         },
         ImageCount = 4
-    }
+    },
+    //Bàn Cắm Trại
     //HT027
-   
-
-
-
+   new {
+        Name = "Bàn gấp cắm trại MH100 - Xám",
+        Desc = "Bàn gấp cắm trại có giá cả phải chăng, đáp ứng tất cả các kiểm nghiệm về độ bền tại Zenith. Bàn nhẹ và nhỏ gọn, là vật dụng không thể thiếu cho những chuyến cắm trại. Đội ngũ thiết kế Zenith đã cho ra đời mẫu bàn gấp cắm trại nhỏ gọn để đồng hành cùng bạn trong các chuyến dã ngoại.",
+        CategoryName = "Bàn Cắm Trại",
+        SportName = "Cắm Trại",
+        SkuBase = "HT-027",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-027", Stock = 150, Price = 499000, SalePrice = 399000, Attributes = "Một Cỡ Duy Nhất" },
+        },
+        ImageCount = 4
+    },
+   //HT028
+   new {
+        Name = "Bộ bàn và 4 ghế cắm trại cho 4-6 người",
+        Desc = "Khi ghế được cất dưới mặt bàn, bạn chỉ cần gấp bàn lại. Bàn gấp nhỏ gọn có hai tay cầm nên bạn có thể mang theo bên mình đến bất cứ đâu. Bàn cắm trại gấp gọn dành cho 4 đến 6 người này được thiết kế nhỏ gọn và chắc chắn. Bàn đi kèm với 4 ghế gấp.",
+        CategoryName = "Bàn Cắm Trại",
+        SportName = "Cắm Trại",
+        SkuBase = "HT-028",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-028", Stock = 150, Price = 2599000, SalePrice = 2199000, Attributes = "Một Cỡ Duy Nhất" },
+        },
+        ImageCount = 4
+    },
+   //HT029
+   new {
+        Name = "Bàn cắm trại nhẹ và gấp gọn - 500 xám/đen",
+        Desc = "Bàn cắm trại nhỏ gọn, cứng cáp, dễ dàng gấp gọn trong cốp xe. Nặng chỉ 2,3kg. Bàn xếp cắm trại MH500 gọn nhẹ cho những chuyến cắm trại cuối tuần năng động.",
+        CategoryName = "Bàn Cắm Trại",
+        SportName = "Cắm Trại",
+        SkuBase = "HT-029",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-029", Stock = 150, Price = 1699000, SalePrice = 1499000, Attributes = "Một Cỡ Duy Nhất" },
+        },
+        ImageCount = 4
+    },
+   //HT030
+   new {
+        Name = "Xe đẩy cắm trại gấp gọn - Đen",
+        Desc = "",
+        CategoryName = "Bàn Cắm Trại",
+        SportName = "Cắm Trại",
+        SkuBase = "HT-030",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "HT-030", Stock = 150, Price = 1999000, SalePrice = 1999000, Attributes = "Một Cỡ Duy Nhất" },
+        },
+        ImageCount = 4
+    }
 };
 
 

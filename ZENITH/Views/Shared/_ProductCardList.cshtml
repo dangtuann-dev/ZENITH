@@ -1,9 +1,17 @@
 ﻿@model List<ZENITH.ViewModels.ProductCardViewModel>
 @using System.Globalization
-
+@using ZENITH.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @{
     // Thiết lập CultureInfo để định dạng tiền VND
     var cultureInfo = new CultureInfo("vi-VN");
+    <script>
+    var isUserLoggedIn = @(SignInManager.IsSignedIn(User) ? "true" : "false");
+    var loginUrl = '@Url.Page("/Account/Login", new { area = "Identity" })';
+    console.log("User Logged In:", isUserLoggedIn);
+    console.log("Login URL:", loginUrl);
+</script>
 }
 
 @foreach (var product in Model)
@@ -20,7 +28,7 @@
                 </a>
 
                 @* Nút Yêu thích (Like Button) - Logic tĩnh *@
-                <button class="like-btn product-card__like-btn">
+                <button class="like-btn product-card__like-btn js-toggle-favorite" data-product-id="@product.VariantId">
                     <img src="~/image/icons/heart.svg" alt="Yêu thích" class="like-btn__icon icon" />
                     <img src="~/image/icons/heart-red.svg" alt="Đã yêu thích" class="like-btn__icon--liked" />
                 </button>
