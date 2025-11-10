@@ -31,7 +31,7 @@ namespace ZENITH.Models
         public bool IsActive { get; set; } = true;
 
         public int SoldCount { get; set; } = 0;
-
+        public string? Attributes { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 

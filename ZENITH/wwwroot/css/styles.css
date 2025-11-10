@@ -8,6 +8,9 @@
     white-space: normal !important;
 }
 */
+.footer__bottom{
+    margin-bottom: 25px;
+}
 .slideshow {
     overflow: hidden;
     width: 99vw; /* Chiếm toàn bộ chiều ngang màn hình */

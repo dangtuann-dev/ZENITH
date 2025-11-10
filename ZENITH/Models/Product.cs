@@ -16,7 +16,7 @@ namespace ZENITH.Models
         [StringLength(200)]
         public string ProductName { get; set; } = string.Empty;
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "nvarchar(max)")]
         public string? Description { get; set; }
 
         [Required]

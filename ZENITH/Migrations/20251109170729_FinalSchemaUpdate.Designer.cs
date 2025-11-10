@@ -12,8 +12,8 @@ using ZENITH.AppData;
 namespace ZENITH.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251104152337_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251109170729_FinalSchemaUpdate")]
+    partial class FinalSchemaUpdate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -950,6 +950,9 @@ namespace ZENITH.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VariantId"));
+
+                    b.Property<string>("Attributes")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()

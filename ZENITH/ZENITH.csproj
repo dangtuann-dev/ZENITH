@@ -26,7 +26,35 @@
     <Folder Include="Migrations\" />
     <Folder Include="wwwroot\image\categoryImage\sport\" />
     <Folder Include="wwwroot\image\advert-action\" />
-    <Folder Include="wwwroot\image\productImage\" />
+    <Folder Include="wwwroot\image\productImage\HT-001\" />
+    <Folder Include="wwwroot\image\productImage\HT-002\" />
+    <Folder Include="wwwroot\image\productImage\HT-003\" />
+    <Folder Include="wwwroot\image\productImage\HT-004\" />
+    <Folder Include="wwwroot\image\productImage\HT-005\" />
+    <Folder Include="wwwroot\image\productImage\HT-006\" />
+    <Folder Include="wwwroot\image\productImage\HT-007\" />
+    <Folder Include="wwwroot\image\productImage\HT-008\" />
+    <Folder Include="wwwroot\image\productImage\HT-009\" />
+    <Folder Include="wwwroot\image\productImage\HT-011\" />
+    <Folder Include="wwwroot\image\productImage\HT-012\" />
+    <Folder Include="wwwroot\image\productImage\HT-013\" />
+    <Folder Include="wwwroot\image\productImage\HT-014\" />
+    <Folder Include="wwwroot\image\productImage\HT-015\" />
+    <Folder Include="wwwroot\image\productImage\HT-016\" />
+    <Folder Include="wwwroot\image\productImage\HT-017\" />
+    <Folder Include="wwwroot\image\productImage\HT-018\" />
+    <Folder Include="wwwroot\image\productImage\HT-019\" />
+    <Folder Include="wwwroot\image\productImage\HT-020\" />
+    <Folder Include="wwwroot\image\productImage\HT-021\" />
+    <Folder Include="wwwroot\image\productImage\HT-022\" />
+    <Folder Include="wwwroot\image\productImage\HT-023\" />
+    <Folder Include="wwwroot\image\productImage\HT-024\" />
+    <Folder Include="wwwroot\image\productImage\HT-025\" />
+    <Folder Include="wwwroot\image\productImage\HT-026\" />
+    <Folder Include="wwwroot\image\productImage\HT-027\" />
+    <Folder Include="wwwroot\image\productImage\HT-028\" />
+    <Folder Include="wwwroot\image\productImage\HT-029\" />
+    <Folder Include="wwwroot\image\productImage\HT-030\" />
   </ItemGroup>
 
 </Project>

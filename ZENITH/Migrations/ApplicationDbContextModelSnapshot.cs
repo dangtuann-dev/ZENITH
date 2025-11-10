@@ -17,6 +17,7 @@ namespace ZENITH.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .UseCollation("Vietnamese_CI_AS")
                 .HasAnnotation("ProductVersion", "9.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
@@ -188,7 +189,7 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Addresses", (string)null);
+                    b.ToTable("Addresses");
                 });
 
             modelBuilder.Entity("ZENITH.Models.AdminLog", b =>
@@ -237,7 +238,7 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AdminLogs", (string)null);
+                    b.ToTable("AdminLogs");
                 });
 
             modelBuilder.Entity("ZENITH.Models.ApplicationRole", b =>
@@ -399,7 +400,7 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("DisplayOrder");
 
-                    b.ToTable("Attributes", (string)null);
+                    b.ToTable("Attributes");
                 });
 
             modelBuilder.Entity("ZENITH.Models.AttributeValue", b =>
@@ -434,7 +435,7 @@ namespace ZENITH.Migrations
                     b.HasIndex("AttributeId", "ValueName")
                         .IsUnique();
 
-                    b.ToTable("AttributeValues", (string)null);
+                    b.ToTable("AttributeValues");
                 });
 
             modelBuilder.Entity("ZENITH.Models.CartItem", b =>
@@ -472,7 +473,7 @@ namespace ZENITH.Migrations
                     b.HasIndex("UserId", "VariantId")
                         .IsUnique();
 
-                    b.ToTable("CartItems", (string)null);
+                    b.ToTable("CartItems");
                 });
 
             modelBuilder.Entity("ZENITH.Models.Category", b =>
@@ -525,7 +526,7 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("ParentCategoryId");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("ZENITH.Models.Favorite", b =>
@@ -555,7 +556,7 @@ namespace ZENITH.Migrations
                     b.HasIndex("UserId", "VariantId")
                         .IsUnique();
 
-                    b.ToTable("Favorites", (string)null);
+                    b.ToTable("Favorites");
                 });
 
             modelBuilder.Entity("ZENITH.Models.InventoryLog", b =>
@@ -601,7 +602,7 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("VariantId");
 
-                    b.ToTable("InventoryLogs", (string)null);
+                    b.ToTable("InventoryLogs");
                 });
 
             modelBuilder.Entity("ZENITH.Models.Order", b =>
@@ -681,7 +682,7 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("OrderStatus", "PaymentStatus");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("ZENITH.Models.OrderItem", b =>
@@ -717,7 +718,7 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("VariantId");
 
-                    b.ToTable("OrderItems", (string)null);
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("ZENITH.Models.OrderStatusHistory", b =>
@@ -756,7 +757,7 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("OrderStatusHistories", (string)null);
+                    b.ToTable("OrderStatusHistories");
                 });
 
             modelBuilder.Entity("ZENITH.Models.OrderVoucher", b =>
@@ -782,7 +783,7 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("VoucherId");
 
-                    b.ToTable("OrderVouchers", (string)null);
+                    b.ToTable("OrderVouchers");
                 });
 
             modelBuilder.Entity("ZENITH.Models.PaymentMethod", b =>
@@ -831,7 +832,7 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PaymentMethods", (string)null);
+                    b.ToTable("PaymentMethods");
                 });
 
             modelBuilder.Entity("ZENITH.Models.Product", b =>
@@ -851,7 +852,8 @@ namespace ZENITH.Migrations
                         .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -904,7 +906,7 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("IsActive", "IsFeatured");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("ZENITH.Models.ProductImage", b =>
@@ -937,7 +939,7 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages", (string)null);
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("ZENITH.Models.ProductVariant", b =>
@@ -947,6 +949,9 @@ namespace ZENITH.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VariantId"));
+
+                    b.Property<string>("Attributes")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -1001,7 +1006,7 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("IsActive", "Price");
 
-                    b.ToTable("ProductVariants", (string)null);
+                    b.ToTable("ProductVariants");
                 });
 
             modelBuilder.Entity("ZENITH.Models.Review", b =>
@@ -1048,7 +1053,7 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("IsApproved", "CreatedAt");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("ZENITH.Models.Shipment", b =>
@@ -1093,7 +1098,7 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("TrackingNumber");
 
-                    b.ToTable("Shipments", (string)null);
+                    b.ToTable("Shipments");
                 });
 
             modelBuilder.Entity("ZENITH.Models.Sport", b =>
@@ -1144,7 +1149,7 @@ namespace ZENITH.Migrations
                     b.HasIndex("SportName")
                         .IsUnique();
 
-                    b.ToTable("Sports", (string)null);
+                    b.ToTable("Sports");
                 });
 
             modelBuilder.Entity("ZENITH.Models.SportCategory", b =>
@@ -1159,7 +1164,7 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("SportCategories", (string)null);
+                    b.ToTable("SportCategories");
                 });
 
             modelBuilder.Entity("ZENITH.Models.Supplier", b =>
@@ -1205,7 +1210,7 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("SupplierName");
 
-                    b.ToTable("Suppliers", (string)null);
+                    b.ToTable("Suppliers");
                 });
 
             modelBuilder.Entity("ZENITH.Models.VariantAttributeValue", b =>
@@ -1231,7 +1236,7 @@ namespace ZENITH.Migrations
                     b.HasIndex("VariantId", "ValueId")
                         .IsUnique();
 
-                    b.ToTable("VariantAttributeValues", (string)null);
+                    b.ToTable("VariantAttributeValues");
                 });
 
             modelBuilder.Entity("ZENITH.Models.Voucher", b =>
@@ -1292,7 +1297,7 @@ namespace ZENITH.Migrations
 
                     b.HasIndex("IsActive", "StartDate", "EndDate");
 
-                    b.ToTable("Vouchers", (string)null);
+                    b.ToTable("Vouchers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -1,17 +1,190 @@
-﻿using ZENITH.AppData;
-using ZENITH.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using ZENITH.AppData;
+using ZENITH.Models;
 
 public static class DbInitializer
 {
     private static int sportDisplayOrder = 1;
     private static int categoryDisplayOrder = 1;
-    
+    private static int productIndex = 1; // Biến đếm Product Index
+    private static int variantIndex = 1; // Biến đếm Variant Index
+
+    // MẢNG DỮ LIỆU SẢN PHẨM: productData (Đã xác nhận là đúng và hoàn chỉnh)
+    public static readonly dynamic[] productData = new[]
+    {
+        //sport Hiking & Trekking
+        //category Balo & Túi
+        //HT001
+        new {
+            Name = "Balo du lịch nhỏ gọn 10 L - NH Arpenaz 50 xanh navy",
+            Desc = "Mục tiêu của chúng tôi là mang đến cho bạn chiếc balo 10 L với mức giá hợp lý, giúp bạn bảo quản những vật dụng thiết yếu an toàn trên mọi cung đường núi có độ dốc vừa phải.",
+            CategoryName = "Balo & Túi",
+            SportName = "Hiking & Trekking",
+            SkuBase = "HT-001",
+            IsFeat = true,
+            Variants = new[] {
+                new { Sku = "HT-001-10L", Stock = 150, Price = 79000, SalePrice = 69000, Attributes = "10L" },
+            },
+            ImageCount = 4
+        },
+        //HT002
+        new {
+            Name = "Balo leo núi du lịch 30L - Arpenaz NH100 đen",
+            Desc = "Mẫu NH Arpenaz100 30 L tiện nghi và đầy đủ phụ kiện của chúng tôi là người bạn đồng hành lý tưởng cho những chuyến đi bộ với địa hình hơi gồ ghề của bạn.",
+            CategoryName = "Balo & Túi",
+            SportName = "Hiking & Trekking",
+            SkuBase = "HT-002",
+            IsFeat = true,
+            Variants = new[] {
+                new { Sku = "HT-002-30L", Stock = 150, Price = 199000, SalePrice = 199000, Attributes = "30L" },
+            },
+            ImageCount = 4
+        },
+        //HT003
+        new {
+            Name = "Balo dã ngoại 32L - NH Escape 500 đen",
+            Desc = "Balo mang lại sự thoải mái nhờ đệm lót êm ái, tiện dụng với 3 ngăn lớn và 15 túi nhỏ, thông minh với kích thước hành lý xách tay và các tính năng tiện lợi.",
+            CategoryName = "Balo & Túi",
+            SportName = "Hiking & Trekking",
+            SkuBase = "HT-003",
+            IsFeat = true,
+            Variants = new[] {
+                new { Sku = "HT-003-32L", Stock = 150, Price = 999000, SalePrice = 999000, Attributes = "32L" },
+            },
+            ImageCount = 4
+        },
+        //HT004
+        new {
+            Name = "Balo leo núi 38L - MH500 nâu",
+            Desc = "Balo nhẹ với phần khung có thể điều chỉnh. Phần lưng được thiết kế thoáng khí tối ưu, giúp mang lại cảm giác thoải mái vượt trội trong các chuyến hiking.",
+            CategoryName = "Balo & Túi",
+            SportName = "Hiking & Trekking",
+            SkuBase = "HT-004",
+            IsFeat = true,
+            Variants = new[] {
+                new { Sku = "HT-004-38L", Stock = 150, Price = 2399000, SalePrice = 2399000, Attributes = "38L" },
+            },
+            ImageCount = 4
+        },
+        //Quần Áo Leo Núi
+        //HT005
+        new {
+            Name = "Quần dài trekking tháo ống bền bỉ - MT100 xám",
+            Desc = "Quần dài trekking có thể tháo ống nhanh chóng để chuyển thành quần short để phù hợp với các điều kiện thời tiết khác nhau.",
+            CategoryName = "Quần Áo Leo Núi",
+            SportName = "Hiking & Trekking",
+            SkuBase = "HT-005",
+            IsFeat = true,
+            Variants = new[] {
+                new { Sku = "HT-005-S", Stock = 150, Price = 539000, SalePrice = 499000, Attributes = "S / W30 L33 " },
+                new { Sku = "HT-005-M", Stock = 150, Price = 539000, SalePrice = 499000, Attributes = "M / W32 L33 " },
+                new { Sku = "HT-005-ML", Stock = 150, Price = 539000, SalePrice = 499000, Attributes = "M/L / W33 L33 " },
+                new { Sku = "HT-005-L", Stock = 150, Price = 539000, SalePrice = 499000, Attributes = "L / W34 L34 " },
+                new { Sku = "HT-005-XL", Stock = 150, Price = 539000, SalePrice = 499000, Attributes = "XL / W37 L34 " }
+            },
+            ImageCount = 4
+        },
+        //HT006
+        new {
+            Name = "Áo khoác chống nắng nam - Helium MH500 xanh dương/trắng",
+            Desc = "Áo khoác gió với chỉ số UPF 50+, nhẹ, từng đạt giải. Trợ thủ chống nắng gió cho những chuyến đi ngoài trời.Được thiết kế cho những chuyến đi dưới trời nắng. Bảo vệ bạn trước tia UVA/UAB từ ánh nắng mặt trời, kèm theo khả năng cản gió, nhẹ, vải co giãn và thoáng khí.",
+            CategoryName = "Quần Áo Leo Núi",
+            SportName = "Hiking & Trekking",
+            SkuBase = "HT-006",
+            IsFeat = true,
+            Variants = new[] {
+                new { Sku = "HT-006-S", Stock = 150, Price = 1199000, SalePrice = 899000, Attributes = "S" },
+                new { Sku = "HT-006-M", Stock = 150, Price = 1199000, SalePrice = 899000, Attributes = "M" },
+                new { Sku = "HT-006-ML", Stock = 150, Price = 1199000, SalePrice = 899000, Attributes = "ML" },
+                new { Sku = "HT-006-L", Stock = 150, Price = 1199000, SalePrice = 899000, Attributes = "L" },
+                new { Sku = "HT-006-XL", Stock = 150, Price = 1199000, SalePrice = 899000, Attributes = "XL" }
+            },
+            ImageCount = 4
+        },
+        //HT007
+        new {
+            Name = "Áo khoác chống nắng - 900 đen",
+            Desc = "Áo khoác gió hiking nhẹ, được làm từ sợi chống UV và đạt giải thưởng. Trợ thủ chống nắng gió cho những chuyến đi ngoài trời.Được thiết kế cho những chuyến đi dưới trời nắng. Bảo vệ bạn trước tia UVA/UAB từ ánh nắng mặt trời, kèm theo khả năng cản gió, nhẹ và thoáng khí.",
+            CategoryName = "Quần Áo Leo Núi",
+            SportName = "Hiking & Trekking",
+            SkuBase = "HT-007",
+            IsFeat = true,
+            Variants = new[] {
+                new { Sku = "HT-007-S", Stock = 150, Price = 1399000, SalePrice = 1299000, Attributes = "S" },
+                new { Sku = "HT-007-M", Stock = 150, Price = 1399000, SalePrice = 1299000, Attributes = "M" },
+                new { Sku = "HT-007-ML", Stock = 150, Price = 1399000, SalePrice = 1299000, Attributes = "ML" },
+                new { Sku = "HT-007-L", Stock = 150, Price = 1399000, SalePrice = 1299000, Attributes = "L" },
+                new { Sku = "HT-007-XL", Stock = 150, Price = 1399000, SalePrice = 1299000, Attributes = "XL" },
+            },
+            ImageCount = 4
+        },
+        //Giày Leo Núi
+        //HT008
+        new {
+            Name = "Giày leo núi hiking cổ lửng - NH100 đen",
+            Desc = "Giày nhẹ, được thiết kế với dây buộc chính xác, mang lại cảm giác thoải mái và nâng đỡ chân hiệu quả trên mọi địa hình gồ ghề. Mẫu giày thân thiện với môi trường và đồng hành cùng bạn trong những chuyến hiking vùng thấp, trong rừng hoặc trên bờ biển giữa tiết trời khô ráo.",
+            CategoryName = "Giày Leo Núi",
+            SportName = "Hiking & Trekking",
+            SkuBase = "HT-008",
+            IsFeat = true,
+            Variants = new[] {
+                new { Sku = "HT-008-40", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "40" },
+                new { Sku = "HT-008-41", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "41" },
+                new { Sku = "HT-008-42", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "42" },
+                new { Sku = "HT-008-43", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "43" },
+                new { Sku = "HT-008-44", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "44" },
+                new { Sku = "HT-008-45", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "45" },
+                new { Sku = "HT-008-46", Stock = 150, Price = 519000, SalePrice = 519000, Attributes = "46" }
+            },
+            ImageCount = 4
+        },
+        //HT009
+        new {
+            Name = "Giày leo núi nữ chống thấm cổ lửng - MH100 xám/xanh dương",
+            Desc = "Mang lại cho đôi chân sự thoải mái và bảo vệ nhờ khả năng giảm chấn dọc đế giày, nâng đỡ từ thân giày cao và lớp màng chống thấm tuyệt đối để giữ chân luôn khô ráo. Giày thể thao chống thấm dành cho những chuyến đi bộ leo núi không thường xuyên, được thiết kế tại chân núi Mont Blanc!\r\n",
+            CategoryName = "Giày Leo Núi",
+            SportName = "Hiking & Trekking",
+            SkuBase = "HT-009",
+            IsFeat = true,
+            Variants = new[] {
+                new { Sku = "HT-009-40", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "40" },
+                new { Sku = "HT-009-41", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "41" },
+                new { Sku = "HT-009-42", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "42" },
+                new { Sku = "HT-009-43", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "43" },
+                new { Sku = "HT-009-44", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "44" },
+                new { Sku = "HT-009-45", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "45" },
+                new { Sku = "HT-009-46", Stock = 150, Price = 1099000, SalePrice = 1099000, Attributes = "46" },
+            },
+            ImageCount = 4
+        },
+        //HT010
+        new {
+            Name = "Giày dã ngoại cổ lửng chống thấm - SH 500 trắng/xám",
+            Desc = "Bạn đang tìm giày hiking hay giày thể thao thoải mái cho chuyến dã ngoại mùa đông? Giày 2 trong 1. Kiểu dáng hiện đại của giày giúp bạn dễ dàng kết hợp giữa đi hiking và các hoạt động hàng ngày. Giày dã ngoại giữ ấm và chống thấm cho những chuyến đi vào mùa đông. Giày kết hợp giữa sự thoải mái, độ bám và phong cách.",
+            CategoryName = "Giày Leo Núi",
+            SportName = "Hiking & Trekking",
+            SkuBase = "HT-010",
+            IsFeat = true,
+            // Dữ liệu Variants
+            Variants = new[] {
+                new { Sku = "HT-010-40", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "40" },
+                new { Sku = "HT-010-41", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "41" },
+                new { Sku = "HT-010-42", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "42" },
+                new { Sku = "HT-010-43", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "43" },
+                new { Sku = "HT-010-44", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "44" },
+                new { Sku = "HT-010-45", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "45" },
+                new { Sku = "HT-010-46", Stock = 150, Price = 1399000, SalePrice = 1399000, Attributes = "46" },
+            },
+            ImageCount = 4
+        }
+    };
+
     // Dictionary cho Sport Icon (Sử dụng ký hiệu ~/ dẫn đến wwwroot)
     private static Dictionary<string, string> SportIcons = new Dictionary<string, string>()
     {
@@ -19,7 +192,7 @@ public static class DbInitializer
         { "Chạy Bộ & Đi Bộ", "~/image/categoryImage/sport/chay-bo-duong-truong.svg" },
         { "Yoga & Pilates", "~/image/categoryImage/sport/quan-ao-yoga.svg" },
         { "Bơi Lội", "~/image/categoryImage/sport/do-boi-loi.svg" },
-        { "Võ Thuật Tổng Hợp", "~/image/categoryImage/sport/boxing.svg" }, 
+        { "Võ Thuật Tổng Hợp", "~/image/categoryImage/sport/boxing.svg" },
         { "Đạp Xe", "~/image/categoryImage/sport/xe-dap.svg" },
         { "Thể Thao Dùng Vợt", "~/image/categoryImage/sport/cau-long.svg" },
         { "Thể Thao Đồng Đội", "~/image/categoryImage/sport/football.svg" },
@@ -51,8 +224,8 @@ public static class DbInitializer
         { "Bóng chuyền", "~/image/categoryImage/sport/bong-chuyen.svg" },
         { "Bóng chày", "~/image/categoryImage/sport/bong-chay.svg" },
     };
-    
-    // Mô tả chi tiết cho Categories (để tránh gán Description = CategoryName)
+
+    // Mô tả chi tiết cho Categories
     private static Dictionary<string, string> CategoryDescriptions = new Dictionary<string, string>()
     {
         { "Balo & Túi", "Mua balo leo núi, balo du lịch siêu gọn nhẹ ngay tại Zenith với giá chỉ từ 69K. Zenith luôn nỗ lực từng ngày để mang đến sản phẩm tốt nhất dành cho khách hàng yêu thể thao. Tại Zenith bạn sẽ tìm thấy balo & túi mọi kích cỡ: từ balo 10L gọn nhẹ cho đến 80L cho chuyến đi dài ngày.\r\n" },
@@ -100,7 +273,7 @@ public static class DbInitializer
         { "Quả bóng rổ", "Từ những quả bóng rổ chuyên nghiệp theo tiêu chuẩn FIBA đến những quả bóng dành cho trẻ em mới bắt đầu tập luyện, Zenith đều có sẵn. Với thiết kế đa dạng, chất lượng đảm bảo và giá cả phải chăng, quả bóng rổ Zenith sẽ là người bạn đồng hành lý tưởng trên sân đấu.\r\n" },
         { "Giày bóng rổ", "Giày bóng rổ không chỉ là phụ kiện thi đấu, mà còn là yếu tố then chốt giúp người chơi di chuyển linh hoạt, bật nhảy mạnh mẽ và hạn chế chấn thương. Tại Zenith, bạn dễ dàng tìm thấy những đôi giày bóng rổ thiết kế chuyên biệt cho từng trình độ, từ người mới tập đến vận động viên chuyên nghiệp. \r\n" },
         { "Quần Áo bóng rổ", "Quần áo bóng rổ không chỉ là trang phục mà còn là yếu tố quan trọng giúp vận động viên thoải mái, tự tin thể hiện kỹ năng trên sân. Tại Zenith, các mẫu quần áo bóng rổ nam, nữ được thiết kế đa dạng về kiểu dáng, màu sắc, từ áo thun, áo tank top, quần short đến bộ set đồng phục, đáp ứng nhu cầu luyện tập và thi đấu ở mọi cấp độ.\r\n" }
-       
+
 
     };
 
@@ -114,6 +287,31 @@ public static class DbInitializer
         await context.Database.MigrateAsync();
 
         var now = DateTime.Now;
+
+        // ====================================================================
+        // 💡 1. SEEDING SUPPLIER (ĐẢM BẢO KHÓA NGOẠI CHO PRODUCTS)
+        // ====================================================================
+        if (!await context.Suppliers.AnyAsync())
+        {
+            var supplier = new Supplier
+            {
+                SupplierName = "Zenith Sports Partner",
+                IsActive = true,
+                CreatedAt = now
+            };
+            context.Suppliers.Add(supplier);
+            // Cần lưu ngay lập tức để SupplierId được gán và có thể được dùng cho Products
+            await context.SaveChangesAsync();
+        }
+
+        // Lấy SupplierId mặc định sau khi đã đảm bảo nó tồn tại
+        var defaultSupplierId = await context.Suppliers
+            .Where(s => s.SupplierName == "Zenith Sports Partner")
+            .Select(s => s.SupplierId)
+            .FirstOrDefaultAsync();
+
+        if (defaultSupplierId == 0) return; // Thoát nếu vẫn không tìm thấy (tránh lỗi)
+
 
         // ====================================================================
         // 2. IDENTITY SEEDING (ROLES & ADMIN)
@@ -215,7 +413,7 @@ public static class DbInitializer
 
             // Dùng Dictionary để lưu các Category mới được tạo
             var seededCategories = new Dictionary<string, Category>();
-            
+
             // --- 3.1 TẠO/ĐẢM BẢO CATEGORY (CÓ ImageUrl và Description) ---
             var existingCategories = await context.Categories
                 .ToDictionaryAsync(c => c.CategoryName, c => c);
@@ -228,17 +426,17 @@ public static class DbInitializer
                 {
                     // TÌM DESCRIPTION TỪ DICTIONARY HOẶC DÙNG MẶC ĐỊNH
                     CategoryDescriptions.TryGetValue(categoryName, out var description);
-                    
+
                     if (!existingCategories.ContainsKey(categoryName))
                     {
                         // LOGIC TẠO ImageUrl: category-{index}.avif
                         var imageUrl = $"~/image/categoryImage/category/category-{categoryImageIndex}.avif";
-                        
+
                         var category = new Category
                         {
                             CategoryName = categoryName,
-                            Description = description ?? $"Danh mục sản phẩm {categoryName} cho môn thể thao hiện đại.", 
-                            ImageUrl = imageUrl, 
+                            Description = description ?? $"Danh mục sản phẩm {categoryName} cho môn thể thao hiện đại.",
+                            ImageUrl = imageUrl,
                             IsActive = true,
                             DisplayOrder = categoryDisplayOrder++,
                             CreatedAt = now,
@@ -246,27 +444,27 @@ public static class DbInitializer
                         };
                         context.Categories.Add(category);
                         existingCategories[categoryName] = category;
-                        
-                        categoryImageIndex++; 
+
+                        categoryImageIndex++;
                     }
                     else
                     {
-                         // Cập nhật Description và ImageUrl nếu Category đã tồn tại
-                         var existingCategory = existingCategories[categoryName];
-                         var imageUrl = $"~/image/categoryImage/category/category-{categoryImageIndex}.avif";
+                        // Cập nhật Description và ImageUrl nếu Category đã tồn tại
+                        var existingCategory = existingCategories[categoryName];
+                        var imageUrl = $"~/image/categoryImage/category/category-{categoryImageIndex}.avif";
 
-                         if (existingCategory.Description != description)
-                         {
-                             existingCategory.Description = description ?? $"Danh mục sản phẩm {categoryName} cho môn thể thao hiện đại.";
-                             context.Categories.Update(existingCategory);
-                         }
-                         if (existingCategory.ImageUrl != imageUrl)
-                         {
-                             existingCategory.ImageUrl = imageUrl;
-                             context.Categories.Update(existingCategory);
-                         }
-                         
-                         categoryImageIndex++;
+                        if (existingCategory.Description != description)
+                        {
+                            existingCategory.Description = description ?? $"Danh mục sản phẩm {categoryName} cho môn thể thao hiện đại.";
+                            context.Categories.Update(existingCategory);
+                        }
+                        if (existingCategory.ImageUrl != imageUrl)
+                        {
+                            existingCategory.ImageUrl = imageUrl;
+                            context.Categories.Update(existingCategory);
+                        }
+
+                        categoryImageIndex++;
                     }
                 }
             }
@@ -285,12 +483,12 @@ public static class DbInitializer
                     existingSports.TryGetValue(item.ParentName!, out parent);
                     if (parent == null)
                     {
-                        SportIcons.TryGetValue(item.ParentName!, out var parentIconUrl); 
+                        SportIcons.TryGetValue(item.ParentName!, out var parentIconUrl);
                         parent = new Sport
                         {
                             SportName = item.ParentName!,
                             Description = item.ParentName!,
-                            IconUrl = parentIconUrl, 
+                            IconUrl = parentIconUrl,
                             IsActive = true,
                             DisplayOrder = sportDisplayOrder++,
                             CreatedAt = now
@@ -300,19 +498,19 @@ public static class DbInitializer
                         existingSports[item.ParentName!] = parent;
                     }
                 }
-                
+
                 // Lấy IconUrl cho Sport hiện tại
                 SportIcons.TryGetValue(item.SportName, out var iconUrl);
 
                 if (!existingSports.ContainsKey(item.SportName))
                 {
-                    
+
                     var sport = new Sport
                     {
                         SportName = item.SportName,
                         Description = item.SportName,
                         ParentSport = parent,
-                        IconUrl = iconUrl, 
+                        IconUrl = iconUrl,
                         IsActive = true,
                         DisplayOrder = sportDisplayOrder++,
                         CreatedAt = now
@@ -327,7 +525,7 @@ public static class DbInitializer
                     if (existingSport.IconUrl != iconUrl)
                     {
                         existingSport.IconUrl = iconUrl;
-                        context.Sports.Update(existingSport); 
+                        context.Sports.Update(existingSport);
                     }
                 }
             }
@@ -361,6 +559,93 @@ public static class DbInitializer
                     }
                 }
             }
+            await context.SaveChangesAsync();
+        }
+        //
+        // ====================================================================
+        // 4. PRODUCT, VARIANT & IMAGE SEEDING
+        // ====================================================================
+        if (!context.Products.Any())
+        {
+            // 4.1. Tải các Khóa ngoại cần thiết (Foreign Keys)
+            var allCategories = await context.Categories.ToDictionaryAsync(c => c.CategoryName);
+            var allSports = await context.Sports.ToDictionaryAsync(s => s.SportName);
+            // SupplierId đã được lấy ở đầu hàm: defaultSupplierId
+
+            var productsToSeed = new List<Product>();
+            var variantsToSeed = new List<ProductVariant>();
+            var imagesToSeed = new List<ProductImage>();
+
+            foreach (var prod in productData)
+            {
+                if (!allCategories.ContainsKey(prod.CategoryName) || !allSports.ContainsKey(prod.SportName))
+                {
+                    // Bỏ qua nếu Category hoặc Sport không tìm thấy (giúp tránh lỗi FK)
+                    continue;
+                }
+
+                var category = allCategories[prod.CategoryName];
+                var sport = allSports[prod.SportName];
+
+                // 4.2. TẠO PRODUCT (BẢNG CHA)
+                var newProduct = new Product
+                {
+                    CategoryId = category.CategoryId,
+                    SportId = sport.SportId,
+                    SupplierId = defaultSupplierId, // SỬ DỤNG ID ĐÃ ĐƯỢC ĐẢM BẢO TỒN TẠI
+                    ProductName = prod.Name,
+                    Description = prod.Desc,
+                    Sku = prod.SkuBase,
+                    IsActive = true,
+                    IsFeatured = prod.IsFeat,
+                    ViewCount = 0,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                };
+                productsToSeed.Add(newProduct);
+                productIndex++;
+
+                // 4.3. TẠO PRODUCT VARIANTS (BẢNG CON)
+                foreach (var variantData in prod.Variants)
+                {
+                    var newVariant = new ProductVariant
+                    {
+                        // EF Core sẽ tự gán ProductId vì có tham chiếu đến newProduct
+                        Product = newProduct,
+                        VariantSku = variantData.Sku,
+                        Price = variantData.Price,
+                        SalePrice = variantData.SalePrice,
+                        StockQuantity = variantData.Stock,
+                        LowStockThreshold = 10,
+                        IsActive = true,
+                        SoldCount = 0,
+                        CreatedAt = now,
+                        UpdatedAt = now,
+                        Attributes = variantData.Attributes
+                    };
+                    variantsToSeed.Add(newVariant);
+                }
+
+                // 4.4. TẠO PRODUCT IMAGES (BẢNG CON)
+                for (int i = 1; i <= prod.ImageCount; i++)
+                {
+                    imagesToSeed.Add(new ProductImage
+                    {
+                        Product = newProduct, // EF Core sẽ tự gán ProductId
+                        ImageUrl = $"~/image/productImages/{prod.SkuBase}/{prod.SkuBase}-{i}.webp",
+                        IsPrimary = (i == 1),
+                        DisplayOrder = i,
+                    });
+                }
+            }
+            // LƯU CÁC BẢNG CHA (Products) TRƯỚC
+            context.Products.AddRange(productsToSeed);
+            await context.SaveChangesAsync();
+
+            // LƯU CÁC BẢNG CON (ProductVariants và ProductImages) SAU
+            context.ProductVariants.AddRange(variantsToSeed);
+            context.ProductImages.AddRange(imagesToSeed);
+
             await context.SaveChangesAsync();
         }
     }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ZENITH.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class FinalSchemaUpdate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -472,6 +472,7 @@ namespace ZENITH.Migrations
                     LowStockThreshold = table.Column<int>(type: "int", nullable: false, defaultValue: 10),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     SoldCount = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    Attributes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()")
                 },

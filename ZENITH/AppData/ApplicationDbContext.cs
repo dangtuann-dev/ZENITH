@@ -41,7 +41,7 @@ namespace ZENITH.AppData
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
+            modelBuilder.UseCollation("Vietnamese_CI_AS");
             modelBuilder.Entity<SportCategory>()
             .HasKey(sc => new { sc.SportId, sc.CategoryId });
 
@@ -193,9 +193,9 @@ namespace ZENITH.AppData
                 entity.Property(e => e.DisplayOrder).HasDefaultValue(0);
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
                 entity.HasOne(e => e.ParentSport)
-    .WithMany(s => s.SubSports)
-    .HasForeignKey(e => e.ParentSportId)
-    .OnDelete(DeleteBehavior.Restrict);
+                        .WithMany(s => s.SubSports)
+                        .HasForeignKey(e => e.ParentSportId)
+                        .OnDelete(DeleteBehavior.Restrict);
                 entity.HasIndex(e => e.SportName).IsUnique();
                 entity.HasIndex(e => e.DisplayOrder);
             });
@@ -205,7 +205,7 @@ namespace ZENITH.AppData
             {
                 entity.HasKey(e => e.ProductId);
                 entity.Property(e => e.ProductName).IsRequired().HasMaxLength(200);
-                entity.Property(e => e.Description).HasColumnType("text");
+                entity.Property(e => e.Description).HasMaxLength(500);
                 entity.Property(e => e.Sku).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.IsActive).HasDefaultValue(true);
                 entity.Property(e => e.IsFeatured).HasDefaultValue(false);
