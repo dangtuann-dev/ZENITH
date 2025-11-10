@@ -161,6 +161,7 @@ wwwroot\image\categoryImage\sport\tennis.svg
 wwwroot\image\categoryImage\sport\tham-tui-yoga.svg
 wwwroot\image\categoryImage\sport\trail.svg
 wwwroot\image\categoryImage\sport\xe-dap.svg
+wwwroot\image\default.avif
 wwwroot\image\icons\arrow-down-2.svg
 wwwroot\image\icons\arrow-down.svg
 wwwroot\image\icons\arrow-left.svg

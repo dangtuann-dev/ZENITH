@@ -295,7 +295,7 @@ public static class DbInitializer
         {
             var supplier = new Supplier
             {
-                SupplierName = "Zenith Sports Partner",
+                SupplierName = "Zenith",
                 IsActive = true,
                 CreatedAt = now
             };
@@ -306,7 +306,7 @@ public static class DbInitializer
 
         // Lấy SupplierId mặc định sau khi đã đảm bảo nó tồn tại
         var defaultSupplierId = await context.Suppliers
-            .Where(s => s.SupplierName == "Zenith Sports Partner")
+            .Where(s => s.SupplierName == "Zenith")
             .Select(s => s.SupplierId)
             .FirstOrDefaultAsync();
 
@@ -632,7 +632,7 @@ public static class DbInitializer
                     imagesToSeed.Add(new ProductImage
                     {
                         Product = newProduct, // EF Core sẽ tự gán ProductId
-                        ImageUrl = $"~/image/productImages/{prod.SkuBase}/{prod.SkuBase}-{i}.webp",
+                        ImageUrl = $"~/image/productImage/{prod.SkuBase}/{prod.SkuBase}-{i}.avif",
                         IsPrimary = (i == 1),
                         DisplayOrder = i,
                     });

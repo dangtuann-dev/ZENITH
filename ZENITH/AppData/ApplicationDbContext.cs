@@ -41,7 +41,6 @@ namespace ZENITH.AppData
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.UseCollation("Vietnamese_CI_AS");
             modelBuilder.Entity<SportCategory>()
             .HasKey(sc => new { sc.SportId, sc.CategoryId });
 

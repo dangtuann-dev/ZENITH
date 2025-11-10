@@ -1,6 +1,14 @@
-﻿@model List<ZENITH.Models.Category>
+﻿
+@model ZENITH.ViewModels.HomeIndexViewModel
+@using ZENITH.ViewModels 
+@using System.Globalization 
+@using System.Collections.Generic
+@using ZENITH.Models;
 @{
     ViewData["Title"] = "| Cửa Hàng Thể Thao Dành Cho Sinh Viên Việt Nam";
+    var cultureInfo = new CultureInfo("vi-VN");
+    var sportDisplayLimit = 6;
+    var parentSports = ViewBag.ParentSports as List<Sport>;
 }
 <!-- Slideshow -->
 <div class="home__container">
@@ -53,7 +61,7 @@
     </div>
     <div class="home__cate">
        <div class="category-list">
-          @foreach (var category in Model)
+          @foreach (var category in Model.Categories)
             {
                 <a href="#!">
                     <div class="category-item">
@@ -70,5 +78,128 @@
             }
            
        </div>
+    </div>
+</section>
+<!--Hero home-->
+<!--SẢN PHẨM BÁN CHẠY-->
+<section class="home__container">
+    <div class="home__row">
+        <h2 class="home__heading">Sản Phẩm Bán Chạy Nhất (@Model.TopSellingProducts.Count)</h2>
+    </div>
+    <div class="row row-cols-5 row-cols-lg-2 row-cols-sm-1 g-3">
+        @if (Model.TopSellingProducts.Any())
+        {
+            @await Html.PartialAsync("_ProductCardList", Model.TopSellingProducts)
+        }
+        else
+        {
+            <div class="col-12"><p>Không có sản phẩm bán chạy để hiển thị.</p></div>
+        }
+    </div>
+</section>
+<!--Sport cha-->
+@*
+<section class="home__container">
+    <h2 class="home__heading">Danh Mục Các Môn Thể Thao Phổ Biến</h2>
+
+    SỬ DỤNG SPORTS TỪ VIEWBAG 
+    <div class="home__cate row row-cols-3 row-cols-md-1">
+        @if (parentSports != null && parentSports.Any())
+        {
+            @foreach (var sport in parentSports.Take(sportDisplayLimit))
+            {
+                <div class="category-list">
+                    <div class="category-item">
+                        <div class="category-image">
+                             💡 Hiển thị IconUrl của Sport 
+                            <img src="@Url.Content(sport.IconUrl)"
+                                 alt="@sport.SportName"
+                                 class="category-image__img"
+                                 asp-append-version="true" />
+                        </div>
+                        <div class="cate-item__info">
+                            <h3 class="cate-item__title">
+                                 Link đến trang Sport/Product List 
+                                <a asp-controller="Product" asp-action="ListBySport" asp-route-id="@sport.SportId">
+                                    💡 HIỂN THỊ TÊN MÔN THỂ THAO 
+                                    @sport.SportName
+                                </a>
+                            </h3>
+                             Mô tả Sport 
+                            <p class="cate-item__desc">@sport.Description</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>Không tìm thấy môn thể thao phổ biến nào.</p>
+        }
+    </div>
+</section> *@
+<!--GIÀY CHẠY BỘ THỂ THAO...-->
+<section class="home__container">
+    <div class="home__row">
+        <h2 class="home__heading">Giày chạy bộ, thể thao, leo núi</h2>
+    </div>
+    <div class="row row-cols-5 row-cols-lg-2 row-cols-sm-1 g-3">
+        @if (Model.FootwearCollection.Any())
+        {
+            @await Html.PartialAsync("_ProductCardList", Model.FootwearCollection)
+        }
+        else
+        {
+            <div class="col-12"><p>Không có sản phẩm Giày chạy bộ, thể thao, leo núi hiển thị.</p></div>
+        }
+    </div>
+</section>
+
+<!--LEO NÚI CẮM TRẠI-->
+<section class="home__container">
+    <div class="home__row">
+        <h2 class="home__heading">Khám phá leo núi - cắm trại - du lịch</h2>
+    </div>
+    <div class="row row-cols-5 row-cols-lg-2 row-cols-sm-1 g-3">
+        @if (Model.ClimbingProducts.Any())
+        {
+            @await Html.PartialAsync("_ProductCardList", Model.ClimbingProducts)
+        }
+        else
+        {
+            <div class="col-12"><p>Không có sản phẩm liên quan tới Khám phá leo núi - cắm trại - du lịch để hiển thị.</p></div>
+        }
+    </div>
+</section>
+<!--VỢT-->
+<section class="home__container">
+    <div class="home__row">
+        <h2 class="home__heading">Vợt pickleball, tennis, cầu lông</h2>
+    </div>
+    <div class="row row-cols-5 row-cols-lg-2 row-cols-sm-1 g-3">
+        @if (Model.RacketSportsProducts.Any())
+        {
+            @await Html.PartialAsync("_ProductCardList", Model.RacketSportsProducts)
+        }
+        else
+        {
+            <div class="col-12"><p>Không có sản phẩm Vợt pickleball, tennis, cầu lông để hiển thị.</p></div>
+        }
+    </div>
+</section>
+<!--QUẦN ÁO BÓNG ĐÁ-->
+<section class="home__container">
+    <div class="home__row">
+        <h2 class="home__heading">Quần áo bóng đá, bóng rổ, bóng chuyền</h2>
+    </div>
+    <div class="row row-cols-5 row-cols-lg-2 row-cols-sm-1 g-3">
+        @if (Model.TeamSportsProducts.Any())
+        {
+            @await Html.PartialAsync("_ProductCardList", Model.TeamSportsProducts)
+        }
+        else
+        {
+            <div class="col-12"><p>Không có sản phẩm Quần áo bóng đá, bóng rổ, bóng chuyền để hiển thị.</p></div>
+        }
     </div>
 </section>

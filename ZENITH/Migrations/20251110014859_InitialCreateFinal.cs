@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ZENITH.Migrations
 {
     /// <inheritdoc />
-    public partial class FinalSchemaUpdate : Migration
+    public partial class InitialCreateFinal : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -242,7 +242,7 @@ namespace ZENITH.Migrations
                     SupplierId = table.Column<int>(type: "int", nullable: true),
                     SportId = table.Column<int>(type: "int", nullable: true),
                     ProductName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", maxLength: 500, nullable: true),
                     Sku = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     IsFeatured = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),

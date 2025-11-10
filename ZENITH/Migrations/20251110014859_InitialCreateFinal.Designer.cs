@@ -12,8 +12,8 @@ using ZENITH.AppData;
 namespace ZENITH.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251109170729_FinalSchemaUpdate")]
-    partial class FinalSchemaUpdate
+    [Migration("20251110014859_InitialCreateFinal")]
+    partial class InitialCreateFinal
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -854,7 +854,8 @@ namespace ZENITH.Migrations
                         .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
