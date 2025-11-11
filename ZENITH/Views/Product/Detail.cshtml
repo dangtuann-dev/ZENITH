@@ -17,7 +17,7 @@
         </div>
 
         <!-- Breadcrumbs -->
-        <div class="product-container">
+        <div class="product-container" style="max-width:1307px;">
             <ul class="breadcrumbs">
                 <li>
                     <a href="/" class="breadcrumbs__link">
@@ -38,7 +38,7 @@
         </div>
 
         <!-- Product info -->
-        <div class="product-container prod-info-content">
+        <div class="product-container prod-info-content" style="max-width:1307px;">
             <div class="row">
                 <div class="col-5 col-xl-6 col-lg-12">
                     <div class="prod-preview">
@@ -119,6 +119,18 @@
                                             }
                                         </div>
                                     </div>
+                                    <label for="" class="form__label prod-info__label">Số lượng</label>
+                                    <div class="filter__form-group" style="max-width: 100px;">
+                                        <div class="cart-item__input" aria-label="Chọn số lượng">
+                                            <button class="cart-item__input-btn js-qty-minus" type="button">
+                                                <img class="icon" src="~/image/icons/minus.svg" alt="Giảm" />
+                                            </button>
+                                            <span class="js-qty-value" data-min="1" data-max="@(Model.StockQuantity > 0 ? Model.StockQuantity : 99)">1</span>
+                                            <button class="cart-item__input-btn js-qty-plus" type="button">
+                                                <img class="icon" src="~/image/icons/plus.svg" alt="Tăng" />
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-7 col-xxl-6 col-xl-12">
                                     <div class="prod-props">
@@ -152,8 +164,8 @@
                                                 var discountPercent = Model.Price > 0 ? (int)System.Math.Round((Model.Price - Model.SalePrice.Value) / Model.Price * 100M) : 0;
                                                 <div class="prod-info__row pb-20">
                                                     <div class="prod-info__price-box">
-                                                        <span class="prod-info__price--old">@Model.PriceFormatted</span>
-                                                        <span class="prod-info__price">@Model.SalePriceFormatted</span>
+                                                        <span class="prod-info__price--old" data-unit-price="@Model.Price">@Model.PriceFormatted</span>
+                                                        <span class="prod-info__price" data-unit-sale-price="@Model.SalePrice">@Model.SalePriceFormatted</span>
                                                     </div>
                                                     <span class="prod-info__tax prod-info__discount">Giảm @discountPercent%</span>
                                                 </div>
@@ -161,7 +173,7 @@
                                             else 
                                             {
                                                 <div class="prod-info__row pb-20">
-                                                    <span class="prod-info__price">@Model.PriceFormatted</span>
+                                                    <span class="prod-info__price" data-unit-price="@Model.Price">@Model.PriceFormatted</span>
                                                 </div>
                                             }
                                             <div class="prod-info__row">

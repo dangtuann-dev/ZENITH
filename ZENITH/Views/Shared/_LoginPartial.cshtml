@@ -9,10 +9,49 @@
 
 
 @if (SignInManager.IsSignedIn(User))
-
 {
+    var user = await UserManager.GetUserAsync(User);
     var userId = UserManager.GetUserId(User);
     var favoriteCount = DbContext.Favorites.AsNoTracking().Count(f => f.UserId == userId);
+
+    string avatarUrl;
+    var raw = user?.Avatar;
+    if (string.IsNullOrWhiteSpace(raw))
+    {
+        avatarUrl = Url.Content("~/image/account/default-avatar.jpg");
+    }
+    else
+    {
+        var s = raw!.Trim().Replace("\\", "/");
+        if (s.StartsWith("http://", System.StringComparison.OrdinalIgnoreCase) || s.StartsWith("https://", System.StringComparison.OrdinalIgnoreCase))
+        {
+            avatarUrl = s;
+        }
+        else if (s.StartsWith("~/"))
+        {
+            avatarUrl = Url.Content(s);
+        }
+        else if (s.StartsWith("/"))
+        {
+            avatarUrl = s;
+        }
+        else
+        {
+            var idx = s.ToLowerInvariant().IndexOf("wwwroot");
+            if (idx >= 0)
+            {
+                var tail = s.Substring(idx + "wwwroot".Length);
+                avatarUrl = Url.Content("~" + (tail.StartsWith("/") ? tail : "/" + tail));
+            }
+            else
+            {
+                avatarUrl = Url.Content("~/" + s.TrimStart('/'));
+            }
+        }
+    }
+    var displayName = string.IsNullOrWhiteSpace(user?.FullName) ? (user?.UserName ?? "") : user!.FullName;
+    var displayAccount = user?.Email ?? user?.UserName ?? "";
+
     <div class="top-act">
         <a asp-controller="Favorites">
             <div class="top-act__group d-md-none top-act__group--single">
@@ -21,7 +60,7 @@
                 </button>
             </div>
         </a>
-     
+
 
         <div class="top-act__group d-md-none">
             <div class="top-act__btn-wrap">
@@ -36,10 +75,9 @@
                         <img src="/image/icons/arrow-up.png" alt="" class="act-dropdown__arrow" />
                         <div class="act-dropdown__top">
                             <h2 class="act-dropdown__title" id="js-favorite-count-text">Bạn có @favoriteCount mục yêu thích</h2>
-                            <a asp-controller="Favorites"  class="act-dropdown__view-all">Xem tất cả</a>
+                            <a asp-controller="Favorites" class="act-dropdown__view-all">Xem tất cả</a>
                         </div>
                         @{ 
-                            // Lấy top 3 sản phẩm vừa được yêu thích của user hiện tại
                             var recentFavorites = DbContext.Favorites
                                 .AsNoTracking()
                                 .Where(f => f.UserId == userId)
@@ -109,7 +147,6 @@
                             <a href="./checkout.html" class="act-dropdown__view-all">See All</a>
                         </div>
                         <div class="row row-cols-3 gx-2 act-dropdown__list">
-                            <!-- Cart preview item 1 -->
                             <div class="col">
                                 <article class="cart-preview-item">
                                     <div class="cart-preview-item__img-wrap">
@@ -122,7 +159,6 @@
                                 </article>
                             </div>
 
-                            <!-- Cart preview item 2 -->
                             <div class="col">
                                 <article class="cart-preview-item">
                                     <div class="cart-preview-item__img-wrap">
@@ -135,7 +171,6 @@
                                 </article>
                             </div>
 
-                            <!-- Cart preview item 3 -->
                             <div class="col">
                                 <article class="cart-preview-item">
                                     <div class="cart-preview-item__img-wrap">
@@ -178,7 +213,9 @@
         </div>
 
         <div class="top-act__user">
-            <img src="/image/img/avatar.jpg" alt="" class="top-act__avatar" />
+            <a asp-controller="Profile" asp-action="Index" class="top-act__avatar-link" title="Trang hồ sơ">
+                <img src="@avatarUrl" alt="Avatar" class="top-act__avatar" onerror="this.onerror=null;this.src='@Url.Content("~/image/account/default-avatar.jpg")';" />
+            </a>
 
             <!-- Dropdown -->
             <div class="act-dropdown top-act__dropdown act-dropdown--profile">
@@ -188,32 +225,32 @@
                          class="act-dropdown__arrow top-act__dropdown-arrow" />
 
                     <div class="user-menu__top">
-                        <img src="/image/img/avatar.jpg" alt="" class="user-menu__avatar" />
+                        <img src="@avatarUrl" alt="" class="user-menu__avatar" onerror="this.onerror=null;this.src='@Url.Content("~/image/account/default-avatar.jpg")';" />
                         <div>
-                            <p class="user-menu__name">John Smith</p>
-                            <p>johnmith</p>
+                            <p class="user-menu__name">@displayName</p>
+                            <p>@displayAccount</p>
                         </div>
                     </div>
 
                     <ul class="user-menu__list">
                         <li>
-                            <a href="./profile.html" class="user-menu__link">Profile</a>
+                            <a asp-controller="Profile" asp-action="Index" class="user-menu__link">Tài khoản</a>    
                         </li>
                         <li>
-                            <a href="./favourite.html" class="user-menu__link">Favourite list</a>
+                            <a asp-controller="Favorites" asp-action="index" class="user-menu__link">Yêu thích</a>
                         </li>
                         <li class="user-menu__separate">
-                            <a href="#!" class="user-menu__link" id="switch-theme-btn">
-                                <span>Dark mode</span>
+                            <a href="#" class="user-menu__link" id="switch-theme-btn">
+                                <span>Nền tối</span>
                                 <img src="/image/icons/sun.svg" alt="" class="icon user-menu__icon" />
                             </a>
                         </li>
                         <li>
-                            <a href="#!" class="user-menu__link">Settings</a>
+                            <a href="#" class="user-menu__link">Cài đặt</a>
                         </li>
                         <li class="user-menu__separate">
                             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                                <button type="submit" class="user-menu__link">Logout</button>
+                                <button type="submit" class="user-menu__link">Đăng xuất</button>
                             </form>
                         </li>
                     </ul>
@@ -224,7 +261,6 @@
 }
 else
 {
-    
     <div class="top-act">
         <a id="login" asp-area="Identity" asp-page="/Account/Login" class="btn btn--text d-md-none">Đăng Nhập</a>
         <a id="register" asp-area="Identity" asp-page="/Account/Register" class="top-act__sign-up btn btn--primary">Đăng Ký</a>

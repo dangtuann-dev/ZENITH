@@ -309,6 +309,9 @@ function initProductPreview() {
       const src = thumb.dataset.src || thumb.getAttribute("src");
       if (mainImg && src) {
         mainImg.src = src;
+        // Reset zoom state when image changes
+        mainImg.style.transform = "";
+        mainImg.style.transformOrigin = "";
       }
       wrap
         .querySelectorAll(".prod-preview__thumb-img--current")
@@ -330,7 +333,12 @@ function initProductPreview() {
         currentIndex = (currentIndex + 1) % thumbs.length;
         const next = thumbs[currentIndex];
         const srcNext = next.dataset.src || next.getAttribute("src");
-        if (mainImg && srcNext) mainImg.src = srcNext;
+        if (mainImg && srcNext) {
+          mainImg.src = srcNext;
+          // Reset zoom on auto-advance
+          mainImg.style.transform = "";
+          mainImg.style.transformOrigin = "";
+        }
         wrap
           .querySelectorAll(".prod-preview__thumb-img--current")
           .forEach((el) => el.classList.remove("prod-preview__thumb-img--current"));
@@ -357,6 +365,41 @@ function initProductPreview() {
 
 window.addEventListener("template-loaded", initProductPreview);
 document.addEventListener("DOMContentLoaded", initProductPreview);
+
+// Zoom preview image on hover based on cursor position
+function initPreviewZoom() {
+  qsa(".prod-preview").forEach((wrap) => {
+    const container = wrap.querySelector(".prod-preview__item");
+    const img = container ? container.querySelector(".prod-preview__img") : null;
+    if (!container || !img) return;
+
+    const ZOOM = 2.2;
+    const onEnter = () => {
+      container.classList.add("zooming");
+    };
+    const onMove = (e) => {
+      const rect = container.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+      const ox = Math.max(0, Math.min(1, x)) * 100;
+      const oy = Math.max(0, Math.min(1, y)) * 100;
+      img.style.transformOrigin = `${ox}% ${oy}%`;
+      img.style.transform = `scale(${ZOOM})`;
+    };
+    const onLeave = () => {
+      container.classList.remove("zooming");
+      img.style.transform = "";
+      img.style.transformOrigin = "";
+    };
+
+    container.addEventListener("mouseenter", onEnter);
+    container.addEventListener("mousemove", onMove);
+    container.addEventListener("mouseleave", onLeave);
+  });
+}
+
+window.addEventListener("template-loaded", initPreviewZoom);
+document.addEventListener("DOMContentLoaded", initPreviewZoom);
 
 window.addEventListener("template-loaded", () => {
   const switchBtn = document.querySelector("#switch-theme-btn");
@@ -728,6 +771,29 @@ document.addEventListener("DOMContentLoaded", initSimilarCarousel);
   });
 })();
 
+// Avatar fallback: nếu ảnh bị xóa hoặc lỗi tải, tự động dùng ảnh mặc định
+(function () {
+    function attachFallback(img) {
+        if (!img) return;
+        img.addEventListener('error', function onErr() {
+            img.onerror = null;
+            img.src = '/image/account/default-avatar.jpg';
+        });
+    }
+
+    function initAvatarFallbacks() {
+        document.querySelectorAll('.top-act__avatar, .user-menu__avatar').forEach(attachFallback);
+        var profileAvatar = document.getElementById('profileAvatar');
+        attachFallback(profileAvatar);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAvatarFallbacks);
+    } else {
+        initAvatarFallbacks();
+    }
+})();
+
 // Xử lý tăng/giảm số lượng trong trang Favorites
 document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll(".js-qty-minus").forEach((btn) => {
@@ -909,4 +975,61 @@ document.addEventListener("DOMContentLoaded", function () {
       box.setAttribute("tabindex", "0");
     }
   });
+});
+
+// Trang Chi tiết sản phẩm: cập nhật giá theo số lượng
+document.addEventListener("DOMContentLoaded", function () {
+  const root = document.querySelector(".product-page");
+  if (!root) return;
+
+  const qtySpan = root.querySelector(".js-qty-value");
+  const priceEl = root.querySelector(".prod-info__price");
+  const oldPriceEl = root.querySelector(".prod-info__price--old");
+
+  if (!qtySpan || !priceEl) return;
+
+  const formatCurrencyVND = (n) => {
+    try {
+      return (
+        new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 0 }).format(
+          Math.round(n)
+        ) + " VND"
+      );
+    } catch (_) {
+      return Math.round(n).toString() + " VND";
+    }
+  };
+
+  const updateTotals = () => {
+    const qty = parseInt(qtySpan.textContent || "1", 10) || 1;
+    const unitSale = priceEl.dataset.unitSalePrice
+      ? parseFloat(priceEl.dataset.unitSalePrice)
+      : null;
+    const unitPrice = priceEl.dataset.unitPrice
+      ? parseFloat(priceEl.dataset.unitPrice)
+      : null;
+    const unitOld = oldPriceEl && oldPriceEl.dataset.unitPrice
+      ? parseFloat(oldPriceEl.dataset.unitPrice)
+      : null;
+
+    if (!isNaN(unitSale) && !isNaN(unitOld) && oldPriceEl) {
+      oldPriceEl.textContent = formatCurrencyVND(unitOld * qty);
+      priceEl.textContent = formatCurrencyVND(unitSale * qty);
+    } else if (!isNaN(unitPrice)) {
+      priceEl.textContent = formatCurrencyVND(unitPrice * qty);
+    }
+  };
+
+  // Quan sát thay đổi text số lượng để cập nhật giá
+  const observer = new MutationObserver(() => updateTotals());
+  observer.observe(qtySpan, { childList: true, subtree: true, characterData: true });
+
+  // Cập nhật sau khi ấn nút +/-
+  root.addEventListener("click", (e) => {
+    const target = e.target.closest(".js-qty-minus, .js-qty-plus");
+    if (target) setTimeout(updateTotals, 0);
+  });
+
+  // Khởi tạo
+  updateTotals();
 });
