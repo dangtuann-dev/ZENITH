@@ -3,6 +3,7 @@
 @using ZENITH.Models
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+@inject ZENITH.AppData.ApplicationDbContext DbContext
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -38,7 +39,7 @@
                 </button>
 
                 <!-- Logo -->
-                <a asp-controller="Home" class="logo top-bar__logo">
+                <a asp-controller="Home" asp-action="index" class="logo top-bar__logo">
                     <img src="~/image/icons/zenith-logo.png" alt="zenith" class="logo__img top-bar__logo-img" style="width:37px;height:37px;" />
                     <h1 class="logo__title top-bar__logo-title" style="color:#3643BA;">Zenith</h1>
                 </a>
@@ -55,10 +56,11 @@
                         <span class="nav-btn__qnt">3</span>
                     </a>
 
-                    <a href="#!" class="nav-btn d-none d-md-flex">
+                    @{ var favCount = SignInManager.IsSignedIn(User) ? DbContext.Favorites.Count(f => f.UserId == UserManager.GetUserId(User)) : 0; }
+                    <a asp-controller="Favorites" asp-action="Index" class="nav-btn d-none d-md-flex">
                         <img src="~/image/icons/heart.svg" alt="" class="nav-btn__icon icon" />
                         <span class="nav-btn__title">Favorite</span>
-                        <span class="nav-btn__qnt">3</span>
+                        <span class="nav-btn__qnt">@favCount</span>
                     </a>
 
                     <ul class="navbar__list js-dropdown-list">

@@ -26,5 +26,6 @@ namespace ZENITH.Models
         public virtual ICollection<AdminLog> AdminLogs { get; set; } = new List<AdminLog>();
         public virtual ICollection<InventoryLog> InventoryLogs { get; set; } = new List<InventoryLog>();
         public virtual ICollection<OrderStatusHistory> OrderStatusHistories { get; set; } = new List<OrderStatusHistory>();
+        
     }
 }

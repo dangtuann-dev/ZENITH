@@ -9,7 +9,11 @@ namespace ZENITH.ViewModels
         public string ProductName { get; set; } = string.Empty;
         public string SkuBase { get; set; } = string.Empty;
 
-        // Thông tin từ bảng ProductVariants
+        // 💡 THUỘC TÍNH MỚI BỊ THIẾU: Dùng ProductId cho hành động Favorite
+        public int FavoriteCount { get; set; } // Lượt yêu thích của sản phẩm (tổng từ Variants)
+
+        // Thông tin từ bảng ProductVariants (Giả định lấy từ Variant đầu tiên)
+        // ⚠️ GIẢ ĐỊNH: VariantId là ID của biến thể đầu tiên/chính
         public int VariantId { get; set; }
         public decimal Price { get; set; } // Giá niêm yết
         public decimal SalePrice { get; set; } // Giá bán (dùng để hiển thị)
@@ -18,6 +22,10 @@ namespace ZENITH.ViewModels
         public string SupplierName { get; set; } = string.Empty; // Brand/Supplier
         public string ImageUrl { get; set; } = string.Empty; // Ảnh chính (Primary Image)
         public double Rating { get; set; } // Điểm đánh giá trung bình
+
+        // Cần thêm trường này nếu bạn muốn đánh dấu sản phẩm đã được user hiện tại yêu thích hay chưa
+        public bool IsUserFavorite { get; set; }
+        
     }
 
     public class HomeIndexViewModel

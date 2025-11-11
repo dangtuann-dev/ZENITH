@@ -1,0 +1,165 @@
+﻿@model List<ZENITH.ViewModels.FavoritesIndexItemViewModel>
+@using ZENITH.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@{
+    ViewData["Title"] = " | Sản Phẩm Yêu Thích Của Bạn";
+    var itemCount = Model?.Count ?? 0;
+}
+@Html.AntiForgeryToken()
+
+<script>
+    var isUserLoggedIn = @(SignInManager.IsSignedIn(User) ? "true" : "false");
+    var loginUrl = '@Url.Page("/Account/Login", new { area = "Identity" })';
+</script>
+
+<div class="container">
+    <div class="checkout-container">
+        <div class="search-bar d-none d-md-flex">
+            <input type="text" placeholder="Tìm trong yêu thích" class="search-bar__input" />
+            <button class="search-bar__submit">
+                <img src="~/image/icons/search.svg" alt="Tìm kiếm" class="search-bar__icon icon" />
+            </button>
+        </div>
+    </div>
+
+    <div class="checkout-container">
+        <ul class="breadcrumbs checkout-page__breadcrumbs">
+            <li>
+                <a asp-controller="Home" asp-action="Index" class="breadcrumbs__link">
+                    Trang Chủ
+                    <img src="~/image/icons/arrow-right.svg" alt="" />
+                </a>
+            </li>
+            <li>
+                <span class="breadcrumbs__link breadcrumbs__link--current">Yêu Thích</span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="checkout-container">
+        <div class="row gy-xl-3">
+            <div class="col-12">
+                <div class="cart-info">
+                    <h1 class="cart-info__heading">Danh Sách Yêu Thích</h1>
+                    <p class="cart-info__desc">@itemCount sản phẩm</p>
+
+                    @if (itemCount == 0)
+                    {
+                        <div class="cart-info__list">
+                            <div class="alert alert-info favorites-empty" role="alert">
+                                <span>Bạn chưa có sản phẩm yêu thích nào.</span>
+                            </div>
+                        </div>
+                        <div class="cart-info__bottom">
+                            <div class="cart-info__row cart-info__row-md--block">
+                                <div class="cart-info__continue">
+                                    <a asp-controller="Home" asp-action="Index" class="cart-info__continue-link">
+                                        <img class="cart-info__continue-icon icon" src="~/image/icons/arrow-down-2.svg" alt="" />
+                                        Tiếp tục mua sắm
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="cart-info__check-all">
+                            <label class="cart-info__checkbox">
+                                <input type="checkbox" class="cart-info__checkbox-input" />
+                            </label>
+                        </div>
+                        <div class="cart-info__list">
+                            @foreach (var item in Model)
+                            {
+                                <article class="cart-item">
+                                    <label class="cart-info__checkbox">
+                                        <input type="checkbox" class="cart-info__checkbox-input" />
+                                    </label>
+                                    <a asp-controller="Product" asp-action="Detail" asp-route-id="@item.ProductId">
+                                        <img src="@Url.Content(item.ImageUrl)" alt="@item.ProductName" class="cart-item__thumb" asp-append-version="true" />
+                                    </a>
+                                    <div class="cart-item__content">
+                                        <div class="cart-item__content-left">
+                                            <h3 class="cart-item__title">
+                                                <a asp-controller="Product" asp-action="Detail" asp-route-id="@item.ProductId">
+                                                    @item.ProductName
+                                                </a>
+                                            </h3>
+                                            <p class="cart-item__price-wrap">
+                                                @(item.SalePriceFormatted ?? item.PriceFormatted) | <span class="cart-item__status">@item.StockStatusText</span>
+                                            </p>
+                                            <div class="cart-item__ctrl-wrap">
+                                                <div class="cart-item__ctrl cart-item__ctrl--md-block">
+                                                    <div class="cart-item__input">
+                                                        <select class="favorite-variant-select" aria-label="Chọn biến thể" data-current-variant-id="@item.VariantId">
+                                                            @if (item is { } && item.GetType().GetProperty("Variants") != null)
+                                                            {
+                                                                var variantsProp = item.GetType().GetProperty("Variants");
+                                                                var variants = (System.Collections.IEnumerable?)variantsProp?.GetValue(item);
+                                                                if (variants != null)
+                                                                {
+                                                                    foreach (var v in variants)
+                                                                    {
+                                                                        var vType = v.GetType();
+                                                                        var vid = (int)vType.GetProperty("VariantId")!.GetValue(v)!;
+                                                                        var text = (string)vType.GetProperty("Text")!.GetValue(v)!;
+                                                                        var selected = (bool)vType.GetProperty("IsSelected")!.GetValue(v)!;
+                                                                        <option value="@vid" selected="@(selected ? "selected" : null)">@text</option>
+                                                                    }
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="@item.VariantId">Mặc định</option>
+                                                            }
+                                                        </select>
+                                                        <img class="icon" src="~/image/icons/arrow-down-2.svg" alt="" />
+                                                    </div>
+                                                    <div class="cart-item__input">
+                                                        <button class="cart-item__input-btn js-qty-minus" type="button">
+                                                            <img class="icon" src="~/image/icons/minus.svg" alt="Giảm" />
+                                                        </button>
+                                                        <span class="js-qty-value" data-min="1" data-max="99">1</span>
+                                                        <button class="cart-item__input-btn js-qty-plus" type="button">
+                                                            <img class="icon" src="~/image/icons/plus.svg" alt="Tăng" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="cart-item__ctrl">
+                                                    <button class="like-btn js-toggle-favorite like-btn--liked" data-variant-id="@item.VariantId" data-liked="true" aria-pressed="true">
+                                                        <img src="~/image/icons/heart.svg" alt="Yêu thích" class="like-btn__icon icon" />
+                                                        <img src="~/image/icons/heart-red.svg" alt="Đã yêu thích" class="like-btn__icon--liked" />
+                                                    </button>
+                                                    <button class="cart-item__ctrl-btn" onclick="(function(btn){ const el=btn.closest('article').querySelector('.js-toggle-favorite'); if(el){ el.click(); } })(this)">
+                                                        <img src="~/image/icons/trash.svg" alt="" />
+                                                        Loại bỏ
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="cart-item__content-right">
+                                            <p class="cart-item__total-price">@(item.SalePriceFormatted ?? item.PriceFormatted)</p>
+                                            <button type="button" class="cart-item__checkout-btn btn btn--primary btn--rounded js-add-to-cart">
+                                                Thêm vào giỏ hàng
+                                            </button>
+                                        </div>
+                                    </div>
+                                </article>
+                            }
+                        </div>
+                        <div class="cart-info__bottom">
+                            <div class="cart-info__row cart-info__row-md--block">
+                                <div class="cart-info__continue">
+                                    <a asp-controller="Home" asp-action="Index" class="cart-info__continue-link">
+                                        <img class="cart-info__continue-icon icon" src="~/image/icons/arrow-down-2.svg" alt="" />
+                                        Tiếp tục mua sắm
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -263,14 +263,14 @@ function setupNavbarOverlay() {
 window.addEventListener("template-loaded", setupNavbarOverlay);
 document.addEventListener("DOMContentLoaded", setupNavbarOverlay);
 
-window.addEventListener("template-loaded", () => {
+function initTabs() {
   const tabsSelector = "prod-tab__item";
   const contentsSelector = "prod-tab__content";
 
   const tabActive = `${tabsSelector}--current`;
   const contentActive = `${contentsSelector}--current`;
 
-  const tabContainers = $$(".js-tabs");
+  const tabContainers = qsa(".js-tabs");
   tabContainers.forEach((tabContainer) => {
     const tabs = tabContainer.querySelectorAll(`.${tabsSelector}`);
     const contents = tabContainer.querySelectorAll(`.${contentsSelector}`);
@@ -287,7 +287,76 @@ window.addEventListener("template-loaded", () => {
       };
     });
   });
-});
+}
+
+window.addEventListener("template-loaded", initTabs);
+document.addEventListener("DOMContentLoaded", initTabs);
+
+// Preview thumbnails: click to set main image and highlight current
+function initProductPreview() {
+  const wraps = qsa(".prod-preview");
+  wraps.forEach((wrap) => {
+    const mainImg = wrap.querySelector(
+      ".prod-preview__item .prod-preview__img"
+    );
+    const thumbsWrap = wrap.querySelector(".prod-preview__thumbs");
+    if (!thumbsWrap) return;
+
+    // Event delegation for robustness
+    thumbsWrap.addEventListener("click", (e) => {
+      const thumb = e.target.closest(".prod-preview__thumb-img");
+      if (!thumb) return;
+      const src = thumb.dataset.src || thumb.getAttribute("src");
+      if (mainImg && src) {
+        mainImg.src = src;
+      }
+      wrap
+        .querySelectorAll(".prod-preview__thumb-img--current")
+        .forEach((el) =>
+          el.classList.remove("prod-preview__thumb-img--current")
+        );
+      thumb.classList.add("prod-preview__thumb-img--current");
+    });
+
+    // Auto-rotate thumbnails every 5s
+    const thumbs = thumbsWrap.querySelectorAll(".prod-preview__thumb-img");
+    if (thumbs.length > 1) {
+      let currentIndex = Array.from(thumbs).findIndex((t) =>
+        t.classList.contains("prod-preview__thumb-img--current")
+      );
+      if (currentIndex < 0) currentIndex = 0;
+
+      const advance = () => {
+        currentIndex = (currentIndex + 1) % thumbs.length;
+        const next = thumbs[currentIndex];
+        const srcNext = next.dataset.src || next.getAttribute("src");
+        if (mainImg && srcNext) mainImg.src = srcNext;
+        wrap
+          .querySelectorAll(".prod-preview__thumb-img--current")
+          .forEach((el) => el.classList.remove("prod-preview__thumb-img--current"));
+        next.classList.add("prod-preview__thumb-img--current");
+      };
+
+      const INTERVAL = 5000;
+      const timer = setInterval(advance, INTERVAL);
+
+      // Sync index on user click
+      thumbsWrap.addEventListener("click", (e) => {
+        const t = e.target.closest(".prod-preview__thumb-img");
+        if (!t) return;
+        currentIndex = Array.from(thumbs).indexOf(t);
+      });
+
+      // Cleanup when leaving page
+      window.addEventListener("beforeunload", () => {
+        clearInterval(timer);
+      });
+    }
+  });
+}
+
+window.addEventListener("template-loaded", initProductPreview);
+document.addEventListener("DOMContentLoaded", initProductPreview);
 
 window.addEventListener("template-loaded", () => {
   const switchBtn = document.querySelector("#switch-theme-btn");
@@ -419,34 +488,425 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+// Similar products carousel: 12 items total, show 6 per view
+function initSimilarCarousel() {
+  const carousel = document.getElementById("similarCarousel");
+  if (!carousel) return;
 
-document.addEventListener('DOMContentLoaded', function() {
-    const favoriteButtons = document.querySelectorAll('.js-toggle-favorite');
+  const viewport = carousel.querySelector(".similar-carousel__viewport");
+  const track = carousel.querySelector(".similar-carousel__track");
+  const items = track ? track.children : [];
+  const prevBtn = carousel.querySelector(".similar-carousel__btn--prev");
+  const nextBtn = carousel.querySelector(".similar-carousel__btn--next");
+  const perPage = 6;
+  const total = items.length;
+  const pages = Math.max(1, Math.ceil(total / perPage));
+  let page = 0;
 
-    favoriteButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault(); 
-            
-            // 1. KIỂM TRA TRẠNG THÁI ĐĂNG NHẬP
-            // isUserLoggedIn được lấy từ biến Razor trong _Layout.cshtml
-            if (isUserLoggedIn === 'false' || !isUserLoggedIn) { 
-                
-                // 💡 Nếu chưa đăng nhập, CHUYỂN HƯỚNG sang trang Login
-                // Sử dụng URL từ biến loginUrl hoặc đường dẫn cố định
-                window.location.href = loginUrl; 
-                return; // Ngăn chặn logic chuyển đổi trạng thái
-            }
+  function update() {
+    if (!viewport || !track) return;
+    const width = viewport.clientWidth;
+    track.style.transform = `translateX(-${page * width}px)`;
+    if (prevBtn) prevBtn.disabled = page === 0;
+    if (nextBtn) nextBtn.disabled = page >= pages - 1;
+  }
 
-            // 2. NẾU ĐÃ ĐĂNG NHẬP: Xử lý chuyển đổi trạng thái
-            const variantId = this.dataset.productId;
-            const isLiked = this.classList.contains('like-btn--liked');
-            
-            // Toggle() trước để phản hồi nhanh UI
-            this.classList.toggle('like-btn--liked'); 
-
-            // 3. GỌI LOGIC SERVER (AJAX)
-            // Gửi yêu cầu AJAX để lưu/xóa trạng thái yêu thích
-            toggleFavoriteOnServer(variantId, !isLiked); 
-        });
+  if (prevBtn) {
+    prevBtn.addEventListener("click", () => {
+      if (page > 0) {
+        page -= 1;
+        update();
+      }
     });
+  }
+  if (nextBtn) {
+    nextBtn.addEventListener("click", () => {
+      if (page < pages - 1) {
+        page += 1;
+        update();
+      }
+    });
+  }
+
+  window.addEventListener("resize", update);
+  update();
+}
+
+window.addEventListener("template-loaded", initSimilarCarousel);
+document.addEventListener("DOMContentLoaded", initSimilarCarousel);
+// Loại bỏ handler cũ gây xung đột và không gọi API
+// Favorite toggle logic for product cards
+(function () {
+  function getAntiForgeryToken() {
+    const el = document.querySelector(
+      'input[name="__RequestVerificationToken"]'
+    );
+    return el ? el.value : null;
+  }
+
+  function updateHeart(button, liked) {
+    const defaultIcon = button.querySelector("img.like-btn__icon.icon");
+    const likedIcon = button.querySelector("img.like-btn__icon--liked");
+    if (defaultIcon && likedIcon) {
+      if (liked) {
+        defaultIcon.style.display = "none";
+        likedIcon.style.display = "inline-block";
+        button.setAttribute("aria-pressed", "true");
+        button.dataset.liked = "true";
+        button.classList.add("like-btn--liked");
+      } else {
+        likedIcon.style.display = "none";
+        defaultIcon.style.display = "inline-block";
+        button.setAttribute("aria-pressed", "false");
+        button.dataset.liked = "false";
+        button.classList.remove("like-btn--liked");
+      }
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const buttons = document.querySelectorAll(".js-toggle-favorite");
+    buttons.forEach(function (button) {
+      // Optional: initialize UI if data-liked is provided
+      if (button.dataset.liked) {
+        updateHeart(button, button.dataset.liked === "true");
+      }
+
+      async function refreshFavoriteDropdown() {
+        try {
+          const list = document.getElementById("js-favorite-dropdown-list");
+          if (!list) return; // Không có dropdown trên trang hiện tại
+          const res = await fetch("/Favorites/Recent", {
+            method: "GET",
+            headers: { Accept: "application/json" },
+          });
+          const contentType = res.headers.get("content-type") || "";
+          if (!res.ok || !contentType.includes("application/json")) return; // Bỏ qua nếu không phải JSON
+          const data = await res.json();
+          const items = Array.isArray(data.items) ? data.items : [];
+
+          // Xây lại nội dung dropdown
+          if (items.length === 0) {
+            list.innerHTML = `<div class="col"><p class="text-muted" style="padding: 8px;">Bạn chưa có bất kỳ sản phẩm yêu thích nào</p></div>`;
+            return;
+          }
+
+          const cols = items
+            .map((it) => {
+              const href = `/Product/Detail/${it.productId}`;
+              return `
+              <div class="col">
+                <article class="cart-preview-item">
+                  <div class="cart-preview-item__img-wrap">
+                    <a href="${href}">
+                      <img src="${it.imgUrl}" alt="${it.productName}" class="cart-preview-item__thumb" />
+                    </a>
+                  </div>
+                  <h3 class="cart-preview-item__title">${it.productName}</h3>
+                  <p class="cart-preview-item__price">${it.priceFormatted} VND</p>
+                </article>
+              </div>`;
+            })
+            .join("");
+
+          list.innerHTML = cols;
+        } catch (e) {
+          console.warn("Không thể làm mới danh sách yêu thích:", e);
+        }
+      }
+
+      button.addEventListener("click", async function (e) {
+        e.preventDefault();
+
+        const variantId = button.dataset.productId || button.dataset.variantId;
+        if (!variantId) {
+          console.warn(
+            "Không tìm thấy VariantId/ProductId trên nút yêu thích."
+          );
+          return;
+        }
+
+        try {
+          const headers = { "Content-Type": "application/json" };
+          const token = getAntiForgeryToken();
+          if (token) headers["RequestVerificationToken"] = token;
+
+          const res = await fetch("/Favorites/ToggleFavorite", {
+            method: "POST",
+            headers,
+            body: JSON.stringify({ variantId: Number(variantId) }),
+          });
+
+          const loginRedirectUrl =
+            typeof loginUrl === "string" && loginUrl
+              ? loginUrl
+              : "/Identity/Account/Login";
+          const contentType = res.headers.get("content-type") || "";
+          if (
+            res.status === 401 ||
+            res.redirected ||
+            !contentType.includes("application/json")
+          ) {
+            // Nếu server chuyển hướng đến login (302 -> 200 HTML) hoặc trả về 401, chuyển hướng
+            window.location.href = loginRedirectUrl;
+            return;
+          }
+
+          if (!res.ok) throw new Error("Failed to toggle favorite");
+
+          const data = await res.json();
+          const likedNow = !!data.isFavorited;
+          updateHeart(button, likedNow);
+
+          // Cập nhật số lượng yêu thích ở header nếu có phần tử hiển thị
+          try {
+            const countEl = document.getElementById("js-favorite-count");
+            if (countEl) {
+              const current = parseInt(countEl.textContent || "0", 10);
+              const next = Math.max(0, current + (likedNow ? 1 : -1));
+              countEl.textContent = String(next);
+            }
+            const countTextEl = document.getElementById(
+              "js-favorite-count-text"
+            );
+            if (countTextEl && countEl) {
+              countTextEl.textContent = `Bạn có ${countEl.textContent} mục yêu thích`;
+            }
+          } catch (e) {
+            console.warn(
+              "Không thể cập nhật số lượng yêu thích trong header:",
+              e
+            );
+          }
+
+          // Làm mới dropdown top 3 để đồng bộ ngay lập tức
+          refreshFavoriteDropdown();
+
+          // Nếu đang ở trang Favorites, khi bỏ yêu thích thì xóa item khỏi DOM ngay
+          try {
+            if (!likedNow) {
+              const article = button.closest("article.cart-item");
+              if (article) {
+                const list = article.parentElement;
+                article.remove();
+                // Cập nhật số items
+                const desc = document.querySelector(".cart-info__desc");
+                if (desc && list) {
+                  const count =
+                    list.querySelectorAll("article.cart-item").length;
+                  desc.textContent = `${count} items`;
+                }
+                // Nếu hết item, hiển thị trạng thái rỗng
+                if (
+                  list &&
+                  list.querySelectorAll("article.cart-item").length === 0
+                ) {
+                  const container = document.querySelector(".cart-info__list");
+                  if (container) {
+                    container.innerHTML = `
+                      <div class="alert alert-info favorites-empty" role="alert">
+                        <span>Bạn chưa có sản phẩm yêu thích nào.</span>
+                      </div>`;
+                    // Đảm bảo khu vực nút "Tiếp tục mua sắm" ở đáy hiển thị để giữ vị trí thống nhất
+                    const bottom = document.querySelector(".cart-info__bottom");
+                    if (bottom) {
+                      bottom.style.display = "block";
+                    }
+                  }
+                }
+              }
+            }
+          } catch (e) {
+            console.warn("Không thể cập nhật DOM Favorites ngay lập tức:", e);
+          }
+        } catch (err) {
+          console.error("Favorite toggle error:", err);
+          alert("Không thể cập nhật trạng thái yêu thích. Vui lòng thử lại!");
+        }
+      });
+    });
+  });
+})();
+
+// Xử lý tăng/giảm số lượng trong trang Favorites
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".js-qty-minus").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const wrap = btn.closest(".cart-item__input");
+      const span = wrap ? wrap.querySelector(".js-qty-value") : null;
+      if (!span) return;
+      const min = parseInt(span.dataset.min || "1", 10);
+      const val = Math.max(min, parseInt(span.textContent || "1", 10) - 1);
+      span.textContent = String(val);
+    });
+  });
+  document.querySelectorAll(".js-qty-plus").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const wrap = btn.closest(".cart-item__input");
+      const span = wrap ? wrap.querySelector(".js-qty-value") : null;
+      if (!span) return;
+      const max = parseInt(span.dataset.max || "99", 10);
+      const val = Math.min(max, parseInt(span.textContent || "1", 10) + 1);
+      span.textContent = String(val);
+    });
+  });
+});
+
+// Thêm vào giỏ hàng từ trang Favorites
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".js-add-to-cart").forEach((btn) => {
+    btn.addEventListener("click", async function () {
+      try {
+        // Nếu chưa đăng nhập, chuyển sang trang đăng nhập
+        if (
+          typeof isUserLoggedIn !== "undefined" &&
+          isUserLoggedIn !== "true"
+        ) {
+          if (typeof loginUrl !== "undefined" && loginUrl) {
+            window.location.href = loginUrl;
+            return;
+          }
+        }
+
+        const article = btn.closest("article.cart-item");
+        if (!article) return;
+
+        // Lấy biến thể đang chọn
+        const sel = article.querySelector("select.favorite-variant-select");
+        const variantId = sel ? parseInt(sel.value, 10) : null;
+        if (!variantId || isNaN(variantId)) {
+          alert("Vui lòng chọn biến thể hợp lệ.");
+          return;
+        }
+
+        // Lấy số lượng
+        const qtySpan = article.querySelector(".js-qty-value");
+        const quantity = qtySpan ? parseInt(qtySpan.textContent || "1", 10) : 1;
+        if (!quantity || quantity < 1) {
+          alert("Số lượng không hợp lệ.");
+          return;
+        }
+
+        const resp = await fetch("/Favorites/AddToCart", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ VariantId: variantId, Quantity: quantity }),
+        });
+
+        if (!resp.ok) {
+          const txt = await resp.text();
+          console.error("AddToCart failed:", txt);
+          alert("Không thể thêm vào giỏ hàng. Vui lòng thử lại!");
+          return;
+        }
+
+        const data = await resp.json();
+        if (data && data.success) {
+          alert("Đã thêm sản phẩm vào giỏ hàng.");
+        } else {
+          alert(data?.message || "Không thể thêm vào giỏ hàng.");
+        }
+      } catch (e) {
+        console.error("Add to cart error:", e);
+        alert("Có lỗi xảy ra khi thêm vào giỏ.");
+      }
+    });
+  });
+});
+
+// Xử lý đổi variant trong trang Favorites
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".favorite-variant-select").forEach((sel) => {
+    sel.addEventListener("change", async function () {
+      try {
+        const newId = parseInt(sel.value, 10);
+        const article = sel.closest("article.cart-item");
+        if (!article || !newId) return;
+        const likeBtn = article.querySelector(".js-toggle-favorite");
+        const oldId = likeBtn
+          ? parseInt(likeBtn.dataset.variantId || "0", 10)
+          : 0;
+        const headers = { "Content-Type": "application/json" };
+        const token = document.querySelector(
+          'input[name="__RequestVerificationToken"]'
+        );
+        if (token) headers["RequestVerificationToken"] = token.value;
+        const res = await fetch("/Favorites/ChangeVariant", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({ oldVariantId: oldId, newVariantId: newId }),
+        });
+        if (!res.ok) throw new Error("ChangeVariant failed");
+        const data = await res.json();
+
+        // Cập nhật UI: giá, tồn kho, ảnh và dataset
+        const priceWrap = article.querySelector(".cart-item__price-wrap");
+        const totalPrice = article.querySelector(".cart-item__total-price");
+        if (priceWrap) {
+          const statusSpan = priceWrap.querySelector(".cart-item__status");
+          priceWrap.innerHTML = `${
+            data.priceFormatted
+          } | <span class="cart-item__status">${
+            data.stockQuantity > 0 ? "Còn hàng" : "Hết hàng"
+          }</span>`;
+        }
+        if (totalPrice) totalPrice.textContent = data.priceFormatted;
+        if (likeBtn) {
+          likeBtn.dataset.variantId = String(data.newVariantId);
+          likeBtn.dataset.productId = String(data.newVariantId);
+        }
+      } catch (e) {
+        console.error("Đổi variant yêu thích lỗi:", e);
+        alert("Không thể đổi biến thể. Vui lòng thử lại!");
+      }
+    });
+  });
+});
+
+// Cho phép click toàn bộ box .cart-item__input mở dropdown biến thể
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".cart-item__input").forEach((box) => {
+    const sel = box.querySelector("select.favorite-variant-select");
+    if (!sel) return; // Chỉ áp dụng cho box chứa select biến thể
+
+    const openPicker = () => {
+      try {
+        if (typeof sel.showPicker === "function") {
+          sel.showPicker();
+          return;
+        }
+      } catch (_) {
+        /* ignore */
+      }
+      sel.focus();
+      sel.click();
+    };
+
+    // Click ở bất kỳ chỗ nào trong box sẽ mở dropdown
+    box.addEventListener("click", (e) => {
+      if (
+        e.target &&
+        (e.target.tagName === "SELECT" ||
+          e.target.closest("select.favorite-variant-select"))
+      ) {
+        return; // Để mặc định nếu click trực tiếp vào select
+      }
+      openPicker();
+    });
+
+    // Hỗ trợ bàn phím: Enter/Space
+    box.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openPicker();
+      }
+    });
+
+    // Làm cho box có thể focus bằng bàn phím
+    if (!box.hasAttribute("tabindex")) {
+      box.setAttribute("tabindex", "0");
+    }
+  });
 });

@@ -2,7 +2,6 @@ wwwroot\css\carousel.css
 wwwroot\css\menu-advert.css
 wwwroot\css\overlay.css
 wwwroot\css\scrollbar.css
-wwwroot\css\site.css
 wwwroot\css\styles.css
 wwwroot\favicon.ico
 wwwroot\fonts\Lato-Black.woff
@@ -332,6 +331,7 @@ wwwroot\image\productImage\HT-030\HT-030-1.avif
 wwwroot\image\productImage\HT-030\HT-030-2.avif
 wwwroot\image\productImage\HT-030\HT-030-3.avif
 wwwroot\image\productImage\HT-030\HT-030-4.avif
+wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
@@ -392,12 +392,11 @@ wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
-wwwroot\js\site.js
+wwwroot\css\site.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\css\carousel.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\css\menu-advert.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\css\overlay.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\css\scrollbar.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\site.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\css\styles.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\favicon.ico
 D:\Web Profile\ZENITH\ZENITH\wwwroot\fonts\stylesheet.css
@@ -472,6 +471,7 @@ D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\tiktok.svg
 D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\trash.svg
 D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\twitter.svg
 D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\youtube.svg
+D:\Web Profile\ZENITH\ZENITH\wwwroot\js\site.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
@@ -531,4 +531,4 @@ D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\dist\jquery.slim.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\dist\jquery.slim.min.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\dist\jquery.slim.min.map
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\LICENSE.txt
-D:\Web Profile\ZENITH\ZENITH\wwwroot\js\site.js
+D:\Web Profile\ZENITH\ZENITH\wwwroot\css\site.css

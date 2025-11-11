@@ -1,0 +1,387 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model ZENITH.ViewModels.ProductDetailViewModel
+@{
+}
+<main class="product-page">
+    <div class="container">
+        <!-- Search bar -->
+        <div class="product-container">
+            <div class="search-bar d-none d-md-flex">
+                <input type="text" name="" id="" placeholder="Tìm kiếm sản phẩm" class="search-bar__input" />
+                <button class="search-bar__submit">
+                    <img src="./assets/icons/search.svg" alt="" class="search-bar__icon icon" />
+                </button>
+            </div>
+        </div>
+
+        <!-- Breadcrumbs -->
+        <div class="product-container">
+            <ul class="breadcrumbs">
+                <li>
+                    <a href="/" class="breadcrumbs__link">
+                        Trang chủ
+                        <img src="./assets/icons/arrow-right.svg" alt="" />
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="breadcrumbs__link">
+                        @Model.CategoryName
+                        <img src="./assets/icons/arrow-right.svg" alt="" />
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="breadcrumbs__link breadcrumbs__link--current">@Model.ProductName</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Product info -->
+        <div class="product-container prod-info-content">
+            <div class="row">
+                <div class="col-5 col-xl-6 col-lg-12">
+                    <div class="prod-preview">
+                        <div class="prod-preview__list">
+                            @{ var mainImage = Model.ImageUrls.Count > 0 ? Model.ImageUrls[0] : "~/image/default.avif"; }
+                            <div class="prod-preview__item">
+                                <img src="@Url.Content(mainImage)" alt="@Model.ProductName" class="prod-preview__img" />
+                            </div>
+                        </div>
+                        <div class="prod-preview__thumbs">
+                            @for (int i = 0; i < Model.ImageUrls.Count; i++)
+                            {
+                                var url = Model.ImageUrls[i];
+                                var currentClass = i == 0 ? " prod-preview__thumb-img--current" : string.Empty;
+                                <img src="@Url.Content(url)" data-src="@Url.Content(url)" alt="@Model.ProductName" class="prod-preview__thumb-img" />
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-7 col-xl-6 col-lg-12">
+                    <form action="" class="form">
+                        <section class="prod-info">
+                            <h1 class="prod-info__heading">
+                                @Model.ProductName
+                            </h1>
+                            <div class="row">
+                                <div class="col-5 col-xxl-6 col-xl-12">
+                                    <div class="prod-prop">
+                                        <img src="./assets/icons/star.svg" alt="" class="prod-prop__icon" />
+                                        <h4 class="prod-prop__title">(@Model.AverageRating.ToString("F1")) @Model.ReviewCount đánh giá</h4>
+                                    </div>
+                                    <label for="" class="form__label prod-info__label">Phân loại</label>
+                                    <div class="filter__form-group">
+                                        <div class="form__select-wrap">
+                                            @if (Model.AttributeGroups != null && Model.AttributeGroups.Any())
+                                            {
+                                                foreach (var group in Model.AttributeGroups)
+                                                {
+                                                    <div class="form__select" style="--width: 146px">
+                                                        <select class="form__select-input" name="attr-@group.AttributeId" data-attr-id="@group.AttributeId">
+                                                            @foreach (var opt in group.Options)
+                                                            {
+                                                                if (opt.IsSelected)
+                                                                {
+                                                                    <option value="@opt.ValueId" selected>@opt.ValueName</option>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <option value="@opt.ValueId">@opt.ValueName</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                        <img src="./assets/icons/select-arrow.svg"
+                                                             alt=""
+                                                             class="form__select-arrow icon" />
+                                                    </div>
+                                                }
+                                            }
+                                            else if (Model.Variants != null && Model.Variants.Any())
+                                            {
+                                                // Fallback: hiển thị dropdown chọn biến thể khi không có nhóm thuộc tính
+                                                <div class="form__select" style="--width: 300px">
+                                                    <select class="form__select-input" name="variant-select" data-variant-select="true">
+                                                        @foreach (var v in Model.Variants)
+                                                        {
+                                                            if (v.IsSelected)
+                                                            {
+                                                                <option value="@v.VariantId" selected>@v.Text</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="@v.VariantId">@v.Text</option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                    <img src="./assets/icons/select-arrow.svg" alt="" class="form__select-arrow icon" />
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-7 col-xxl-6 col-xl-12">
+                                    <div class="prod-props">
+                                        <div class="prod-prop">
+                                            <img src="./assets/icons/document.svg"
+                                                 alt=""
+                                                 class="prod-prop__icon icon" />
+                                            <h4 class="prod-prop__title">So sánh</h4>
+                                        </div>
+                                        <div class="prod-prop">
+                                            <img src="./assets/icons/buy.svg"
+                                                 alt=""
+                                                 class="prod-prop__icon icon" />
+                                            <div>
+                                                <h4 class="prod-prop__title">Giao hàng</h4>
+                                                <p class="prod-prop__desc">Từ 6.000đ trong 1–3 ngày</p>
+                                            </div>
+                                        </div>
+                                        <div class="prod-prop">
+                                            <img src="./assets/icons/bag.svg"
+                                                 alt=""
+                                                 class="prod-prop__icon icon" />
+                                            <div>
+                                                <h4 class="prod-prop__title">Nhận tại cửa hàng</h4>
+                                                <p class="prod-prop__desc">Tại 2 cửa hàng, hôm nay</p>
+                                            </div>
+                                        </div>
+                                        <div class="prod-info__card">
+                                            @if (Model.Price != Model.SalePrice)
+                                            {
+                                                var discountPercent = Model.Price > 0 ? (int)System.Math.Round((Model.Price - Model.SalePrice.Value) / Model.Price * 100M) : 0;
+                                                <div class="prod-info__row pb-20">
+                                                    <div class="prod-info__price-box">
+                                                        <span class="prod-info__price--old">@Model.PriceFormatted</span>
+                                                        <span class="prod-info__price">@Model.SalePriceFormatted</span>
+                                                    </div>
+                                                    <span class="prod-info__tax prod-info__discount">Giảm @discountPercent%</span>
+                                                </div>
+                                            }
+                                            else 
+                                            {
+                                                <div class="prod-info__row pb-20">
+                                                    <span class="prod-info__price">@Model.PriceFormatted</span>
+                                                </div>
+                                            }
+                                            <div class="prod-info__row">
+                                                <button class="btn btn--primary prod-info__add-to-cart">
+                                                    Thêm vào giỏ
+                                                </button>
+                                                <button class="like-btn prod-info__like-btn js-toggle-favorite" data-variant-id="@(Model.SelectedVariantId ?? Model.Variants.FirstOrDefault()?.VariantId)">
+                                                    <img src="~/image/icons/heart.svg"
+                                                         alt=""
+                                                         class="like-btn__icon icon" />
+                                                    <img src="~/image/icons/heart-red.svg"
+                                                         alt=""
+                                                         class="like-btn__icon--liked" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product content -->
+        <div class="product-container">
+            <div class="prod-tab js-tabs">
+                <ul class="prod-tab__list">
+                    <li class="prod-tab__item prod-tab__item--current">Mô tả</li>
+                    <li class="prod-tab__item">Đánh giá (@Model.ReviewCount)</li>
+                    <li class="prod-tab__item">Tương tự</li>
+                </ul>
+                <div class="prod-tab__contents">
+                    <div class="prod-tab__content prod-tab__content--current">
+                        <div class="row">
+                            <div class="col-8 col-xl-10 col-lg-12">
+                                <div class="text-content prod-tab__text-content">
+                                    <h2>Mô tả sản phẩm</h2>
+                                    <p>
+                                        @Model.Description
+                                    </p>
+
+
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="prod-tab__content">
+                        <div class="prod-content">
+                            <h2 class="prod-content__heading">Khách hàng nói gì</h2>
+                            <div class="row row-cols-3 gx-lg-2 row-cols-md-1 gy-md-3">
+                                <!-- Review card 1 -->
+                                <div class="col">
+                                    <div class="review-card">
+                                        <div class="review-card__content">
+                                            <img src="./assets/img/avatar/avatar-1.png"
+                                                 alt=""
+                                                 class="review-card__avatar" />
+                                            <div class="review-card__info">
+                                                <h4 class="review-card__title">Jakir Hussen</h4>
+                                                <p class="review-card__desc">
+                                                    Great product, I love this Coffee Beans
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="review-card__rating">
+                                            <div class="review-card__star-list">
+                                                <img src="./assets/icons/star.svg"
+                                                     alt=""
+                                                     class="review-card__star" />
+                                                <img src="./assets/icons/star.svg"
+                                                     alt=""
+                                                     class="review-card__star" />
+                                                <img src="./assets/icons/star.svg"
+                                                     alt=""
+                                                     class="review-card__star" />
+                                                <img src="./assets/icons/star-half.svg"
+                                                     alt=""
+                                                     class="review-card__star" />
+                                                <img src="./assets/icons/star-blank.svg"
+                                                     alt=""
+                                                     class="review-card__star" />
+                                            </div>
+                                            <span class="review-card__rating-title">(3.5) Review</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Review card 2 -->
+                                <div class="col">
+                                    <div class="review-card">
+                                        <div class="review-card__content">
+                                            <img src="./assets/img/avatar/avatar-2.png"
+                                                 alt=""
+                                                 class="review-card__avatar" />
+                                            <div class="review-card__info">
+                                                <h4 class="review-card__title">Jubed Ahmed</h4>
+                                                <p class="review-card__desc">
+                                                    Awesome Coffee, I love this Coffee Beans
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="review-card__rating">
+                                            <div class="review-card__star-list">
+                                                <img src="./assets/icons/star.svg"
+                                                     alt=""
+                                                     class="review-card__star" />
+                                                <img src="./assets/icons/star.svg"
+                                                     alt=""
+                                                     class="review-card__star" />
+                                                <img src="./assets/icons/star.svg"
+                                                     alt=""
+                                                     class="review-card__star" />
+                                                <img src="./assets/icons/star-half.svg"
+                                                     alt=""
+                                                     class="review-card__star" />
+                                                <img src="./assets/icons/star-blank.svg"
+                                                     alt=""
+                                                     class="review-card__star" />
+                                            </div>
+                                            <span class="review-card__rating-title">(3.5) Review</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Review card 3 -->
+                                <div class="col">
+                                    <div class="review-card">
+                                        <div class="review-card__content">
+                                            <img src="./assets/img/avatar/avatar-3.png"
+                                                 alt=""
+                                                 class="review-card__avatar" />
+                                            <div class="review-card__info">
+                                                <h4 class="review-card__title">Delwar Hussain</h4>
+                                                <p class="review-card__desc">
+                            Sản phẩm rất tốt, tôi thích loại cà phê này
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="review-card__rating">
+                                            <div class="review-card__star-list">
+                                                <img src="./assets/icons/star.svg"
+                                                     alt=""
+                                                     class="review-card__star" />
+                                                <img src="./assets/icons/star.svg"
+                                                     alt=""
+                                                     class="review-card__star" />
+                                                <img src="./assets/icons/star.svg"
+                                                     alt=""
+                                                     class="review-card__star" />
+                                                <img src="./assets/icons/star-half.svg"
+                                                     alt=""
+                                                     class="review-card__star" />
+                                                <img src="./assets/icons/star-blank.svg"
+                                                     alt=""
+                                                     class="review-card__star" />
+                                            </div>
+                                            <span class="review-card__rating-title">(3.5) Review</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="prod-tab__content">
+                        <div class="prod-content">
+                        <h2 class="prod-content__heading">Sản phẩm tương tự có thể bạn thích</h2>
+                            <div class="similar-carousel" id="similarCarousel">
+                                <button type="button" class="similar-carousel__btn similar-carousel__btn--prev" aria-label="Trước">
+                                    ‹
+                                </button>
+                                <div class="similar-carousel__viewport">
+                                    <div class="similar-carousel__track">
+                                        @foreach (var p in Model.SimilarProducts)
+                                        {
+                                            <div class="similar-carousel__item">
+                                                <article class="product-card">
+                                                    <div class="product-card__img-wrap">
+                                                        <a href="/Product/Detail/@p.ProductId">
+                                                            <img src="@Url.Content(p.ImageUrl)"
+                                                                 alt="@p.ProductName"
+                                                                 class="product-card__thumb" />
+                                                        </a>
+                                                        <button class="like-btn product-card__like-btn js-toggle-favorite" data-variant-id="@p.VariantId" aria-pressed="@(p.IsUserFavorite ? "true" : "false")">
+                                                            <img src="~/image/icons/heart.svg"
+                                                                 alt=""
+                                                                 class="like-btn__icon icon" />
+                                                            <img src="~/image/icons/heart-red.svg"
+                                                                 alt=""
+                                                                 class="like-btn__icon--liked" />
+                                                        </button>
+                                                    </div>
+                                                    <h3 class="product-card__title">
+                                                        <a href="/Product/Detail/@p.ProductId">@p.ProductName</a>
+                                                    </h3>
+                                                    <p class="product-card__brand">@p.SupplierName</p>
+                                                    <div class="product-card__row">
+                                                        @{ var priceText = p.SalePrice > 0 ? p.SalePrice.ToString("N0") + " VND" : p.Price.ToString("N0") + " VND"; }
+                                                        <span class="product-card__price">@priceText</span>
+                                                        <img src="./assets/icons/star.svg"
+                                                             alt=""
+                                                             class="product-card__star" />
+                                                        <span class="product-card__score">@p.Rating.ToString("F1")</span>
+                                                    </div>
+                                                </article>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <button type="button" class="similar-carousel__btn similar-carousel__btn--next" aria-label="Sau">
+                                    ›
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

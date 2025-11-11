@@ -1,88 +1,91 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using ZENITH.Models
+@using Microsoft.EntityFrameworkCore
+@using System.Linq
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+@inject ZENITH.AppData.ApplicationDbContext DbContext
 
 
 @if (SignInManager.IsSignedIn(User))
-{
-    @* <li class="nav-item">
-        <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
-    </li>
-    <li class="nav-item">
-        <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0">Logout</button>
-        </form>
-    </li> *@
 
+{
+    var userId = UserManager.GetUserId(User);
+    var favoriteCount = DbContext.Favorites.AsNoTracking().Count(f => f.UserId == userId);
     <div class="top-act">
-        <div class="top-act__group d-md-none top-act__group--single">
-            <button class="top-act__btn">
-                <img src="/image/icons/search.svg" alt="" class="icon top-act__icon" />
-            </button>
-        </div>
+        <a asp-controller="Favorites">
+            <div class="top-act__group d-md-none top-act__group--single">
+                <button class="top-act__btn">
+                    <img src="/image/icons/search.svg" alt="" class="icon top-act__icon" />
+                </button>
+            </div>
+        </a>
+     
 
         <div class="top-act__group d-md-none">
             <div class="top-act__btn-wrap">
-                <button class="top-act__btn">
+                <a asp-controller="Favorites" asp-action="Index" class="top-act__btn">
                     <img src="/image/icons/heart.svg" alt="" class="icon top-act__icon" />
-                    <span class="top-act__title">03</span>
-                </button>
+                    <span id="js-favorite-count" class="top-act__title">@favoriteCount</span>
+                </a>
 
                 <!-- Dropdown Fav -->
-                <div class="act-dropdown">
+                <div class="act-dropdown act-dropdown--favorites">
                     <div class="act-dropdown__inner">
                         <img src="/image/icons/arrow-up.png" alt="" class="act-dropdown__arrow" />
                         <div class="act-dropdown__top">
-                            <h2 class="act-dropdown__title">You have 3 item(s)</h2>
-                            <a href="./favourite.html" class="act-dropdown__view-all">See All</a>
+                            <h2 class="act-dropdown__title" id="js-favorite-count-text">Bạn có @favoriteCount mục yêu thích</h2>
+                            <a asp-controller="Favorites"  class="act-dropdown__view-all">Xem tất cả</a>
                         </div>
-                        <div class="row row-cols-3 gx-2 act-dropdown__list">
-                            <!-- Cart preview item 1 -->
-                            <div class="col">
-                                <article class="cart-preview-item">
-                                    <div class="cart-preview-item__img-wrap">
-                                        <img src="/image/img/product/item-1.png"
-                                             alt=""
-                                             class="cart-preview-item__thumb" />
+                        @{ 
+                            // Lấy top 3 sản phẩm vừa được yêu thích của user hiện tại
+                            var recentFavorites = DbContext.Favorites
+                                .AsNoTracking()
+                                .Where(f => f.UserId == userId)
+                                .OrderByDescending(f => f.AddedAt)
+                                .Include(f => f.ProductVariant)
+                                    .ThenInclude(v => v.Product)
+                                .ThenInclude(p => p.ProductImages)
+                                .Take(3)
+                                .ToList();
+                            var culture = new System.Globalization.CultureInfo("vi-VN");
+                        }
+                        <div class="row row-cols-3 gx-2 act-dropdown__list" id="js-favorite-dropdown-list">
+                            @if (recentFavorites.Any())
+                            {
+                                foreach (var f in recentFavorites)
+                                {
+                                    var product = f.ProductVariant.Product;
+                                    var imgUrl = product.ProductImages.FirstOrDefault(i => i.IsPrimary)?.ImageUrl ?? "/image/default.avif";
+                                    var displayPrice = f.ProductVariant.SalePrice ?? f.ProductVariant.Price;
+                                    <div class="col">
+                                        <article class="cart-preview-item">
+                                            <div class="cart-preview-item__img-wrap">
+                                                <a asp-controller="Product" asp-action="Detail" asp-route-id="@product.ProductId">
+                                                    <img src="@Url.Content(imgUrl)"
+                                                         alt="@product.ProductName"
+                                                         class="cart-preview-item__thumb" />
+                                                </a>
+                                            </div>
+                                            <h3 class="cart-preview-item__title">@product.ProductName</h3>
+                                            <p class="cart-preview-item__price">@displayPrice.ToString("N0", culture) VND</p>
+                                        </article>
                                     </div>
-                                    <h3 class="cart-preview-item__title">Lavazza Coffee Blends</h3>
-                                    <p class="cart-preview-item__price">$329.00</p>
-                                </article>
-                            </div>
-
-                            <!-- Cart preview item 2 -->
-                            <div class="col">
-                                <article class="cart-preview-item">
-                                    <div class="cart-preview-item__img-wrap">
-                                        <img src="/image/img/product/item-2.png"
-                                             alt=""
-                                             class="cart-preview-item__thumb" />
-                                    </div>
-                                    <h3 class="cart-preview-item__title">Coffee Beans Espresso</h3>
-                                    <p class="cart-preview-item__price">$39.99</p>
-                                </article>
-                            </div>
-
-                            <!-- Cart preview item 3 -->
-                            <div class="col">
-                                <article class="cart-preview-item">
-                                    <div class="cart-preview-item__img-wrap">
-                                        <img src="/image/img/product/item-3.png"
-                                             alt=""
-                                             class="cart-preview-item__thumb" />
-                                    </div>
-                                    <h3 class="cart-preview-item__title">Qualità Oro Mountain</h3>
-                                    <p class="cart-preview-item__price">$47.00</p>
-                                </article>
-                            </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="col">
+                                    <p class="text-muted">Bạn chưa có bất kỳ sản phẩm yêu thích nào!</p>
+                                </div>
+                            }
                         </div>
                         <div class="act-dropdown__separate"></div>
                         <div class="act-dropdown__checkout">
-                            <a href="./checkout.html"
+                            <a asp-controller="Favorites"
                                class="btn btn--primary btn--rounded act-dropdown__checkout-btn">
-                                Check Out All
+                                Xem tất cả sản phẩm
                             </a>
                         </div>
                     </div>
@@ -98,7 +101,7 @@
                 </button>
 
                 <!-- Dropdown cart -->
-                <div class="act-dropdown">
+                <div class="act-dropdown act-dropdown--cart">
                     <div class="act-dropdown__inner">
                         <img src="/image/icons/arrow-up.png" alt="" class="act-dropdown__arrow" />
                         <div class="act-dropdown__top">
@@ -178,7 +181,7 @@
             <img src="/image/img/avatar.jpg" alt="" class="top-act__avatar" />
 
             <!-- Dropdown -->
-            <div class="act-dropdown top-act__dropdown">
+            <div class="act-dropdown top-act__dropdown act-dropdown--profile">
                 <div class="act-dropdown__inner user-menu">
                     <img src="/image/icons/arrow-up.png"
                          alt=""
@@ -221,12 +224,7 @@
 }
 else
 {
-    @* <li class="nav-item">
-            <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li> *@
+    
     <div class="top-act">
         <a id="login" asp-area="Identity" asp-page="/Account/Login" class="btn btn--text d-md-none">Đăng Nhập</a>
         <a id="register" asp-area="Identity" asp-page="/Account/Register" class="top-act__sign-up btn btn--primary">Đăng Ký</a>

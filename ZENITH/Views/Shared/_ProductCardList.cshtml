@@ -1,63 +1,77 @@
 ﻿@model List<ZENITH.ViewModels.ProductCardViewModel>
+
 @using System.Globalization
+
 @using ZENITH.Models
+
 @inject SignInManager<ApplicationUser> SignInManager
+
 @inject UserManager<ApplicationUser> UserManager
 @{
     // Thiết lập CultureInfo để định dạng tiền VND
+
     var cultureInfo = new CultureInfo("vi-VN");
+
     <script>
-    var isUserLoggedIn = @(SignInManager.IsSignedIn(User) ? "true" : "false");
-    var loginUrl = '@Url.Page("/Account/Login", new { area = "Identity" })';
-    console.log("User Logged In:", isUserLoggedIn);
-    console.log("Login URL:", loginUrl);
-</script>
+
+        var isUserLoggedIn = @(SignInManager.IsSignedIn(User) ? "true" : "false");
+
+        var loginUrl = '@Url.Page("/Account/Login", new { area = "Identity" })';
+
+        console.log("User Logged In:", isUserLoggedIn);
+
+        console.log("Login URL:", loginUrl);
+
+    </script>
 }
 
 @foreach (var product in Model)
 {
-        <article class="product-card">
-            <div class="product-card__img-wrap">
-                @* Link đến trang chi tiết sản phẩm *@
-                <a asp-controller="Product" asp-action="Detail" asp-route-id="@product.ProductId">
-                    @* Sử dụng ImageUrl động từ ViewModel *@
-                    <img src="@Url.Content(product.ImageUrl)"
-                         alt="@product.ProductName"
+    <article class="product-card">
+        <div class="product-card__img-wrap">
+            @* Link đến trang chi tiết sản phẩm *@
+            <a asp-controller="Product" asp-action="Detail" asp-route-id="@product.ProductId">
+                @* Sử dụng ImageUrl động từ ViewModel *@
+                <img src="@Url.Content(product.ImageUrl)"
+                     alt="@product.ProductName"
                      class="product-card__thumb "
-                         asp-append-version="true" />
-                </a>
+                     asp-append-version="true" />
+            </a>
 
-                @* Nút Yêu thích (Like Button) - Logic tĩnh *@
-                <button class="like-btn product-card__like-btn js-toggle-favorite" data-product-id="@product.VariantId">
+            @* Nút Yêu thích (Like Button) - Logic tĩnh *@
+           
+                <button class="like-btn product-card__like-btn js-toggle-favorite@(product.IsUserFavorite ? " like-btn--liked" : "")" data-product-id="@product.VariantId" data-liked="@(product.IsUserFavorite ? "true" : "false")" aria-pressed="@(product.IsUserFavorite ? "true" : "false")">
                     <img src="~/image/icons/heart.svg" alt="Yêu thích" class="like-btn__icon icon" />
                     <img src="~/image/icons/heart-red.svg" alt="Đã yêu thích" class="like-btn__icon--liked" />
                 </button>
-            </div>
+          
+           
+        </div>
 
         <h3 class="product-card__title">
             <a asp-controller="Product" asp-action="Detail" asp-route-id="@product.ProductId" class="clip-text">@product.ProductName</a>
-            </h3>
+        </h3>
 
-            @* Brand/Supplier *@
-            <p class="product-card__brand">@product.SupplierName</p>
+        @* Brand/Supplier *@
+        <p class="product-card__brand">@product.SupplierName</p>
 
-            <div class="product-card__row">
-                @* 💡 HIỂN THỊ GIÁ BÁN (SalePrice) *@
-                <span class="product-card__price">
-                    @product.SalePrice.ToString("N0", cultureInfo) VND
-                </span>
+        <div class="product-card__row">
+            @* 💡 HIỂN THỊ GIÁ BÁN (SalePrice) *@
+            <span class="product-card__price">
+                @product.SalePrice.ToString("N0", cultureInfo) VND
+            </span>
 
-                @* Hiển thị giá gốc nếu có giảm giá *@
-                @* @if (product.SalePrice < product.Price)
+            @* Hiển thị giá gốc nếu có giảm giá *@
+            @* @if (product.SalePrice < product.Price)
                 {
                     <span class="product-card__price product-card__price--old">
                         @product.Price.ToString("N0", cultureInfo) VND
                     </span>
                 } *@
 
-                @* Rating *@
-                <img src="~/image/icons/star.svg" alt="Rating" class="product-card__star" />
-                <span class="product-card__score">@product.Rating.ToString("F1")</span>
-            </div>
-        </article>
+            @* Rating *@
+            <img src="~/image/icons/star.svg" alt="Rating" class="product-card__star" />
+            <span class="product-card__score">@product.Rating.ToString("F1")</span>
+        </div>
+    </article>
 }

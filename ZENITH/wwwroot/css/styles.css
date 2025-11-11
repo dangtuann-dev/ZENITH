@@ -165,3 +165,12 @@
 .product-card:hover{
     border: 2px solid var(--primary-color);
 }
+.text-muted{
+   width: 200px;
+}
+/*fav dropdow*/
+
+
+.pb-20{
+    padding-bottom: 20px;
+}

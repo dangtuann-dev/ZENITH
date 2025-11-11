@@ -6,6 +6,7 @@ using ZENITH.Models;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 
 namespace ZENITH.Controllers
@@ -39,8 +40,11 @@ namespace ZENITH.Controllers
                 ProductName = p.ProductName,
                 SkuBase = p.Sku,
                 SupplierName = p.Supplier != null ? p.Supplier.SupplierName : "N/A",
+                // Chọn biến thể dùng để hiển thị giá bán (SalePrice) và lấy VariantId tương ứng
                 Price = p.ProductVariants.OrderByDescending(v => v.Price).FirstOrDefault()?.Price ?? 0,
                 SalePrice = p.ProductVariants.OrderBy(v => v.SalePrice).FirstOrDefault()?.SalePrice ?? 0,
+                VariantId = p.ProductVariants.OrderBy(v => v.SalePrice).FirstOrDefault()?.VariantId ??
+                            p.ProductVariants.FirstOrDefault()?.VariantId ?? 0,
                 ImageUrl = p.ProductImages.FirstOrDefault()?.ImageUrl ?? "~/image/default.webp",
                 Rating = 4.5
             }).ToList();
@@ -111,6 +115,35 @@ namespace ZENITH.Controllers
                 ClimbingProducts = MapToCardViewModel(climbingProducts),
                 TeamSportsProducts = MapToCardViewModel(teamSportsProducts)
             };
+            // Đặt trạng thái đã yêu thích ban đầu dựa trên danh sách yêu thích của user
+            var favoriteVariantIds = new HashSet<int>();
+            if (User?.Identity?.IsAuthenticated == true)
+            {
+                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!string.IsNullOrEmpty(currentUserId))
+                {
+                    var favIds = await _context.Favorites
+                        .Where(f => f.UserId == currentUserId)
+                        .Select(f => f.VariantId)
+                        .ToListAsync();
+                    favoriteVariantIds = favIds.ToHashSet();
+                }
+            }
+
+            void markFavorites(List<ProductCardViewModel> list)
+            {
+                if (list == null) return;
+                foreach (var item in list)
+                {
+                    item.IsUserFavorite = favoriteVariantIds.Contains(item.VariantId);
+                }
+            }
+
+            markFavorites(viewModel.FootwearCollection);
+            markFavorites(viewModel.TopSellingProducts);
+            markFavorites(viewModel.RacketSportsProducts);
+            markFavorites(viewModel.ClimbingProducts);
+            markFavorites(viewModel.TeamSportsProducts);
             ViewBag.ParentSports = parentSports;
             return View(viewModel);
         }
