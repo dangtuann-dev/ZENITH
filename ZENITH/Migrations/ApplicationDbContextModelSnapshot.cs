@@ -1017,7 +1017,7 @@ namespace ZENITH.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReviewId"));
 
                     b.Property<string>("Comment")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -1037,8 +1037,8 @@ namespace ZENITH.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Rating")
+                        .HasColumnType("decimal(3,1)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -1051,6 +1051,9 @@ namespace ZENITH.Migrations
                     b.HasIndex("UserId");
 
                     b.HasIndex("IsApproved", "CreatedAt");
+
+                    b.HasIndex("UserId", "ProductId")
+                        .IsUnique();
 
                     b.ToTable("Reviews");
                 });

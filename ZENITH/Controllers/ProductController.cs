@@ -2,9 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using ZENITH.AppData;
 using ZENITH.ViewModels;
 using ZENITH.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ZENITH.Controllers
 {
@@ -34,6 +37,7 @@ namespace ZENITH.Controllers
                         .ThenInclude(vav => vav.AttributeValue)
                             .ThenInclude(av => av.Attribute)
                 .Include(p => p.Reviews)
+                    .ThenInclude(r => r.User)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.ProductId == id && p.IsActive);
 
@@ -164,7 +168,7 @@ namespace ZENITH.Controllers
             double avgRating = 0;
             if (reviewCount > 0)
             {
-                avgRating = product.Reviews.Average(r => r.Rating);
+                avgRating = (double)product.Reviews.Average(r => r.Rating);
             }
 
             var vm = new ProductDetailViewModel
@@ -185,6 +189,43 @@ namespace ZENITH.Controllers
                 ReviewCount = reviewCount,
                 AverageRating = avgRating
             };
+
+            var currentVariantId = vm.SelectedVariantId ?? vm.Variants.FirstOrDefault()?.VariantId ?? 0;
+            if (currentVariantId > 0 && User?.Identity?.IsAuthenticated == true)
+            {
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!string.IsNullOrEmpty(uid))
+                {
+                    vm.IsUserFavorite = await _context.Favorites.AnyAsync(f => f.UserId == uid && f.VariantId == currentVariantId);
+                    var myReview = await _context.Reviews.Where(r => r.ProductId == product.ProductId && r.UserId == uid).FirstOrDefaultAsync();
+                    if (myReview != null)
+                    {
+                        vm.MyReviewId = myReview.ReviewId;
+                        vm.MyReview = new ReviewItemViewModel
+                        {
+                            UserFullName = product.Reviews.FirstOrDefault(r => r.UserId == uid)?.User?.FullName ?? "Bạn",
+                            AvatarUrl = ResolveAvatar(product.Reviews.FirstOrDefault(r => r.UserId == uid)?.User?.Avatar),
+                            Rating = (double)myReview.Rating,
+                            Comment = myReview.Comment ?? string.Empty,
+                            CreatedAt = myReview.CreatedAt,
+                            IsVerifiedPurchase = myReview.IsVerifiedPurchase
+                        };
+                    }
+                }
+            }
+
+            vm.Reviews = product.Reviews
+                .OrderByDescending(r => r.CreatedAt)
+                .Select(r => new ReviewItemViewModel
+                {
+                    UserFullName = r.User != null ? r.User.FullName : "Người dùng",
+                    AvatarUrl = ResolveAvatar(r.User?.Avatar),
+                    Rating = (double)r.Rating,
+                    Comment = r.Comment ?? string.Empty,
+                    CreatedAt = r.CreatedAt,
+                    IsVerifiedPurchase = r.IsVerifiedPurchase
+                })
+                .ToList();
 
             // Similar products: same sport, highest views, exclude current
             var sportId = product.SportId;
@@ -211,11 +252,136 @@ namespace ZENITH.Controllers
                     VariantId = p.ProductVariants.OrderBy(v => v.SalePrice).FirstOrDefault()?.VariantId ??
                                 p.ProductVariants.FirstOrDefault()?.VariantId ?? 0,
                     ImageUrl = p.ProductImages.FirstOrDefault()?.ImageUrl ?? "~/image/default.webp",
-                    Rating = p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 4.5
+                    Rating = p.Reviews.Any() ? (double)p.Reviews.Average(r => r.Rating) : 0
                 }).ToList();
             }
 
             return View(vm);
+        }
+
+        public class ResolveVariantRequest
+        {
+            public int ProductId { get; set; }
+            public List<int> ValueIds { get; set; } = new List<int>();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResolveVariant([FromBody] ResolveVariantRequest req)
+        {
+            if (req == null || req.ProductId <= 0 || req.ValueIds == null || req.ValueIds.Count == 0)
+            {
+                return BadRequest(new { success = false, message = "Thiếu thông tin." });
+            }
+
+            var variants = await _context.ProductVariants
+                .Where(v => v.ProductId == req.ProductId && v.IsActive)
+                .Include(v => v.VariantAttributeValues)
+                .ToListAsync();
+
+            var match = variants.FirstOrDefault(v =>
+                v.VariantAttributeValues != null &&
+                v.VariantAttributeValues.Count == req.ValueIds.Count &&
+                req.ValueIds.All(id => v.VariantAttributeValues.Any(x => x.ValueId == id))
+            );
+
+            if (match == null)
+            {
+                return NotFound(new { success = false, message = "Không tìm thấy biến thể phù hợp." });
+            }
+
+            return Ok(new
+            {
+                success = true,
+                variantId = match.VariantId,
+                price = match.Price,
+                salePrice = match.SalePrice,
+                stockQuantity = match.StockQuantity
+            });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddReview(int productId, decimal rating, string? comment)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
+            var product = await _context.Products
+                .Include(p => p.ProductVariants)
+                .FirstOrDefaultAsync(p => p.ProductId == productId && p.IsActive);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            var verified = await _context.OrderItems
+                .Include(oi => oi.Order)
+                .Include(oi => oi.ProductVariant)
+                .AnyAsync(oi => oi.Order.UserId == userId && oi.ProductVariant.ProductId == productId && oi.Order.PaymentStatus == "Paid");
+
+            var rounded = Math.Round(rating * 2m, MidpointRounding.AwayFromZero) / 2m;
+            if (rounded < 0.5m) rounded = 0.5m;
+            if (rounded > 5m) rounded = 5m;
+
+            var existing = await _context.Reviews.FirstOrDefaultAsync(r => r.ProductId == productId && r.UserId == userId);
+            if (existing != null)
+            {
+                existing.Rating = rounded;
+                existing.Comment = string.IsNullOrWhiteSpace(comment) ? null : comment.Trim();
+                existing.IsApproved = true;
+                existing.IsVerifiedPurchase = verified;
+            }
+            else
+            {
+                var review = new Review
+                {
+                    UserId = userId,
+                    ProductId = productId,
+                    Rating = rounded,
+                    Comment = string.IsNullOrWhiteSpace(comment) ? null : comment.Trim(),
+                    IsApproved = true,
+                    IsVerifiedPurchase = verified,
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.Reviews.Add(review);
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Detail), new { id = productId });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteReview(int productId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
+            var existing = await _context.Reviews.FirstOrDefaultAsync(r => r.ProductId == productId && r.UserId == userId);
+            if (existing != null)
+            {
+                _context.Reviews.Remove(existing);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Detail), new { id = productId });
+        }
+
+        private string ResolveAvatar(string? path)
+        {
+            var d = Url.Content("~/image/account/default-avatar.jpg");
+            if (string.IsNullOrWhiteSpace(path)) return d;
+            var s = path.Trim();
+            if (s.StartsWith("http://", System.StringComparison.OrdinalIgnoreCase) || s.StartsWith("https://", System.StringComparison.OrdinalIgnoreCase)) return s;
+            if (s.StartsWith("~/")) return Url.Content(s);
+            if (s.StartsWith("/")) return s;
+            return Url.Content("~/" + s.TrimStart('/'));
         }
 
         private static string BuildVariantText(ProductVariant v)

@@ -14,10 +14,11 @@ namespace ZENITH.Models
         public int ProductId { get; set; }
 
         [Required]
-        [Range(1, 5)]
-        public int Rating { get; set; }
+        [Range(0.5, 5)]
+        [Column(TypeName = "decimal(3,1)")]
+        public decimal Rating { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "nvarchar(max)")]
         public string? Comment { get; set; }
 
         public bool IsApproved { get; set; } = false;

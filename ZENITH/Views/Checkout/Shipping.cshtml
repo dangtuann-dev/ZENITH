@@ -1,0 +1,482 @@
+﻿@model ZENITH.ViewModels.ShippingViewModel
+<main class="checkout-page">
+    <div class="container">
+        <style>
+            .shipping-address__radio{
+                -webkit-appearance:none;
+                appearance:none;
+                width:18px;
+                height:18px;
+                border:2px solid var(--primary-color);
+                border-radius:50%;
+                background-color:transparent;
+                display:inline-block;
+                cursor:pointer;
+            }
+            .shipping-address__radio:checked{
+                background-color:var(--primary-color);
+                border-color:var(--primary-color);
+            }
+            .shipping-address__radio:focus{
+                outline:2px solid rgba(0,0,0,0.1);
+                outline-offset:2px;
+            }
+        </style>
+        <!-- Search bar -->
+        <div class="checkout-container">
+            <div class="search-bar d-none d-md-flex">
+                <input type="text" name="" id="" placeholder="Search for item" class="search-bar__input" />
+                <button class="search-bar__submit">
+                    <img src="~/image/icons/search.svg" alt="" class="search-bar__icon icon" />
+                </button>
+            </div>
+        </div>
+
+        <!-- Breadcrumbs -->
+        <div class="checkout-container">
+            <ul class="breadcrumbs checkout-page__breadcrumbs">
+                <li>
+                    <a asp-controller="Home" asp-action="Index" class="breadcrumbs__link">
+                        Trang chủ
+                        <img src="~/image/icons/arrow-right.svg" alt="" />
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Checkout" asp-action="Index" class="breadcrumbs__link">
+                        Giỏ hàng
+                        <img src="~/image/icons/arrow-right.svg" alt="" />
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="breadcrumbs__link breadcrumbs__link--current">Vận chuyển</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Checkout content -->
+        <div class="checkout-container">
+            <div class="row gy-xl-3">
+                <div class="col-8 col-xl-12">
+                    <div class="cart-info">
+                        <h1 class="cart-info__heading">1. Vận chuyển</h1>
+                        <div class="cart-info__separate"></div>
+
+                        <!-- Checkout address -->
+                        <div class="user-address">
+                            <div class="user-address__top">
+                                <div>
+                                    <h2 class="user-address__title">Địa chỉ nhận hàng</h2>
+                                    <p class="user-address__desc">Chúng tôi sẽ giao hàng đến đâu?</p>
+                                </div>
+                                <button class="user-address__btn btn btn--primary btn--rounded btn--small js-open-address-modal" data-mode="create">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="1em" height="1em">
+        <path fill="#FFFFFF" d="M352 128C352 110.3 337.7 96 320 96C302.3 96 288 110.3 288 128L288 288L128 288C110.3 288 96 302.3 96 320C96 337.7 110.3 352 128 352L288 352L288 512C288 529.7 302.3 544 320 544C337.7 544 352 529.7 352 512L352 352L512 352C529.7 352 544 337.7 544 320C544 302.3 529.7 288 512 288L352 288L352 128z"/>
+    </svg>
+                                    Thêm địa chỉ mới
+                                </button>
+                            </div>
+                            <div class="user-address__list">
+                                @if (Model.Addresses != null && Model.Addresses.Any())
+                                {
+                                    foreach (var addr in Model.Addresses)
+                                    {
+                                        <article class="address-card" data-address-id="@addr.AddressId" data-full-name="@addr.FullName" data-phone="@addr.Phone" data-address-line="@addr.AddressLine" data-ward="@addr.Ward" data-district="@addr.District" data-city="@addr.City">
+                                            <div class="address-card__left">
+                                                <div class="address-card__choose" style="display:@((Model.Addresses?.Count ?? 0) > 1 ? "block" : "none")">
+                                                    <label class="cart-info__checkbox">
+                                                        <input type="radio"
+                                                               name="shipping-address"
+                                                               value="@addr.AddressId"
+                                                               @(Model.SelectedAddressId == addr.AddressId ? "checked" : null)
+                                                               class="shipping-address__radio" />
+                                                    </label>
+                                                </div>
+                                                <div class="address-card__info">
+                                                    <h3 class="address-card__title">@addr.FullName</h3>
+                                                    <p class="address-card__desc">@addr.DisplayText</p>
+                                                    <ul class="address-card__list">
+                                                        <li class="address-card__list-item">@addr.Phone</li>
+                                                        <li class="address-card__list-item">Giao hàng tiêu chuẩn</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="address-card__right">
+                                                <div class="address-card__ctrl">
+                                                    <button class="cart-info__edit-btn js-open-address-modal" data-mode="edit">
+                                                        <img class="icon" src="~/image/icons/edit.svg" alt="" />
+                                                        Sửa
+                                                    </button>
+                                                    <button class="cart-info__edit-btn js-delete-address">
+                                                        <img class="icon" src="~/image/icons/trash.svg" alt="" />
+                                                        Xóa
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="user-address__message">
+                                        Chưa có địa chỉ.
+                                        <a class="user-address__link js-open-address-modal" href="#" data-mode="create">Thêm địa chỉ mới</a>
+                                    </p>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="cart-info__separate"></div>
+
+                        <h2 class="cart-info__sub-heading">Sản phẩm</h2>
+                        <div class="cart-info__list">
+                            @if (Model.Items != null && Model.Items.Any())
+                            {
+                                foreach (var item in Model.Items)
+                                {
+                                    <article class="cart-item">
+                                        <a href="#">
+                                            <img src="@item.ImageUrl" alt="" class="cart-item__thumb" />
+                                        </a>
+                                        <div class="cart-item__content">
+                                            <div class="cart-item__content-left">
+                                                <h3 class="cart-item__title">
+                                                    <a href="#">@item.ProductName</a>
+                                                </h3>
+                                                <p class="cart-item__price-wrap">
+                                                    @item.UnitPriceFormatted | <span class="cart-item__status">@(item.StockQuantity > 0 ? "Còn hàng" : "Hết hàng")</span>
+                                                </p>
+                                                <div class="cart-item__ctrl cart-item__ctrl--md-block">
+                                                    <div class="cart-item__input">
+                                                        @item.AttributesText
+                                                        <img class="icon" src="~/image/icons/arrow-down-2.svg" alt="" />
+                                                    </div>
+                                                    <div class="cart-item__input">
+                                                        <span>@item.Quantity</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="cart-item__content-right">
+                                                <p class="cart-item__total-price">@item.LineTotalFormatted</p>
+                                                <div class="cart-item__ctrl">
+                                                    <div class="cart-item__input">
+                                                        <span>@item.Quantity</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </article>
+                                }
+                            }
+                        </div>
+                        <div class="cart-info__bottom d-md-none">
+                            <div class="row">
+                                <div class="col-8 col-xxl-7">
+                                    <div class="cart-info__continue">
+                                        <a asp-controller="Home" asp-action="Index" class="cart-info__continue-link">
+                                            <img class="cart-info__continue-icon icon" src="~/image/icons/arrow-down-2.svg" alt="" />
+                                            Tiếp tục mua sắm
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-4 col-xxl-5">
+                                    <div class="cart-info__row">
+                                        <span>Tổng cộng:</span>
+                                        <span>@Model.SubtotalFormatted</span>
+                                    </div>
+                                    <div class="cart-info__row">
+                                        <span>Phí vận chuyển:</span>
+                                        <span>@Model.ShippingFormatted</span>
+                                    </div>
+                                    <div class="cart-info__separate"></div>
+                                    <div class="cart-info__row cart-info__row--bold">
+                                        <span>Tổng:</span>
+                                        <span>@Model.TotalFormatted</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 col-xl-12">
+                    <div class="cart-info">
+                        <div class="cart-info__row">
+                            <span>Số sản phẩm</span>
+                            <span>@Model.ItemCount</span>
+                        </div>
+                        <div class="cart-info__row">
+                            <span>Tổng cộng</span>
+                            <span>@Model.SubtotalFormatted</span>
+                        </div>
+                        <div class="cart-info__row">
+                            <span>Phí vận chuyển</span>
+                            <span>@Model.ShippingFormatted</span>
+                        </div>
+                        <div class="cart-info__separate"></div>
+                        <div class="cart-info__row">
+                            <span>Tổng dự kiến</span>
+                            <span>@Model.TotalFormatted</span>
+                        </div>
+                        <a href="#" class="cart-info__next-btn btn btn--primary btn--rounded">
+                            Tiếp tục thanh toán
+                        </a>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div id="add-new-address" class="modal hide" style="--content-width: 650px">
+    <div class="modal__overlay js-close-address-modal"></div>
+    <div class="modal__content">
+        <form action="#" class="form" id="address-form">
+            <h2 class="modal__heading" id="address-modal-title">Thêm địa chỉ giao hàng</h2>
+            <div class="modal__body">
+                <input type="hidden" id="addressId" />
+                <div class="form__row">
+                    <div class="form__group">
+                        <label for="name" class="form__label form__label--small">Họ tên</label>
+                        <div class="form__text-input form__text-input--small">
+                            <input type="text" name="name" id="name" placeholder="Họ tên" class="form__input" required minlength="2" />
+                        </div>
+                    </div>
+                    <div class="form__group">
+                        <label for="phone" class="form__label form__label--small">Số điện thoại</label>
+                        <div class="form__text-input form__text-input--small">
+                            <input type="tel" name="phone" id="phone" placeholder="Số điện thoại" class="form__input" required minlength="10" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <label for="address" class="form__label form__label--small">Địa chỉ</label>
+                    <div class="form__text-area">
+                        <textarea name="address" id="address" placeholder="Số nhà, đường..." class="form__text-area-input" required></textarea>
+                    </div>
+                </div>
+                <div class="form__row">
+                    <div class="form__group">
+                        <label for="ward" class="form__label form__label--small">Phường/Xã</label>
+                        <div class="form__text-input form__text-input--small">
+                            <input type="text" id="ward" placeholder="Phường/Xã" class="form__input" />
+                        </div>
+                    </div>
+                    <div class="form__group">
+                        <label for="district" class="form__label form__label--small">Quận/Huyện</label>
+                        <div class="form__text-input form__text-input--small">
+                            <input type="text" id="district" placeholder="Quận/Huyện" class="form__input" />
+                        </div>
+                    </div>
+                    <div class="form__group">
+                        <label for="city" class="form__label form__label--small">Tỉnh/Thành phố</label>
+                        <div class="form__text-input form__text-input--small">
+                            <input type="text" id="city" placeholder="Tỉnh/Thành phố" class="form__input" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal__bottom">
+                <button type="button" class="btn btn--text js-close-address-modal">Hủy</button>
+                <button type="submit" class="btn btn--primary btn--rounded" id="address-submit-btn">Lưu địa chỉ</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        (function(){
+            const modal = document.getElementById('add-new-address');
+            function openModal(){ modal.classList.remove('hide'); modal.classList.add('show'); }
+            function closeModal(){ modal.classList.add('hide'); modal.classList.remove('show'); }
+            function clearForm(){
+                document.getElementById('addressId').value = '';
+                document.getElementById('name').value = '';
+                document.getElementById('phone').value = '';
+                document.getElementById('address').value = '';
+                document.getElementById('ward').value = '';
+                document.getElementById('district').value = '';
+                document.getElementById('city').value = '';
+            }
+            function fillForm(article){
+                const id = article.getAttribute('data-address-id') || '';
+                const fullName = article.getAttribute('data-full-name') || '';
+                const phone = article.getAttribute('data-phone') || '';
+                const line = article.getAttribute('data-address-line') || '';
+                const ward = article.getAttribute('data-ward') || '';
+                const district = article.getAttribute('data-district') || '';
+                const city = article.getAttribute('data-city') || '';
+                document.getElementById('addressId').value = id;
+                document.getElementById('name').value = fullName;
+                document.getElementById('phone').value = phone;
+                document.getElementById('address').value = line;
+                document.getElementById('ward').value = ward;
+                document.getElementById('district').value = district;
+                document.getElementById('city').value = city;
+            }
+            document.addEventListener('click', function(e){
+                const createBtn = e.target.closest('.js-open-address-modal[data-mode="create"]');
+                if(createBtn){
+                    e.preventDefault();
+                    clearForm();
+                    document.getElementById('address-modal-title').textContent = 'Thêm địa chỉ giao hàng';
+                    document.getElementById('address-submit-btn').textContent = 'Thêm địa chỉ';
+                    openModal();
+                    return;
+                }
+                const editBtn = e.target.closest('.js-open-address-modal[data-mode="edit"]');
+                if(editBtn){
+                    e.preventDefault();
+                    const article = editBtn.closest('article.address-card');
+                    if(article){
+                        fillForm(article);
+                        document.getElementById('address-modal-title').textContent = 'Sửa địa chỉ giao hàng';
+                        document.getElementById('address-submit-btn').textContent = 'Lưu thay đổi';
+                        openModal();
+                    }
+                    return;
+                }
+                if(e.target.closest('.js-close-address-modal')){
+                    e.preventDefault();
+                    closeModal();
+                }
+            });
+            document.getElementById('address-form').addEventListener('submit', function(ev){
+                ev.preventDefault();
+                const idVal = document.getElementById('addressId').value.trim();
+                const payload = {
+                    addressId: idVal ? parseInt(idVal, 10) : null,
+                    fullName: document.getElementById('name').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    addressLine: document.getElementById('address').value.trim(),
+                    ward: document.getElementById('ward').value.trim(),
+                    district: document.getElementById('district').value.trim(),
+                    city: document.getElementById('city').value.trim()
+                };
+                fetch('/Checkout/SaveAddress', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }).then(r => r.json())
+                .then(data => {
+                    if(!data || !data.success){
+                        alert('Lưu địa chỉ thất bại');
+                        return;
+                    }
+                    const a = data.address;
+                    const listEl = document.querySelector('.user-address__list');
+                    const editIconUrl = '@Url.Content("~/image/icons/edit.svg")';
+                    const trashIconUrl = '@Url.Content("~/image/icons/trash.svg")';
+                    const existing = listEl.querySelector(`article.address-card[data-address-id="${a.addressId}"]`);
+                    if(existing){
+                        existing.setAttribute('data-full-name', a.fullName);
+                        existing.setAttribute('data-phone', a.phone);
+                        existing.setAttribute('data-address-line', a.addressLine);
+                        existing.setAttribute('data-ward', a.ward);
+                        existing.setAttribute('data-district', a.district);
+                        existing.setAttribute('data-city', a.city);
+                        const titleEl = existing.querySelector('.address-card__title');
+                        const descEl = existing.querySelector('.address-card__desc');
+                        if(titleEl) titleEl.textContent = a.fullName;
+                        if(descEl) descEl.textContent = a.displayText;
+                    } else {
+                        const tpl = document.createElement('template');
+                        tpl.innerHTML = `
+<article class="address-card" data-address-id="${a.addressId}" data-full-name="${a.fullName}" data-phone="${a.phone}" data-address-line="${a.addressLine}" data-ward="${a.ward}" data-district="${a.district}" data-city="${a.city}">
+    <div class="address-card__left">
+        <div class="address-card__choose">
+            <label class="cart-info__checkbox">
+                <input type="radio" name="shipping-address" value="${a.addressId}" class="shipping-address__radio" />
+            </label>
+        </div>
+        <div class="address-card__info">
+            <h3 class="address-card__title">${a.fullName}</h3>
+            <p class="address-card__desc">${a.displayText}</p>
+            <ul class="address-card__list">
+                <li class="address-card__list-item">${a.phone}</li>
+                <li class="address-card__list-item">Giao hàng tiêu chuẩn</li>
+            </ul>
+        </div>
+    </div>
+    <div class="address-card__right">
+        <div class="address-card__ctrl">
+            <button class="cart-info__edit-btn js-open-address-modal" data-mode="edit">
+                <img class="icon" src="${editIconUrl}" alt="" />
+                Sửa
+            </button>
+            <button class="cart-info__edit-btn js-delete-address">
+                <img class="icon" src="${trashIconUrl}" alt="" />
+                Xóa
+            </button>
+        </div>
+    </div>
+</article>`;
+                        const msg = listEl.querySelector('.user-address__message');
+                        if(msg) msg.remove();
+                        listEl.prepend(tpl.content.firstElementChild);
+                    }
+                    updateContinueState();
+                    closeModal();
+                }).catch(() => {
+                    alert('Có lỗi khi kết nối máy chủ');
+                });
+            });
+
+            function updateContinueState(){
+                const addrArticles = document.querySelectorAll('.user-address__list article.address-card');
+                const hasAddr = addrArticles.length > 0;
+                const contBtn = document.querySelector('.cart-info__next-btn');
+                if(!contBtn) return;
+                if(hasAddr){
+                    contBtn.setAttribute('aria-disabled','false');
+                    contBtn.style.pointerEvents = '';
+                    contBtn.style.opacity = '';
+                } else {
+                    contBtn.setAttribute('aria-disabled','true');
+                    contBtn.style.pointerEvents = 'none';
+                    contBtn.style.opacity = '0.6';
+                }
+                const chooseBlocks = document.querySelectorAll('.address-card__choose');
+                chooseBlocks.forEach(el => { el.style.display = addrArticles.length > 1 ? 'block' : 'none'; });
+            }
+            updateContinueState();
+
+            document.addEventListener('click', function(e){
+                const delBtn = e.target.closest('.js-delete-address');
+                if(delBtn){
+                    e.preventDefault();
+                    const article = delBtn.closest('article.address-card');
+                    const id = article ? parseInt(article.getAttribute('data-address-id')||'0',10) : 0;
+                    if(!id){ return; }
+                    if(!confirm('Bạn có chắc muốn xóa địa chỉ này?')) return;
+                    fetch('/Checkout/DeleteAddress', {
+                        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ addressId: id })
+                    }).then(r=>r.json()).then(data=>{
+                        if(!data || !data.success){ alert('Xóa địa chỉ thất bại'); return; }
+                        article.remove();
+                        const listEl = document.querySelector('.user-address__list');
+                        if(listEl && listEl.querySelectorAll('article.address-card').length === 0){
+                            const p = document.createElement('p');
+                            p.className = 'user-address__message';
+                            p.innerHTML = 'Chưa có địa chỉ. <a class="user-address__link js-open-address-modal" href="#" data-mode="create">Thêm địa chỉ mới</a>';
+                            listEl.appendChild(p);
+                        }
+                        updateContinueState();
+                    }).catch(()=>{ alert('Có lỗi khi kết nối máy chủ'); });
+                }
+                const nextBtn = e.target.closest('.cart-info__next-btn');
+                if(nextBtn){
+                    e.preventDefault();
+                    const disabled = nextBtn.getAttribute('aria-disabled') === 'true';
+                    if(disabled){ return; }
+                    const selected = document.querySelector('input[name="shipping-address"]:checked');
+                    let id = selected ? parseInt(selected.value, 10) : 0;
+                    if(!id){
+                        const firstArticle = document.querySelector('.user-address__list article.address-card');
+                        id = firstArticle ? parseInt(firstArticle.getAttribute('data-address-id')||'0',10) : 0;
+                    }
+                    if(!id){ alert('Vui lòng chọn địa chỉ giao hàng'); return; }
+                    const payUrl = '@Url.Action("Payment","Checkout")' + '?addressId=' + id;
+                    window.location.href = payUrl;
+                }
+            });
+        })();
+    </script>
+</div>

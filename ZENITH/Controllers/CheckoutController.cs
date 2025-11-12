@@ -1,0 +1,659 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ZENITH.AppData;
+using ZENITH.ViewModels;
+
+namespace ZENITH.Controllers
+{
+    [Authorize]
+    public class CheckoutController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<Models.ApplicationUser> _userManager;
+
+        public CheckoutController(ApplicationDbContext context, UserManager<Models.ApplicationUser> userManager)
+        {
+            _context = context;
+            _userManager = userManager;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userId)) return RedirectToPage("/Account/Login", new { area = "Identity" });
+
+            var cartItems = await _context.CartItems
+                .AsNoTracking()
+                .Where(c => c.UserId == userId)
+                .OrderByDescending(c => c.UpdatedAt)
+                .Include(c => c.ProductVariant)
+                    .ThenInclude(v => v.Product)
+                        .ThenInclude(p => p.ProductImages)
+                .Include(c => c.ProductVariant)
+                    .ThenInclude(v => v.VariantAttributeValues)
+                        .ThenInclude(vav => vav.AttributeValue)
+                            .ThenInclude(av => av.Attribute)
+                .ToListAsync();
+
+            string ResolveImageUrl(string? path)
+            {
+                if (string.IsNullOrWhiteSpace(path)) return Url.Content("~/image/default.avif");
+                var s = path.Trim();
+                if (s.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || s.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) return s;
+                if (s.StartsWith("~/")) return Url.Content(s);
+                if (s.StartsWith("/")) return s;
+                var lower = s.ToLowerInvariant();
+                int idxWwwroot = lower.IndexOf("wwwroot");
+                if (idxWwwroot >= 0)
+                {
+                    var after = s.Substring(idxWwwroot + "wwwroot".Length).Replace('\\', '/');
+                    return Url.Content("~" + (after.StartsWith("/") ? after : "/" + after));
+                }
+                foreach (var marker in new[] { "/uploads/", "uploads/", "\\uploads\\", "/images/", "images/", "\\images\\", "/image/", "image/", "\\image\\" })
+                {
+                    int idx = lower.IndexOf(marker);
+                    if (idx >= 0)
+                    {
+                        var tail = s.Substring(idx).Replace('\\', '/');
+                        return Url.Content("~" + (tail.StartsWith("/") ? tail : "/" + tail));
+                    }
+                }
+                s = s.Replace('\\', '/');
+                return Url.Content("~/" + s.TrimStart('/'));
+            }
+
+            string BuildVariantText(Models.ProductVariant v)
+            {
+                if (v.VariantAttributeValues != null && v.VariantAttributeValues.Any())
+                {
+                    var parts = v.VariantAttributeValues
+                        .OrderBy(x => x.AttributeValue.Attribute.DisplayOrder)
+                        .Select(x => $"{x.AttributeValue.Attribute.DisplayName}: {x.AttributeValue.ValueName}");
+                    return string.Join(", ", parts);
+                }
+                if (!string.IsNullOrWhiteSpace(v.Attributes)) return v.Attributes.Trim();
+                if (!string.IsNullOrWhiteSpace(v.VariantSku)) return v.VariantSku;
+                return $"SKU {v.VariantId}";
+            }
+
+            var culture = new System.Globalization.CultureInfo("vi-VN");
+            int itemCount = cartItems.Sum(c => c.Quantity);
+            decimal subtotal = cartItems.Sum(c => (c.ProductVariant.SalePrice ?? c.ProductVariant.Price) * c.Quantity);
+            decimal shipping = cartItems.Count * 15000m;
+            decimal total = subtotal + shipping;
+
+            var items = cartItems.Select(ci => new CheckoutItemViewModel
+            {
+                VariantId = ci.VariantId,
+                ProductId = ci.ProductVariant.ProductId,
+                ProductName = ci.ProductVariant.Product.ProductName,
+                ImageUrl = ResolveImageUrl(ci.ProductVariant.Product.ProductImages
+                    .OrderByDescending(i => i.IsPrimary)
+                    .ThenBy(i => i.DisplayOrder)
+                    .Select(i => i.ImageUrl)
+                    .FirstOrDefault()),
+                Quantity = ci.Quantity,
+                UnitPrice = ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price,
+                LineTotal = (ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price) * ci.Quantity,
+                AttributesText = BuildVariantText(ci.ProductVariant),
+                StockQuantity = ci.ProductVariant.StockQuantity,
+                UnitPriceFormatted = (ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price).ToString("N0", culture) + " VND",
+                LineTotalFormatted = (((ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price) * ci.Quantity)).ToString("N0", culture) + " VND"
+            }).ToList();
+
+            foreach (var it in items)
+            {
+                var variants = await _context.ProductVariants
+                    .AsNoTracking()
+                    .Where(v => v.ProductId == it.ProductId && v.IsActive)
+                    .Include(v => v.VariantAttributeValues)
+                        .ThenInclude(vav => vav.AttributeValue)
+                            .ThenInclude(av => av.Attribute)
+                    .OrderBy(v => v.SalePrice ?? v.Price)
+                    .ToListAsync();
+                it.Variants = variants.Select(v => new ZENITH.ViewModels.VariantOptionViewModel
+                {
+                    VariantId = v.VariantId,
+                    Text = BuildVariantText(v),
+                    Price = v.Price,
+                    SalePrice = v.SalePrice,
+                    StockQuantity = v.StockQuantity,
+                    IsSelected = v.VariantId == it.VariantId
+                }).ToList();
+            }
+
+            var model = new CheckoutIndexViewModel
+            {
+                Items = items,
+                ItemCount = itemCount,
+                Subtotal = subtotal,
+                Shipping = shipping,
+                Total = total,
+                SubtotalFormatted = subtotal.ToString("N0", culture) + " VND",
+                ShippingFormatted = shipping.ToString("N0", culture) + " VND",
+                TotalFormatted = total.ToString("N0", culture) + " VND"
+            };
+
+            return View(model);
+        }
+
+        public class UpdateQuantityRequest
+        {
+            public int? VariantId { get; set; }
+            public int? Delta { get; set; }
+        }
+
+        [HttpPost]
+        [Route("Checkout/UpdateQuantity")]
+        public async Task<IActionResult> UpdateQuantity([FromBody] UpdateQuantityRequest request)
+        {
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userId)) return Unauthorized(new { success = false });
+            int variantId = request?.VariantId ?? 0;
+            int delta = request?.Delta ?? 0;
+            if (variantId <= 0 || delta == 0) return BadRequest(new { success = false });
+            var item = await _context.CartItems.FirstOrDefaultAsync(ci => ci.UserId == userId && ci.VariantId == variantId);
+            if (item == null) return NotFound(new { success = false });
+            item.Quantity += delta;
+            if (item.Quantity <= 0)
+            {
+                _context.CartItems.Remove(item);
+            }
+            else
+            {
+                item.UpdatedAt = DateTime.UtcNow;
+            }
+            await _context.SaveChangesAsync();
+            return Ok(new { success = true });
+        }
+
+        public class RemoveItemRequest
+        {
+            public int? VariantId { get; set; }
+        }
+
+        [HttpPost]
+        [Route("Checkout/RemoveItem")]
+        public async Task<IActionResult> RemoveItem([FromBody] RemoveItemRequest request)
+        {
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userId)) return Unauthorized(new { success = false });
+            int variantId = request?.VariantId ?? 0;
+            if (variantId <= 0) return BadRequest(new { success = false });
+            var item = await _context.CartItems.FirstOrDefaultAsync(ci => ci.UserId == userId && ci.VariantId == variantId);
+            if (item == null) return NotFound(new { success = false });
+            _context.CartItems.Remove(item);
+            await _context.SaveChangesAsync();
+            return Ok(new { success = true });
+        }
+
+        public class SaveItemRequest
+        {
+            public int? VariantId { get; set; }
+        }
+
+        [HttpPost]
+        [Route("Checkout/SaveItem")]
+        public async Task<IActionResult> SaveItem([FromBody] SaveItemRequest request)
+        {
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userId)) return Unauthorized(new { success = false });
+            int variantId = request?.VariantId ?? 0;
+            if (variantId <= 0) return BadRequest(new { success = false });
+
+            var variant = await _context.ProductVariants.FirstOrDefaultAsync(v => v.VariantId == variantId && v.IsActive);
+            if (variant == null) return NotFound(new { success = false });
+
+            var existedFav = await _context.Favorites.FirstOrDefaultAsync(f => f.UserId == userId && f.VariantId == variantId);
+            if (existedFav == null)
+            {
+                _context.Favorites.Add(new ZENITH.Models.Favorite
+                {
+                    UserId = userId,
+                    VariantId = variantId,
+                    AddedAt = DateTime.UtcNow
+                });
+            }
+
+            var cartItem = await _context.CartItems.FirstOrDefaultAsync(ci => ci.UserId == userId && ci.VariantId == variantId);
+            if (cartItem != null)
+            {
+                _context.CartItems.Remove(cartItem);
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { success = true });
+        }
+
+        public class SaveAddressRequest
+        {
+            public int? AddressId { get; set; }
+            public string? FullName { get; set; }
+            public string? Phone { get; set; }
+            public string? AddressLine { get; set; }
+            public string? Ward { get; set; }
+            public string? District { get; set; }
+            public string? City { get; set; }
+        }
+
+        [HttpPost]
+        [Route("Checkout/SaveAddress")]
+        public async Task<IActionResult> SaveAddress([FromBody] SaveAddressRequest request)
+        {
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userId)) return Unauthorized(new { success = false });
+
+            string fullName = (request?.FullName ?? string.Empty).Trim();
+            string phone = (request?.Phone ?? string.Empty).Trim();
+            string addressLine = (request?.AddressLine ?? string.Empty).Trim();
+            string ward = (request?.Ward ?? string.Empty).Trim();
+            string district = (request?.District ?? string.Empty).Trim();
+            string city = (request?.City ?? string.Empty).Trim();
+
+            if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(phone) || string.IsNullOrEmpty(addressLine)
+                || string.IsNullOrEmpty(ward) || string.IsNullOrEmpty(district) || string.IsNullOrEmpty(city))
+            {
+                return BadRequest(new { success = false });
+            }
+
+            int addrId = request?.AddressId ?? 0;
+            ZENITH.Models.Address? entity = null;
+            if (addrId > 0)
+            {
+                entity = await _context.Addresses.FirstOrDefaultAsync(a => a.AddressId == addrId && a.UserId == userId);
+                if (entity == null) return NotFound(new { success = false });
+                entity.FullName = fullName;
+                entity.Phone = phone;
+                entity.AddressLine = addressLine;
+                entity.Ward = ward;
+                entity.District = district;
+                entity.City = city;
+            }
+            else
+            {
+                bool firstAddress = !await _context.Addresses.AnyAsync(a => a.UserId == userId);
+                entity = new ZENITH.Models.Address
+                {
+                    UserId = userId,
+                    FullName = fullName,
+                    Phone = phone,
+                    AddressLine = addressLine,
+                    Ward = ward,
+                    District = district,
+                    City = city,
+                    IsDefault = firstAddress
+                };
+                _context.Addresses.Add(entity);
+            }
+
+            await _context.SaveChangesAsync();
+
+            var display = string.Join(", ", new[] { entity.AddressLine, entity.Ward, entity.District, entity.City }.Where(s => !string.IsNullOrWhiteSpace(s)));
+            return Ok(new
+            {
+                success = true,
+                address = new
+                {
+                    addressId = entity.AddressId,
+                    fullName = entity.FullName,
+                    phone = entity.Phone,
+                    addressLine = entity.AddressLine,
+                    ward = entity.Ward,
+                    district = entity.District,
+                    city = entity.City,
+                    isDefault = entity.IsDefault,
+                    displayText = display
+                }
+            });
+        }
+
+        public class DeleteAddressRequest
+        {
+            public int? AddressId { get; set; }
+        }
+
+        [HttpPost]
+        [Route("Checkout/DeleteAddress")]
+        public async Task<IActionResult> DeleteAddress([FromBody] DeleteAddressRequest request)
+        {
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userId)) return Unauthorized(new { success = false });
+            int id = request?.AddressId ?? 0;
+            if (id <= 0) return BadRequest(new { success = false });
+
+            var entity = await _context.Addresses.FirstOrDefaultAsync(a => a.AddressId == id && a.UserId == userId);
+            if (entity == null) return NotFound(new { success = false });
+
+            _context.Addresses.Remove(entity);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true });
+        }
+
+        public class ChangeVariantRequest
+        {
+            public int? OldVariantId { get; set; }
+            public int? NewVariantId { get; set; }
+        }
+
+        [HttpPost]
+        [Route("Checkout/ChangeVariant")]
+        public async Task<IActionResult> ChangeVariant([FromBody] ChangeVariantRequest request)
+        {
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userId)) return Unauthorized(new { success = false });
+            int oldId = request?.OldVariantId ?? 0;
+            int newId = request?.NewVariantId ?? 0;
+            if (oldId <= 0 || newId <= 0 || oldId == newId) return BadRequest(new { success = false });
+            var oldItem = await _context.CartItems.FirstOrDefaultAsync(ci => ci.UserId == userId && ci.VariantId == oldId);
+            if (oldItem == null) return NotFound(new { success = false });
+            var newVariant = await _context.ProductVariants.FirstOrDefaultAsync(v => v.VariantId == newId && v.IsActive);
+            if (newVariant == null) return NotFound(new { success = false });
+            var existingNew = await _context.CartItems.FirstOrDefaultAsync(ci => ci.UserId == userId && ci.VariantId == newId);
+            if (existingNew != null)
+            {
+                existingNew.Quantity += oldItem.Quantity;
+                existingNew.UpdatedAt = DateTime.UtcNow;
+                _context.CartItems.Remove(oldItem);
+            }
+            else
+            {
+                oldItem.VariantId = newId;
+                oldItem.UpdatedAt = DateTime.UtcNow;
+            }
+            await _context.SaveChangesAsync();
+            return Ok(new { success = true });
+        }
+        [HttpGet]
+        [Route("Checkout/GetCartSummary")]
+        public async Task<IActionResult> GetCartSummary()
+        {
+            var userId = _userManager.GetUserId(User);
+            var culture = new System.Globalization.CultureInfo("vi-VN");
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Ok(new
+                {
+                    count = 0,
+                    subtotal = 0m,
+                    shipping = 0m,
+                    tax = 0m,
+                    total = 0m,
+                    subtotalFormatted = 0m.ToString("N0", culture) + " VND",
+                    shippingFormatted = 0m.ToString("N0", culture) + " VND",
+                    totalFormatted = 0m.ToString("N0", culture) + " VND"
+                });
+            }
+
+            var cartItems = await _context.CartItems
+                .AsNoTracking()
+                .Where(c => c.UserId == userId)
+                .Include(c => c.ProductVariant)
+                .ToListAsync();
+
+            int count = cartItems.Sum(c => c.Quantity);
+            decimal subtotal = cartItems.Sum(c => (c.ProductVariant.SalePrice ?? c.ProductVariant.Price) * c.Quantity);
+            decimal shipping = cartItems.Count * 15000m;
+            decimal tax = 0m;
+            decimal total = subtotal + shipping + tax;
+
+            return Ok(new
+            {
+                count,
+                subtotal,
+                shipping,
+                tax,
+                total,
+                subtotalFormatted = subtotal.ToString("N0", culture) + " VND",
+                shippingFormatted = shipping.ToString("N0", culture) + " VND",
+                totalFormatted = total.ToString("N0", culture) + " VND"
+            });
+        }
+        public IActionResult Shipping()
+        {
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userId)) return RedirectToPage("/Account/Login", new { area = "Identity" });
+
+            var cartItems = _context.CartItems
+                .AsNoTracking()
+                .Where(c => c.UserId == userId)
+                .OrderByDescending(c => c.UpdatedAt)
+                .Include(c => c.ProductVariant)
+                    .ThenInclude(v => v.Product)
+                        .ThenInclude(p => p.ProductImages)
+                .Include(c => c.ProductVariant)
+                    .ThenInclude(v => v.VariantAttributeValues)
+                        .ThenInclude(vav => vav.AttributeValue)
+                            .ThenInclude(av => av.Attribute)
+                .ToList();
+
+            string ResolveImageUrl(string? path)
+            {
+                if (string.IsNullOrWhiteSpace(path)) return Url.Content("~/image/default.avif");
+                var s = path.Trim();
+                if (s.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || s.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) return s;
+                if (s.StartsWith("~/")) return Url.Content(s);
+                if (s.StartsWith("/")) return s;
+                var lower = s.ToLowerInvariant();
+                int idxWwwroot = lower.IndexOf("wwwroot");
+                if (idxWwwroot >= 0)
+                {
+                    var after = s.Substring(idxWwwroot + "wwwroot".Length).Replace('\\', '/');
+                    return Url.Content("~" + (after.StartsWith("/") ? after : "/" + after));
+                }
+                foreach (var marker in new[] { "/uploads/", "uploads/", "\\uploads\\", "/images/", "images/", "\\images\\", "/image/", "image/", "\\image\\" })
+                {
+                    int idx = lower.IndexOf(marker);
+                    if (idx >= 0)
+                    {
+                        var tail = s.Substring(idx).Replace('\\', '/');
+                        return Url.Content("~" + (tail.StartsWith("/") ? tail : "/" + tail));
+                    }
+                }
+                s = s.Replace('\\', '/');
+                return Url.Content("~/" + s.TrimStart('/'));
+            }
+
+            string BuildVariantText(Models.ProductVariant v)
+            {
+                if (v.VariantAttributeValues != null && v.VariantAttributeValues.Any())
+                {
+                    var parts = v.VariantAttributeValues
+                        .OrderBy(x => x.AttributeValue.Attribute.DisplayOrder)
+                        .Select(x => $"{x.AttributeValue.Attribute.DisplayName}: {x.AttributeValue.ValueName}");
+                    return string.Join(", ", parts);
+                }
+                if (!string.IsNullOrWhiteSpace(v.Attributes)) return v.Attributes.Trim();
+                if (!string.IsNullOrWhiteSpace(v.VariantSku)) return v.VariantSku;
+                return $"SKU {v.VariantId}";
+            }
+
+            var culture = new System.Globalization.CultureInfo("vi-VN");
+            int itemCount = cartItems.Sum(c => c.Quantity);
+            decimal subtotal = cartItems.Sum(c => (c.ProductVariant.SalePrice ?? c.ProductVariant.Price) * c.Quantity);
+            decimal shipping = cartItems.Count * 15000m;
+            decimal total = subtotal + shipping;
+
+            var items = cartItems.Select(ci => new CheckoutItemViewModel
+            {
+                VariantId = ci.VariantId,
+                ProductId = ci.ProductVariant.ProductId,
+                ProductName = ci.ProductVariant.Product.ProductName,
+                ImageUrl = ResolveImageUrl(ci.ProductVariant.Product.ProductImages
+                    .OrderByDescending(i => i.IsPrimary)
+                    .ThenBy(i => i.DisplayOrder)
+                    .Select(i => i.ImageUrl)
+                    .FirstOrDefault()),
+                Quantity = ci.Quantity,
+                UnitPrice = ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price,
+                LineTotal = (ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price) * ci.Quantity,
+                AttributesText = BuildVariantText(ci.ProductVariant),
+                StockQuantity = ci.ProductVariant.StockQuantity,
+                UnitPriceFormatted = (ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price).ToString("N0", culture) + " VND",
+                LineTotalFormatted = (((ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price) * ci.Quantity)).ToString("N0", culture) + " VND"
+            }).ToList();
+
+            var addresses = _context.Addresses
+                .AsNoTracking()
+                .Where(a => a.UserId == userId)
+                .OrderByDescending(a => a.IsDefault)
+                .ThenByDescending(a => a.AddressId)
+                .Select(a => new AddressItemViewModel
+                {
+                    AddressId = a.AddressId,
+                    FullName = a.FullName,
+                    Phone = a.Phone,
+                    AddressLine = a.AddressLine,
+                    Ward = a.Ward,
+                    District = a.District,
+                    City = a.City,
+                    IsDefault = a.IsDefault
+                })
+                .ToList();
+
+            int? selectedId = addresses.FirstOrDefault(a => a.IsDefault)?.AddressId;
+            selectedId ??= addresses.FirstOrDefault()?.AddressId;
+
+            var model = new ShippingViewModel
+            {
+                Addresses = addresses,
+                SelectedAddressId = selectedId,
+                Items = items,
+                ItemCount = itemCount,
+                Subtotal = subtotal,
+                Shipping = shipping,
+                Total = total,
+                SubtotalFormatted = subtotal.ToString("N0", culture) + " VND",
+                ShippingFormatted = shipping.ToString("N0", culture) + " VND",
+                TotalFormatted = total.ToString("N0", culture) + " VND"
+            };
+
+            return View(model);
+        }
+        public IActionResult Payment(int? addressId)
+        {
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userId)) return RedirectToPage("/Account/Login", new { area = "Identity" });
+
+            var cartItems = _context.CartItems
+                .AsNoTracking()
+                .Where(c => c.UserId == userId)
+                .OrderByDescending(c => c.UpdatedAt)
+                .Include(c => c.ProductVariant)
+                    .ThenInclude(v => v.Product)
+                        .ThenInclude(p => p.ProductImages)
+                .Include(c => c.ProductVariant)
+                    .ThenInclude(v => v.VariantAttributeValues)
+                        .ThenInclude(vav => vav.AttributeValue)
+                            .ThenInclude(av => av.Attribute)
+                .ToList();
+
+            string ResolveImageUrl(string? path)
+            {
+                if (string.IsNullOrWhiteSpace(path)) return Url.Content("~/image/default.avif");
+                var s = path.Trim();
+                if (s.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || s.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) return s;
+                if (s.StartsWith("~/")) return Url.Content(s);
+                if (s.StartsWith("/")) return s;
+                var lower = s.ToLowerInvariant();
+                int idxWwwroot = lower.IndexOf("wwwroot");
+                if (idxWwwroot >= 0)
+                {
+                    var after = s.Substring(idxWwwroot + "wwwroot".Length).Replace('\\', '/');
+                    return Url.Content("~" + (after.StartsWith("/") ? after : "/" + after));
+                }
+                foreach (var marker in new[] { "/uploads/", "uploads/", "\\uploads\\", "/images/", "images/", "\\images\\", "/image/", "image/", "\\image\\" })
+                {
+                    int idx = lower.IndexOf(marker);
+                    if (idx >= 0)
+                    {
+                        var tail = s.Substring(idx).Replace('\\', '/');
+                        return Url.Content("~" + (tail.StartsWith("/") ? tail : "/" + tail));
+                    }
+                }
+                s = s.Replace('\\', '/');
+                return Url.Content("~/" + s.TrimStart('/'));
+            }
+
+            string BuildVariantText(Models.ProductVariant v)
+            {
+                if (v.VariantAttributeValues != null && v.VariantAttributeValues.Any())
+                {
+                    var parts = v.VariantAttributeValues
+                        .OrderBy(x => x.AttributeValue.Attribute.DisplayOrder)
+                        .Select(x => $"{x.AttributeValue.Attribute.DisplayName}: {x.AttributeValue.ValueName}");
+                    return string.Join(", ", parts);
+                }
+                if (!string.IsNullOrWhiteSpace(v.Attributes)) return v.Attributes.Trim();
+                if (!string.IsNullOrWhiteSpace(v.VariantSku)) return v.VariantSku;
+                return $"SKU {v.VariantId}";
+            }
+
+            var culture = new System.Globalization.CultureInfo("vi-VN");
+            int itemCount = cartItems.Sum(c => c.Quantity);
+            decimal subtotal = cartItems.Sum(c => (c.ProductVariant.SalePrice ?? c.ProductVariant.Price) * c.Quantity);
+            decimal shipping = cartItems.Count * 15000m;
+            decimal total = subtotal + shipping;
+
+            var items = cartItems.Select(ci => new CheckoutItemViewModel
+            {
+                VariantId = ci.VariantId,
+                ProductId = ci.ProductVariant.ProductId,
+                ProductName = ci.ProductVariant.Product.ProductName,
+                ImageUrl = ResolveImageUrl(ci.ProductVariant.Product.ProductImages
+                    .OrderByDescending(i => i.IsPrimary)
+                    .ThenBy(i => i.DisplayOrder)
+                    .Select(i => i.ImageUrl)
+                    .FirstOrDefault()),
+                Quantity = ci.Quantity,
+                UnitPrice = ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price,
+                LineTotal = (ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price) * ci.Quantity,
+                AttributesText = BuildVariantText(ci.ProductVariant),
+                StockQuantity = ci.ProductVariant.StockQuantity,
+                UnitPriceFormatted = (ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price).ToString("N0", culture) + " VND",
+                LineTotalFormatted = (((ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price) * ci.Quantity)).ToString("N0", culture) + " VND"
+            }).ToList();
+
+            var addresses = _context.Addresses
+                .AsNoTracking()
+                .Where(a => a.UserId == userId)
+                .OrderByDescending(a => a.IsDefault)
+                .ThenByDescending(a => a.AddressId)
+                .Select(a => new AddressItemViewModel
+                {
+                    AddressId = a.AddressId,
+                    FullName = a.FullName,
+                    Phone = a.Phone,
+                    AddressLine = a.AddressLine,
+                    Ward = a.Ward,
+                    District = a.District,
+                    City = a.City,
+                    IsDefault = a.IsDefault
+                })
+                .ToList();
+
+            int? selectedId = addressId;
+            selectedId ??= addresses.FirstOrDefault(a => a.IsDefault)?.AddressId;
+            selectedId ??= addresses.FirstOrDefault()?.AddressId;
+
+            var selected = addresses.FirstOrDefault(a => a.AddressId == (selectedId ?? 0));
+
+            var model = new PaymentViewModel
+            {
+                SelectedAddress = selected,
+                Items = items,
+                ItemCount = itemCount,
+                Subtotal = subtotal,
+                Shipping = shipping,
+                Total = total,
+                SubtotalFormatted = subtotal.ToString("N0", culture) + " VND",
+                ShippingFormatted = shipping.ToString("N0", culture) + " VND",
+                TotalFormatted = total.ToString("N0", culture) + " VND"
+            };
+
+            return View(model);
+        }
+    }
+}

@@ -1,0 +1,173 @@
+﻿
+<div class="col-3 col-xl-4 col-lg-5 col-md-12">
+    <aside class="profile__sidebar">
+        <!-- User -->
+        <div class="profile-user">
+            <form id="avatarUploadForm" asp-controller="Profile" asp-action="UploadAvatar" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display:none" />
+            </form>
+            <img src="@Url.Content(ViewBag.AvatarUrl ?? "~/image/account/default-avatar.jpg")" alt="Avatar" class="profile-user__avatar" id="profileAvatar" />
+            <h1 class="profile-user__name">@((ViewBag.FullName as string) ?? "")</h1>
+            <p class="profile-user__desc">Đăng ký: @(((DateTime?)ViewBag.RegisteredDate)?.ToString("dd MMM yyyy", new System.Globalization.CultureInfo("vi-VN")))</p>
+        </div>
+
+        <!-- Menu 1 -->
+        <div class="profile-menu">
+            <a asp-controller="Profile" asp-action="index"
+                ><h3 class="profile-menu__title">Tài Khoản Của Tôi</h3></a>
+            <ul class="profile-menu__list">
+                <li>
+                    <a asp-controller="Profile" asp-action="EditPersonalInfo" class="profile-menu__link">
+                        <span class="profile-menu__icon">
+                            <img src="~/image/icons/profile.svg" alt="" class="icon" />
+                        </span>
+                        Thông tin cá nhân
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Profile" asp-action="EditAddressInfo" asp-route-addressId="@((ViewBag.AddressId ?? ViewBag.DefaultAddressId ?? 0))" class="profile-menu__link">
+                        <span class="profile-menu__icon">
+                            <img src="~/image/icons/location.svg" alt="" class="icon" />
+                        </span>
+                        Địa chỉ
+                    </a>
+                </li>
+                
+                <li>
+                    <a asp-controller="Profile" asp-action="EditPassword" class="profile-menu__link">
+                        <span class="profile-menu__icon">
+                            <img src="~/image/icons/password.png" style="width: 24px;height:25px;" alt="" class="icon" />
+                        </span>
+                        Đổi mật khẩu
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Profile" asp-action="DeleteAccount" class="profile-menu__link">
+                        <span class="profile-menu__icon">
+                            <img src="~/image/icons/message-2.svg" alt="" class="icon" />
+                        </span>
+                        Quyền riêng tư
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Menu 2 -->
+        <div class="profile-menu">
+            <h3 class="profile-menu__title">My items</h3>
+            <ul class="profile-menu__list">
+                <li>
+                    <a href="#!" class="profile-menu__link">
+                        <span class="profile-menu__icon">
+                            <img src="~/image/icons/download.svg" alt="" class="icon" />
+                        </span>
+                        Reorder
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Favorites"  asp-action="Index" class="profile-menu__link">
+                        <span class="profile-menu__icon">
+                            <img src="~/image/icons/heart.svg" alt="" class="icon" />
+                        </span>
+                        Yêu thích
+                    </a>
+                </li>
+                <li>
+                    <a href="#!" class="profile-menu__link">
+                        <span class="profile-menu__icon">
+                            <img src="~/image/icons/gift-2.svg" alt="" class="icon" />
+                        </span>
+                        Registries
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Menu 3 -->
+        <div class="profile-menu">
+            <h3 class="profile-menu__title">Subscriptions & plans</h3>
+            <ul class="profile-menu__list">
+                <li>
+                    <a href="#!" class="profile-menu__link">
+                        <span class="profile-menu__icon">
+                            <img src="~/image/icons/shield.svg" alt="" class="icon" />
+                        </span>
+                        Protection plans
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Menu 4 -->
+        <div class="profile-menu">
+            <h3 class="profile-menu__title">Customer Service</h3>
+            <ul class="profile-menu__list">
+                <li>
+                    <a href="#!" class="profile-menu__link">
+                        <span class="profile-menu__icon">
+                            <img src="~/image/icons/info.svg" alt="" class="icon" />
+                        </span>
+                        Help
+                    </a>
+                </li>
+                <li>
+                    <a href="#!" class="profile-menu__link">
+                        <span class="profile-menu__icon">
+                            <img src="~/image/icons/danger.svg" alt="" class="icon" />
+                        </span>
+                        Terms of Use
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+</div>
+<script>
+    (function () {
+        const avatarImg = document.getElementById('profileAvatar');
+        const fileInput = document.getElementById('avatarInput');
+        const form = document.getElementById('avatarUploadForm');
+
+        if (!avatarImg || !fileInput || !form) return;
+
+        avatarImg.style.cursor = 'pointer';
+        avatarImg.title = 'Nhấp để đổi ảnh đại diện';
+        avatarImg.addEventListener('click', function () {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function () {
+            if (!fileInput.files || fileInput.files.length === 0) return;
+            const fd = new FormData(form);
+            // FormData(form) đã chứa __RequestVerificationToken
+            fd.set('avatar', fileInput.files[0]);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: fd,
+            })
+                .then(r => r.ok ? r.json() : Promise.reject(r))
+                .then(data => {
+                    if (data && data.success && data.avatarUrl) {
+                        // Cập nhật avatar trên trang hồ sơ
+                        avatarImg.src = data.avatarUrl;
+
+                        // Cập nhật avatar ở phần layout (header)
+                        const headerAvatars = document.querySelectorAll('.top-act__avatar, .user-menu__avatar');
+                        headerAvatars.forEach(img => {
+                            if (img && img.tagName === 'IMG') {
+                                img.src = data.avatarUrl;
+                            }
+                        });
+                    } else {
+                        alert('Không thể cập nhật ảnh đại diện.');
+                    }
+                })
+                .catch(() => alert('Có lỗi xảy ra khi tải ảnh lên.'))
+                .finally(() => {
+                    fileInput.value = '';
+                });
+        });
+    })();
+</script>

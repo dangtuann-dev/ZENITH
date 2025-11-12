@@ -163,3 +163,18 @@
         </div>
     </div>
 </div>
+<script>
+document.querySelectorAll('.js-add-to-cart').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var article = this.closest('article');
+    var sel = article ? article.querySelector('.favorite-variant-select') : null;
+    var qtyEl = article ? article.querySelector('.js-qty-value') : null;
+    var vid = sel ? parseInt(sel.value) : parseInt((article?.querySelector('.js-toggle-favorite')?.getAttribute('data-variant-id')) || '0');
+    var qty = qtyEl ? parseInt(qtyEl.textContent || '1') : 1;
+    if (!vid || vid <= 0) return;
+    fetch('/Favorites/MoveToCart', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ variantId: vid, quantity: qty }) })
+      .then(function(r){ return r.json(); })
+      .then(function(){ location.reload(); });
+  });
+});
+</script>

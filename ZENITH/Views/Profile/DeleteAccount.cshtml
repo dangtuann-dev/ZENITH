@@ -1,0 +1,59 @@
+﻿
+@using ZENITH.Models
+@{
+    ViewData["Title"] = "| Thiết Lập Thông Tin Cá Nhân";
+}
+<main class="profile">
+    <div class="container">
+        <!-- Search bar -->
+        <div class="profile-container">
+            <div class="search-bar d-none d-md-flex">
+                <input type="text" name="" id="" placeholder="Tìm kiếm sản phẩm" class="search-bar__input" />
+                <button class="search-bar__submit">
+                    <img src="~/image/icons/search.svg" alt="" class="search-bar__icon icon" />
+                </button>
+            </div>
+        </div>
+
+        <!-- Profile content -->
+        <div class="profile-container">
+            <div class="row gy-md-3">
+                <partial name="_ProfilePartial" />
+                <div class="col-9 col-xl-8 col-lg-12">
+                    <div class="cart-info">
+                        <div class="row gy-3">
+                            <div class="col-12">
+                                <h2 class="cart-info__heading">
+                                    <a asp-controller="Profile" asp-action="Index">
+                                        <img src="~/image/icons/arrow-left.svg" alt="" class="icon cart-info__back-arrow" />
+                                    </a>
+                                    Xóa Tài Khoản
+                                </h2>
+                                <div class="alert alert-warning" role="alert">
+                                    <p><strong>Xóa tài khoản sẽ xóa vĩnh viễn tất cả dữ liệu của bạn. Hành động này không thể hoàn tác.</strong></p>
+                                </div>
+                                <form asp-controller="Profile" asp-action="DeleteAccount" method="post" class="form form-card">
+                                    @Html.AntiForgeryToken()
+                                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                                    <div class="form__row">
+                                        <div class="form__group">
+                                            <label for="password" class="form__label form-card__label">Mật khẩu của bạn</label>
+                                            <div class="form__text-input">
+                                                <input type="password" name="password" id="password" class="form__input" required />
+                                                <img src="~/image/icons/form-error.svg" alt="" class="form__input-icon-error" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-card__bottom">
+                                        <a class="btn btn--text" asp-controller="Profile" asp-action="Index">Hủy</a>
+                                        <button class="btn btn--danger btn--rounded">Xóa Tài Khoản</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

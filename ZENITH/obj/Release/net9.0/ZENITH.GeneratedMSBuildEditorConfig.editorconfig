@@ -17,13 +17,13 @@ build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = ZENITH
 build_property.RootNamespace = ZENITH
-build_property.ProjectDir = d:\Web Profile\ZENITH\ZENITH\
+build_property.ProjectDir = D:\Web Profile\ZENITH\ZENITH\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = d:\Web Profile\ZENITH\ZENITH
+build_property.MSBuildProjectDirectory = D:\Web Profile\ZENITH\ZENITH
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 9.0
 build_property.EnableCodeStyleSeverity = 
@@ -196,6 +196,18 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/Web Profile/ZENITH/ZENITH/Views/Checkout/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2hlY2tvdXRcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Web Profile/ZENITH/ZENITH/Views/Checkout/Payment.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2hlY2tvdXRcUGF5bWVudC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Web Profile/ZENITH/ZENITH/Views/Checkout/Shipping.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2hlY2tvdXRcU2hpcHBpbmcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/Web Profile/ZENITH/ZENITH/Views/Favorites/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmF2b3JpdGVzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -206,6 +218,30 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/Web Profile/ZENITH/ZENITH/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Web Profile/ZENITH/ZENITH/Views/Product/Detail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxEZXRhaWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Web Profile/ZENITH/ZENITH/Views/Profile/DeleteAccount.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsZVxEZWxldGVBY2NvdW50LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Web Profile/ZENITH/ZENITH/Views/Profile/EditAddressInfo.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsZVxFZGl0QWRkcmVzc0luZm8uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Web Profile/ZENITH/ZENITH/Views/Profile/EditPassword.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsZVxFZGl0UGFzc3dvcmQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Web Profile/ZENITH/ZENITH/Views/Profile/EditPersonalInfo.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsZVxFZGl0UGVyc29uYWxJbmZvLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Web Profile/ZENITH/ZENITH/Views/Profile/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/Web Profile/ZENITH/ZENITH/Views/Shared/Components/Menu/Default.cshtml]
@@ -222,6 +258,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/Web Profile/ZENITH/ZENITH/Views/Shared/_ProductCardList.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Qcm9kdWN0Q2FyZExpc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Web Profile/ZENITH/ZENITH/Views/Shared/_ProfilePartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Qcm9maWxlUGFydGlhbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/Web Profile/ZENITH/ZENITH/Views/_ViewImports.cshtml]

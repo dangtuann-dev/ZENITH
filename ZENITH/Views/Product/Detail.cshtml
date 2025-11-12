@@ -4,14 +4,14 @@
 @model ZENITH.ViewModels.ProductDetailViewModel
 @{
 }
-<main class="product-page">
+<main class="product-page" data-product-id="@Model.ProductId">
     <div class="container">
         <!-- Search bar -->
         <div class="product-container">
             <div class="search-bar d-none d-md-flex">
                 <input type="text" name="" id="" placeholder="Tìm kiếm sản phẩm" class="search-bar__input" />
                 <button class="search-bar__submit">
-                    <img src="./assets/icons/search.svg" alt="" class="search-bar__icon icon" />
+                    <img src="~/image/icons/search.svg" alt="" class="search-bar__icon icon" />
                 </button>
             </div>
         </div>
@@ -22,13 +22,13 @@
                 <li>
                     <a href="/" class="breadcrumbs__link">
                         Trang chủ
-                        <img src="./assets/icons/arrow-right.svg" alt="" />
+                        <img src="~/image/icons/arrow-right.svg" alt="" />
                     </a>
                 </li>
                 <li>
                     <a href="#" class="breadcrumbs__link">
                         @Model.CategoryName
-                        <img src="./assets/icons/arrow-right.svg" alt="" />
+                        <img src="~/image/icons/arrow-right.svg" alt="" />
                     </a>
                 </li>
                 <li>
@@ -67,7 +67,7 @@
                             <div class="row">
                                 <div class="col-5 col-xxl-6 col-xl-12">
                                     <div class="prod-prop">
-                                        <img src="./assets/icons/star.svg" alt="" class="prod-prop__icon" />
+                                        <img src="~/image/icons/star.svg" alt="" class="prod-prop__icon" />
                                         <h4 class="prod-prop__title">(@Model.AverageRating.ToString("F1")) @Model.ReviewCount đánh giá</h4>
                                     </div>
                                     <label for="" class="form__label prod-info__label">Phân loại</label>
@@ -91,7 +91,7 @@
                                                                 }
                                                             }
                                                         </select>
-                                                        <img src="./assets/icons/select-arrow.svg"
+                                                        <img src="~/image/icons/select-arrow.svg"
                                                              alt=""
                                                              class="form__select-arrow icon" />
                                                     </div>
@@ -114,7 +114,7 @@
                                                             }
                                                         }
                                                     </select>
-                                                    <img src="./assets/icons/select-arrow.svg" alt="" class="form__select-arrow icon" />
+                                                    <img src="~/image/icons/select-arrow.svg" alt="" class="form__select-arrow icon" />
                                                 </div>
                                             }
                                         </div>
@@ -135,13 +135,13 @@
                                 <div class="col-7 col-xxl-6 col-xl-12">
                                     <div class="prod-props">
                                         <div class="prod-prop">
-                                            <img src="./assets/icons/document.svg"
+                                            <img src="~/image/icons/document.svg"
                                                  alt=""
                                                  class="prod-prop__icon icon" />
                                             <h4 class="prod-prop__title">So sánh</h4>
                                         </div>
                                         <div class="prod-prop">
-                                            <img src="./assets/icons/buy.svg"
+                                            <img src="~/image/icons/buy.svg"
                                                  alt=""
                                                  class="prod-prop__icon icon" />
                                             <div>
@@ -150,7 +150,7 @@
                                             </div>
                                         </div>
                                         <div class="prod-prop">
-                                            <img src="./assets/icons/bag.svg"
+                                            <img src="~/image/icons/bag.svg"
                                                  alt=""
                                                  class="prod-prop__icon icon" />
                                             <div>
@@ -177,10 +177,10 @@
                                                 </div>
                                             }
                                             <div class="prod-info__row">
-                                                <button class="btn btn--primary prod-info__add-to-cart">
+                                                <button type="button" class="btn btn--primary prod-info__add-to-cart">
                                                     Thêm vào giỏ
                                                 </button>
-                                                <button class="like-btn prod-info__like-btn js-toggle-favorite" data-variant-id="@(Model.SelectedVariantId ?? Model.Variants.FirstOrDefault()?.VariantId)">
+                                                <button class="like-btn prod-info__like-btn js-toggle-favorite@(Model.IsUserFavorite ? " like-btn--liked" : "")" data-variant-id="@(Model.SelectedVariantId ?? Model.Variants.FirstOrDefault()?.VariantId)" data-liked="@(Model.IsUserFavorite ? "true" : "false")" aria-pressed="@(Model.IsUserFavorite ? "true" : "false")">
                                                     <img src="~/image/icons/heart.svg"
                                                          alt=""
                                                          class="like-btn__icon icon" />
@@ -226,118 +226,145 @@
                     </div>
                     <div class="prod-tab__content">
                         <div class="prod-content">
-                            <h2 class="prod-content__heading">Khách hàng nói gì</h2>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <form asp-controller="Product" asp-action="AddReview" method="post" class="form form-card" id="reviewForm">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="productId" value="@Model.ProductId" />
+                                    <div class="form__row d-block">
+                                        <div class="form__group">
+                                            <label class="form__label form-card__label">Đánh giá</label>
+                                            <input type="hidden" name="rating" id="ratingInput" value="@(Model.MyReview != null ? Model.MyReview.Rating.ToString("0.0") : "")" />
+                                            <div class="review-card__star-list js-rating-input">
+                                                <img src="~/image/icons/star-blank.svg" alt="" class="review-card__star js-rating-star" data-value="1" />
+                                                <img src="~/image/icons/star-blank.svg" alt="" class="review-card__star js-rating-star" data-value="2" />
+                                                <img src="~/image/icons/star-blank.svg" alt="" class="review-card__star js-rating-star" data-value="3" />
+                                                <img src="~/image/icons/star-blank.svg" alt="" class="review-card__star js-rating-star" data-value="4" />
+                                                <img src="~/image/icons/star-blank.svg" alt="" class="review-card__star js-rating-star" data-value="5" />
+                                            </div>
+                                            <script>
+                                                (function () {
+                                                    var STAR_BLANK = '@Url.Content("~/image/icons/star-blank.svg")';
+                                                    var STAR_HALF = '@Url.Content("~/image/icons/star-half.svg")';
+                                                    var STAR_FULL = '@Url.Content("~/image/icons/star.svg")';
+                                                    var input = document.getElementById('ratingInput');
+                                                    var container = document.querySelector('.js-rating-input');
+                                                    if (!container || !input) return;
+                                                    var stars = container.querySelectorAll('.js-rating-star');
+                                                    var selected = parseFloat(input.value) || 0;
+                                                    function renderSelected() {
+                                                        stars.forEach(function (s, i) {
+                                                            s.src = (i + 1) <= selected ? STAR_FULL : STAR_BLANK;
+                                                        });
+                                                    }
+                                                    renderSelected();
+                                                    stars.forEach(function (star) {
+                                                        star.addEventListener('mousemove', function (e) {
+                                                            var idx = parseInt(star.getAttribute('data-value'));
+                                                            var half = e.offsetX < star.clientWidth / 2;
+                                                            stars.forEach(function (s, i) {
+                                                                var cur = i + 1;
+                                                                if (cur < idx) s.src = STAR_FULL;
+                                                                else if (cur === idx) s.src = half ? STAR_HALF : STAR_FULL;
+                                                                else s.src = STAR_BLANK;
+                                                            });
+                                                        });
+                                                        star.addEventListener('mouseleave', function () {
+                                                            renderSelected();
+                                                        });
+                                                        star.addEventListener('click', function (e) {
+                                                            var idx = parseInt(star.getAttribute('data-value'));
+                                                            var half = e.offsetX < star.clientWidth / 2;
+                                                            selected = half ? (idx - 0.5) : idx;
+                                                            input.value = selected.toFixed(1);
+                                                            renderSelected();
+                                                        });
+                                                    });
+                                                    var form = document.getElementById('reviewForm');
+                                                    if (form) {
+                                                        form.addEventListener('submit', function (e) {
+                                                            var v = parseFloat(input.value) || 0;
+                                                            if (v < 0.5 || v > 5) {
+                                                                e.preventDefault();
+                                                                alert('Vui lòng chọn số sao');
+                                                            }
+                                                        });
+                                                    }
+                                                })();
+                                            </script>
+                                            <script>
+                                                (function(){
+                                                    var ta = document.querySelector('#reviewForm textarea[name="comment"]');
+                                                    if(!ta) return;
+                                                    function fit(){ ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }
+                                                    fit();
+                                                    ta.addEventListener('input', fit);
+                                                })();
+                                            </script>
+                                        </div>
+                                        <div class="form__group">
+                                            <label class="form__label form-card__label">Bình luận</label>
+                                            <div class="form__text-input" style="max-width:300px;padding:20px;height:110px;">
+                                                <textarea name="comment" class="form__input js-auto-resize" rows="3" placeholder="Viết đánh giá" style="resize:none;overflow:hidden">@(Model.MyReview != null ? Model.MyReview.Comment : "")</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-card__bottom justify-start">
+                                        <button class="btn btn--primary btn--rounded">@(Model.MyReview != null ? "Cập nhật đánh giá" : "Gửi đánh giá")</button>
+                                        @if (Model.MyReviewId.HasValue)
+                                        {
+                                            <button class="btn btn--danger btn--rounded ms-10" type="submit" form="deleteReviewForm">Xóa đánh giá</button>
+                                        }
+                                    </div>
+                                </form>
+                                @if (Model.MyReviewId.HasValue)
+                                {
+                                    <form id="deleteReviewForm" asp-controller="Product" asp-action="DeleteReview" method="post" style="display:none">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="productId" value="@Model.ProductId" />
+                                    </form>
+                                }
+                            }
+                            else
+                            {
+                                <div class="form-card__bottom">
+                                    <a class="btn btn--primary btn--rounded" href="/Identity/Account/Login">Đăng nhập để đánh giá</a>
+                                </div>
+                            }
+                            <h2 class="prod-content__heading pt-20">Các đánh giá khác</h2>
                             <div class="row row-cols-3 gx-lg-2 row-cols-md-1 gy-md-3">
-                                <!-- Review card 1 -->
-                                <div class="col">
-                                    <div class="review-card">
-                                        <div class="review-card__content">
-                                            <img src="./assets/img/avatar/avatar-1.png"
-                                                 alt=""
-                                                 class="review-card__avatar" />
-                                            <div class="review-card__info">
-                                                <h4 class="review-card__title">Jakir Hussen</h4>
-                                                <p class="review-card__desc">
-                                                    Great product, I love this Coffee Beans
-                                                </p>
+                                @if (Model.Reviews != null && Model.Reviews.Count > 0)
+                                {
+                                    foreach (var rv in Model.Reviews)
+                                    {
+                                        <div class="col">
+                                            <div class="review-card">
+                                                <div class="review-card__content">
+                                                    <img src="@Url.Content(rv.AvatarUrl)" alt="" class="review-card__avatar" />
+                                                    <div class="review-card__info">
+                                                        <h4 class="review-card__title">@rv.UserFullName</h4>
+                                                        <p class="review-card__desc">@rv.Comment</p>
+                                                    </div>
+                                                </div>
+                                                <div class="review-card__rating">
+                                                    <div class="review-card__star-list">
+                                                    @{ var full = (int)Math.Floor(rv.Rating); var hasHalf = (rv.Rating - full) >= 0.5; var blank = 5 - full - (hasHalf ? 1 : 0); }
+                                                    @for (int s = 0; s < full; s++) { <img src="~/image/icons/star.svg" alt="" class="review-card__star" /> }
+                                                    @if (hasHalf) { <img src="~/image/icons/star-half.svg" alt="" class="review-card__star" /> }
+                                                    @for (int s = 0; s < blank; s++) { <img src="~/image/icons/star-blank.svg" alt="" class="review-card__star" /> }
+                                                    </div>
+                                                    <span class="review-card__rating-title">(@rv.Rating.ToString("0.0")) Đánh giá</span>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="review-card__rating">
-                                            <div class="review-card__star-list">
-                                                <img src="./assets/icons/star.svg"
-                                                     alt=""
-                                                     class="review-card__star" />
-                                                <img src="./assets/icons/star.svg"
-                                                     alt=""
-                                                     class="review-card__star" />
-                                                <img src="./assets/icons/star.svg"
-                                                     alt=""
-                                                     class="review-card__star" />
-                                                <img src="./assets/icons/star-half.svg"
-                                                     alt=""
-                                                     class="review-card__star" />
-                                                <img src="./assets/icons/star-blank.svg"
-                                                     alt=""
-                                                     class="review-card__star" />
-                                            </div>
-                                            <span class="review-card__rating-title">(3.5) Review</span>
-                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="col">
+                                        <p>Chưa có đánh giá nào.</p>
                                     </div>
-                                </div>
-
-                                <!-- Review card 2 -->
-                                <div class="col">
-                                    <div class="review-card">
-                                        <div class="review-card__content">
-                                            <img src="./assets/img/avatar/avatar-2.png"
-                                                 alt=""
-                                                 class="review-card__avatar" />
-                                            <div class="review-card__info">
-                                                <h4 class="review-card__title">Jubed Ahmed</h4>
-                                                <p class="review-card__desc">
-                                                    Awesome Coffee, I love this Coffee Beans
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="review-card__rating">
-                                            <div class="review-card__star-list">
-                                                <img src="./assets/icons/star.svg"
-                                                     alt=""
-                                                     class="review-card__star" />
-                                                <img src="./assets/icons/star.svg"
-                                                     alt=""
-                                                     class="review-card__star" />
-                                                <img src="./assets/icons/star.svg"
-                                                     alt=""
-                                                     class="review-card__star" />
-                                                <img src="./assets/icons/star-half.svg"
-                                                     alt=""
-                                                     class="review-card__star" />
-                                                <img src="./assets/icons/star-blank.svg"
-                                                     alt=""
-                                                     class="review-card__star" />
-                                            </div>
-                                            <span class="review-card__rating-title">(3.5) Review</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Review card 3 -->
-                                <div class="col">
-                                    <div class="review-card">
-                                        <div class="review-card__content">
-                                            <img src="./assets/img/avatar/avatar-3.png"
-                                                 alt=""
-                                                 class="review-card__avatar" />
-                                            <div class="review-card__info">
-                                                <h4 class="review-card__title">Delwar Hussain</h4>
-                                                <p class="review-card__desc">
-                            Sản phẩm rất tốt, tôi thích loại cà phê này
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="review-card__rating">
-                                            <div class="review-card__star-list">
-                                                <img src="./assets/icons/star.svg"
-                                                     alt=""
-                                                     class="review-card__star" />
-                                                <img src="./assets/icons/star.svg"
-                                                     alt=""
-                                                     class="review-card__star" />
-                                                <img src="./assets/icons/star.svg"
-                                                     alt=""
-                                                     class="review-card__star" />
-                                                <img src="./assets/icons/star-half.svg"
-                                                     alt=""
-                                                     class="review-card__star" />
-                                                <img src="./assets/icons/star-blank.svg"
-                                                     alt=""
-                                                     class="review-card__star" />
-                                            </div>
-                                            <span class="review-card__rating-title">(3.5) Review</span>
-                                        </div>
-                                    </div>
-                                </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -376,7 +403,7 @@
                                                     <div class="product-card__row">
                                                         @{ var priceText = p.SalePrice > 0 ? p.SalePrice.ToString("N0") + " VND" : p.Price.ToString("N0") + " VND"; }
                                                         <span class="product-card__price">@priceText</span>
-                                                        <img src="./assets/icons/star.svg"
+                                                        <img src="~/image/icons/star.svg"
                                                              alt=""
                                                              class="product-card__star" />
                                                         <span class="product-card__score">@p.Rating.ToString("F1")</span>

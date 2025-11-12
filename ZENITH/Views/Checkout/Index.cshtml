@@ -1,0 +1,272 @@
+﻿@model ZENITH.ViewModels.CheckoutIndexViewModel
+<main class="checkout-page">
+    <div class="container">
+        <!-- Search bar -->
+        <div class="checkout-container">
+            <div class="search-bar d-none d-md-flex">
+                <input type="text" name="" id="" placeholder="Search for item" class="search-bar__input" />
+                <button class="search-bar__submit">
+                    <img src="~/image/icons/search.svg" alt="" class="search-bar__icon icon" />
+                </button>
+            </div>
+        </div>
+
+        <!-- Breadcrumbs -->
+        <div class="checkout-container">
+            <ul class="breadcrumbs checkout-page__breadcrumbs">
+                <li>
+                    <a asp-controller="Home" asp-action="Index" class="breadcrumbs__link">
+                        Trang chủ
+                        <img src="~/image/icons/arrow-right.svg" alt="" />
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="breadcrumbs__link breadcrumbs__link--current">Giỏ hàng</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Checkout content -->
+        <div class="checkout-container">
+            <div class="row gy-xl-3">
+                <div class="col-8 col-xl-12">
+                    <div class="cart-info">
+                        <div class="cart-info__list">
+                            @if (Model.Items != null && Model.Items.Any())
+                            {
+                                foreach (var item in Model.Items)
+                                {
+                                <article class="cart-item" data-variant-id="@item.VariantId" data-unit-price="@item.UnitPrice">
+                                    <a asp-controller="Product" asp-action="Detail" asp-route-id="@item.ProductId">
+                                        <img src="@item.ImageUrl" alt="" class="cart-item__thumb" />
+                                    </a>
+                                    <div class="cart-item__content">
+                                        <div class="cart-item__content-left">
+                                            <h3 class="cart-item__title">
+                                                <a asp-controller="Product" asp-action="Detail" asp-route-id="@item.ProductId">
+                                                    @item.ProductName
+                                                </a>
+                                            </h3>
+                                            <p class="cart-item__price-wrap">
+                                                @item.UnitPriceFormatted | <span class="cart-item__status">@(item.StockQuantity > 0 ? "Còn hàng" : "Hết hàng")</span>
+                                            </p>
+                                            <div class="cart-item__ctrl cart-item__ctrl--md-block">
+                                                <div class="cart-item__input">
+                                                    <select class="cart-item__variant-select" data-old-variant-id="@item.VariantId">
+                                                        @foreach (var v in item.Variants)
+                                                        {
+                                                            @Html.Raw(v.IsSelected ? $"<option value=\"{v.VariantId}\" selected>{v.Text}</option>" : $"<option value=\"{v.VariantId}\">{v.Text}</option>")
+                                                        }
+                                                    </select>
+                                                </div>
+                                                <div class="cart-item__input">
+                                                    <button class="cart-item__input-btn js-qty-dec" data-variant-id="@item.VariantId">
+                                                        <img class="icon" src="~/image/icons/minus.svg" alt="" />
+                                                    </button>
+                                                    <span class="js-qty-value">@item.Quantity</span>
+                                                    <button class="cart-item__input-btn js-qty-inc" data-variant-id="@item.VariantId">
+                                                        <img class="icon" src="~/image/icons/plus.svg" alt="" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="cart-item__content-right">
+                                            <p class="cart-item__total-price">@item.LineTotalFormatted</p>
+                                            <div class="cart-item__ctrl">
+                                                <button class="cart-item__ctrl-btn js-fav" data-variant-id="@item.VariantId">
+                                                    <img src="~/image/icons/heart-2.svg" alt="" />
+                                                    Lưu
+                                                </button>
+                                                <button class="cart-item__ctrl-btn js-remove" data-variant-id="@item.VariantId">
+                                                    <img src="~/image/icons/trash.svg" alt="" />
+                                                    Xóa
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </article>
+                                }
+                            }
+                            else
+                            {
+                                <div class="cart-info__continue">
+                                    <p class="text-muted">Giỏ hàng của bạn đang trống</p>
+                                </div>
+                            }
+                        </div>
+                        <div class="cart-info__bottom d-md-none">
+                            <div class="row">
+                                <div class="col-8 col-xxl-7">
+                                    <div class="cart-info__continue">
+                                        <a asp-controller="Home" asp-action="Index" class="cart-info__continue-link">
+                                            <img class="cart-info__continue-icon icon"
+                                                 src="~/image/icons/arrow-down-2.svg"
+                                                 alt="" />
+                                            Tiếp tục mua sắm
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-4 col-xxl-5">
+                                    <div class="cart-info__row">
+                                        <span>Tính trước:</span>
+                                        <span id="js-summary-subtotal-mobile">@Model.SubtotalFormatted</span>
+                                    </div>
+                                    <div class="cart-info__row">
+                                        <span>Phí vận chuyển:</span>
+                                        <span id="js-summary-shipping-mobile">@Model.ShippingFormatted</span>
+                                    </div>
+                                    <div class="cart-info__separate"></div>
+                                    <div class="cart-info__row cart-info__row--bold">
+                                        <span>Tổng:</span>
+                                        <span id="js-summary-total-mobile">@Model.TotalFormatted</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 col-xl-12">
+                    <div class="cart-info">
+                        <div class="cart-info__row">
+                            <span>Số sản phẩm</span>
+                            <span id="js-summary-itemcount">@Model.ItemCount</span>
+                        </div>
+                        <div class="cart-info__row">
+                            <span>Tổng cộng</span>
+                            <span id="js-summary-subtotal">@Model.SubtotalFormatted</span>
+                        </div>
+                        <div class="cart-info__row">
+                            <span>Phí vận chuyển</span>
+                            <span id="js-summary-shipping">@Model.ShippingFormatted</span>
+                        </div>
+                        <div class="cart-info__separate"></div>
+                        <div class="cart-info__row">
+                            <span>Tổng số tiền</span>
+                            <span id="js-summary-total">@Model.TotalFormatted</span>
+                        </div>
+                        <a asp-controller="Checkout" asp-action="Shipping" class="cart-info__next-btn btn btn--primary btn--rounded">
+                            Mua hàng
+                        </a>
+                    </div>
+                  
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+@section Scripts {
+<script>
+function formatCurrency(n){ try{ return new Intl.NumberFormat('vi-VN').format(n) + ' VND'; }catch(e){ return (Math.round(n)).toString() + ' VND'; } }
+function recalcSummary(){
+  var items = Array.prototype.slice.call(document.querySelectorAll('.cart-item'));
+  var subtotal = 0;
+  for (var i=0;i<items.length;i++){
+    var it = items[i];
+    var unit = parseFloat(it.getAttribute('data-unit-price')) || 0;
+    var qtyEl = it.querySelector('.js-qty-value');
+    var qty = parseInt(qtyEl ? qtyEl.textContent : '0') || 0;
+    subtotal += unit * qty;
+  }
+  var shipping = items.length * 15000;
+  var total = subtotal + shipping;
+  var ic = document.getElementById('js-summary-itemcount'); if (ic) ic.textContent = items.length.toString();
+  var ss = document.getElementById('js-summary-subtotal'); if (ss) ss.textContent = formatCurrency(subtotal);
+  var sh = document.getElementById('js-summary-shipping'); if (sh) sh.textContent = formatCurrency(shipping);
+  var st = document.getElementById('js-summary-total'); if (st) st.textContent = formatCurrency(total);
+  var ss2 = document.getElementById('js-summary-subtotal-mobile'); if (ss2) ss2.textContent = formatCurrency(subtotal);
+  var sh2 = document.getElementById('js-summary-shipping-mobile'); if (sh2) sh2.textContent = formatCurrency(shipping);
+  var st2 = document.getElementById('js-summary-total-mobile'); if (st2) st2.textContent = formatCurrency(total);
+}
+function updateLineTotal(article){
+  if (!article) return;
+  var unit = parseFloat(article.getAttribute('data-unit-price')) || 0;
+  var qtyEl = article.querySelector('.js-qty-value');
+  var qty = parseInt(qtyEl ? qtyEl.textContent : '0') || 0;
+  var lt = article.querySelector('.cart-item__total-price');
+  if (lt) lt.textContent = formatCurrency(unit * qty);
+}
+document.querySelectorAll('.js-qty-inc').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var article = this.closest('article.cart-item');
+    var qtyEl = article ? article.querySelector('.js-qty-value') : null;
+    var vid = this.getAttribute('data-variant-id');
+    var curr = qtyEl ? parseInt(qtyEl.textContent) || 0 : 0;
+    var next = curr + 1;
+    if (qtyEl) qtyEl.textContent = next.toString();
+    fetch('/Checkout/UpdateQuantity', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ variantId: parseInt(vid), delta: 1 })})
+      .then(function(r){ return r.json(); })
+      .then(function(){ updateLineTotal(article); recalcSummary(); });
+  });
+});
+document.querySelectorAll('.js-qty-dec').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var article = this.closest('article.cart-item');
+    var qtyEl = article ? article.querySelector('.js-qty-value') : null;
+    var vid = this.getAttribute('data-variant-id');
+    var curr = qtyEl ? parseInt(qtyEl.textContent) || 0 : 0;
+    var next = curr - 1;
+    if (next >= 0 && qtyEl) qtyEl.textContent = next.toString();
+    fetch('/Checkout/UpdateQuantity', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ variantId: parseInt(vid), delta: -1 })})
+      .then(function(r){ return r.json(); })
+      .then(function(){
+        if (next <= 0 && article){ article.parentNode.removeChild(article); }
+        else { updateLineTotal(article); }
+        var list = document.querySelector('.cart-info__list');
+        if (list && document.querySelectorAll('.cart-item').length === 0){
+          var empty = document.createElement('div'); empty.className = 'cart-info__continue'; empty.innerHTML = '<p class="text-muted">Giỏ hàng của bạn đang trống</p>';
+          list.innerHTML = ''; list.appendChild(empty);
+        }
+        recalcSummary();
+      });
+  });
+});
+document.querySelectorAll('.js-remove').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var article = this.closest('article.cart-item');
+    var vid = this.getAttribute('data-variant-id');
+    fetch('/Checkout/RemoveItem', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ variantId: parseInt(vid) })})
+      .then(function(r){ return r.json(); })
+      .then(function(){ if (article){ article.parentNode.removeChild(article); }
+        var list = document.querySelector('.cart-info__list');
+        if (list && document.querySelectorAll('.cart-item').length === 0){
+          var empty = document.createElement('div'); empty.className = 'cart-info__continue'; empty.innerHTML = '<p class="text-muted">Giỏ hàng của bạn đang trống</p>';
+          list.innerHTML = ''; list.appendChild(empty);
+        }
+        recalcSummary(); });
+  });
+});
+document.querySelectorAll('.js-fav').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var article = this.closest('article.cart-item');
+    var vid = this.getAttribute('data-variant-id');
+    fetch('/Checkout/SaveItem', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ variantId: parseInt(vid) })})
+      .then(function(r){ return r.json(); })
+      .then(function(){ if (article){ article.parentNode.removeChild(article); }
+        var list = document.querySelector('.cart-info__list');
+        if (list && document.querySelectorAll('.cart-item').length === 0){
+          var empty = document.createElement('div'); empty.className = 'cart-info__continue'; empty.innerHTML = '<p class="text-muted">Giỏ hàng của bạn đang trống</p>';
+          list.innerHTML = ''; list.appendChild(empty);
+        }
+        var favCountEl = document.getElementById('js-favorite-count');
+        if (favCountEl){
+          var fc = parseInt(favCountEl.textContent) || 0;
+          fc = fc + 1;
+          favCountEl.textContent = fc.toString();
+          var favTextEl = document.getElementById('js-favorite-count-text');
+          if (favTextEl){ favTextEl.textContent = 'Bạn có ' + fc + ' mục yêu thích'; }
+        }
+        recalcSummary(); });
+  });
+});
+document.querySelectorAll('.cart-item__variant-select').forEach(function(sel){
+  sel.addEventListener('change', function(){
+    var oldId = parseInt(this.getAttribute('data-old-variant-id'));
+    var newId = parseInt(this.value);
+    fetch('/Checkout/ChangeVariant', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ oldVariantId: oldId, newVariantId: newId })})
+      .then(function(r){ return r.json(); })
+      .then(function(){ recalcSummary(); });
+  });
+});
+recalcSummary();
+</script>
+}

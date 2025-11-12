@@ -26,6 +26,7 @@ namespace ZENITH.Controllers
                 .Include(p => p.Supplier)
                 .Include(p => p.ProductVariants)
                 .Include(p => p.ProductImages.Where(i => i.IsPrimary))
+                .Include(p => p.Reviews)
                 .Include(p => p.Category) // Cần Include Category để lọc
                 .Where(p => p.IsActive)
                 .AsNoTracking();
@@ -46,7 +47,7 @@ namespace ZENITH.Controllers
                 VariantId = p.ProductVariants.OrderBy(v => v.SalePrice).FirstOrDefault()?.VariantId ??
                             p.ProductVariants.FirstOrDefault()?.VariantId ?? 0,
                 ImageUrl = p.ProductImages.FirstOrDefault()?.ImageUrl ?? "~/image/default.webp",
-                Rating = 4.5
+                Rating = p.Reviews != null && p.Reviews.Any() ? (double)p.Reviews.Average(r => r.Rating) : 0
             }).ToList();
         }
         public async Task<IActionResult> Index()

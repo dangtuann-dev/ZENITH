@@ -1,0 +1,136 @@
+﻿
+@using ZENITH.Models
+@{
+    ViewData["Title"] = "| Địa Chỉ Giao Hàng";
+}
+<main class="profile">
+    <div class="container">
+        <!-- Search bar -->
+        <div class="profile-container">
+            <div class="search-bar d-none d-md-flex">
+                <input type="text" name="" id="" placeholder="Search for item" class="search-bar__input" />
+                <button class="search-bar__submit">
+                    <img src="~/image/icons/search.svg" alt="" class="search-bar__icon icon" />
+                </button>
+            </div>
+        </div>
+
+        <!-- Profile content -->
+        <div class="profile-container">
+            <div class="row gy-md-3">
+                <partial name="_ProfilePartial" />
+                <div class="col-9 col-xl-8 col-lg-12">
+                    <div class="cart-info">
+                        <div class="row gy-3">
+                            <div class="col-12">
+                                <h2 class="cart-info__heading">
+                                    <a asp-controller="Profile" asp-action="Index">
+                                        <img src="~/image/icons/arrow-left.svg"
+                                             alt=""
+                                             class="icon cart-info__back-arrow" />
+                                    </a>
+                                    Địa chỉ giao hàng
+                                </h2>
+                                <form asp-controller="Profile" asp-action="EditAddressInfo" method="post" class="form form-card">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="addressId" value="@((ViewBag.AddressId ?? 0))" />
+                                    <!--Form row 1-->
+                                    <div class="form__row">
+                                        <div class="form__group">
+                                            <label for="AddressLine" class="form__label form-card__label">
+                                                Địa chỉ nhà
+                                            </label>
+                                            <div class="form__text-input">
+                                                <input type="text"
+                                                       name="addressLine"
+                                                       id="AddressLine"
+                                                       placeholder="Số nhà & Tên đường"
+                                                       class="form__input"
+                                                       required
+                                                       autofocus value="@((ViewBag.AddressLine as string) ?? "")" />
+                                                <img src="~/image/icons/form-error.svg"
+                                                     alt=""
+                                                     class="form__input-icon-error" />
+                                            </div>
+                                            <p class="form__error">Vui lòng nhập địa chỉ nhà</p>
+                                        </div>
+                                    </div>
+                                    <!--Form row 3-->
+                                    <div class="form__row">
+                                        <div class="form__group">
+                                            <label for="Ward" class="form__label form-card__label">
+                                                Phường
+                                            </label>
+                                            <div class="form__text-input">
+                                                <input type="text"
+                                                       name="ward"
+                                                       id="Ward"
+                                                       placeholder="Phường"
+                                                       class="form__input"
+                                                       autofocus value="@((ViewBag.Ward as string) ?? "")" />
+                                                <img src="~/image/icons/form-error.svg"
+                                                     alt=""
+                                                     class="form__input-icon-error" />
+                                            </div>
+                                            <p class="form__error">Vui lòng nhập phường</p>
+                                        </div>
+                                        <div class="form__group">
+                                            <label for="District" class="form__label form-card__label">
+                                                Quận
+                                            </label>
+                                            <div class="form__text-input">
+                                                <input type="text"
+                                                       name="district"
+                                                       id="District"
+                                                       placeholder="Quận"
+                                                       class="form__input"
+                                                       autofocus value="@((ViewBag.District as string) ?? "")" />
+                                                <img src="~/image/icons/form-error.svg"
+                                                     alt=""
+                                                     class="form__input-icon-error" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Form row 2 -->
+                                    <div class="form__row">
+                                        <div class="form__group">
+                                            <label for="City" class="form__label form-card__label">
+                                                Thành phố
+                                            </label>
+                                            <div class="form__text-input">
+                                                <input type="text"
+                                                       name="city"
+                                                       id="City"
+                                                       placeholder="Thành phố"
+                                                       class="form__input"
+                                                       required
+                                                       autofocus value="@((ViewBag.City as string) ?? "")" />
+                                                <img src="~/image/icons/form-error.svg"
+                                                     alt=""
+                                                     class="form__input-icon-error" />
+                                            </div>
+                                            <p class="form__error">Vui lòng nhập thành phố</p>
+                                        </div>
+                                        <div class="form__group">
+                                            <label class="form__label form-card__label">
+                                                Đặt làm mặc định
+                                            </label>
+                                            <div class="form__text-input">
+                                                <input type="checkbox" name="isDefault" id="IsDefault" @( (ViewBag.IsDefault == true) ? "checked" : "" ) />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-card__bottom">
+                                        <a class="btn btn--text" asp-controller="Profile" asp-action="Index">Hủy</a>
+                                        <button type="submit" class="btn btn--primary btn--rounded">Lưu</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

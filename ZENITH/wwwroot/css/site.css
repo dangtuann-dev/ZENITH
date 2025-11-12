@@ -2243,12 +2243,12 @@ html {
   margin-top: 14px;
   font-size: 1.4rem;
   line-height: 142.857%;
-  /* Giới hạn 2 dòng để đảm bảo chiều cao đồng đều */
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
-  min-height: 4rem;
+  height: 4rem;
+  word-break: break-word;
 }
 
 .cart-preview-item__price {
@@ -2256,6 +2256,10 @@ html {
   font-size: 1.5rem;
   font-weight: 500;
   line-height: 146.667%;
+  height: 2.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .user-menu__top {
@@ -3321,7 +3325,7 @@ html::-webkit-scrollbar-thumb {
 
 .form__group:has(:invalid):has(.form__input:not(:placeholder-shown))
   .form__text-input {
-  border-color: #ed4337;
+  border-color: var(--primary-color);
   background: rgba(237, 67, 55, 0.1);
 }
 
@@ -4234,6 +4238,7 @@ html::-webkit-scrollbar-thumb {
   font-size: 2.2rem;
   font-weight: 500;
   line-height: 145.455%;
+  width: 150px;
 }
 
 .home {
@@ -5364,6 +5369,7 @@ html::-webkit-scrollbar-thumb {
   height: 100%;
   display: flex;
   align-items: flex-end;
+  gap: 20px;
 }
 
 .payment-item {
@@ -5595,9 +5601,9 @@ html::-webkit-scrollbar-thumb {
   margin-top: 16px;
 }
 .similar-carousel__viewport {
-    overflow: hidden;
-    width: 100%;
-    margin-left: -15px;
+  overflow: hidden;
+  width: 100%;
+  margin-left: -15px;
 }
 .similar-carousel__track {
   display: flex;
@@ -5624,8 +5630,12 @@ html::-webkit-scrollbar-thumb {
   cursor: pointer;
   z-index: 2;
 }
-.similar-carousel__btn--prev { left: -32px; }
-.similar-carousel__btn--next { right: -6px; }
+.similar-carousel__btn--prev {
+  left: -32px;
+}
+.similar-carousel__btn--next {
+  right: -6px;
+}
 .similar-carousel__btn[disabled] {
   opacity: 1;
   cursor: default;

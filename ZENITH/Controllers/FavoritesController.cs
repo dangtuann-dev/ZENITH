@@ -304,6 +304,12 @@ namespace ZENITH.Controllers
             public int? Quantity { get; set; }
         }
 
+        public class MoveToCartRequest
+        {
+            public int? VariantId { get; set; }
+            public int? Quantity { get; set; }
+        }
+
         [HttpPost]
         [Route("Favorites/AddToCart")]
         public async Task<IActionResult> AddToCart([FromBody] AddToCartRequest request)
@@ -332,6 +338,59 @@ namespace ZENITH.Controllers
             {
                 existing.Quantity += quantity;
                 existing.UpdatedAt = DateTime.UtcNow;
+            }
+            else
+            {
+                _context.CartItems.Add(new CartItem
+                {
+                    UserId = userId,
+                    VariantId = variantId,
+                    Quantity = quantity,
+                    AddedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                });
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { success = true });
+        }
+
+        [HttpPost]
+        [Route("Favorites/MoveToCart")]
+        public async Task<IActionResult> MoveToCart([FromBody] MoveToCartRequest request)
+        {
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { success = false, message = "Bạn cần đăng nhập để chuyển qua giỏ hàng." });
+            }
+
+            int variantId = request?.VariantId ?? 0;
+            int quantity = request?.Quantity ?? 1;
+            if (variantId <= 0 || quantity <= 0)
+            {
+                return BadRequest(new { success = false, message = "Thiếu hoặc không hợp lệ VariantId/Quantity." });
+            }
+
+            var variant = await _context.ProductVariants.FirstOrDefaultAsync(v => v.VariantId == variantId && v.IsActive);
+            if (variant == null)
+            {
+                return NotFound(new { success = false, message = "Biến thể không tồn tại hoặc không hoạt động." });
+            }
+
+            // Remove from favorites if exists
+            var existingFav = await _context.Favorites.FirstOrDefaultAsync(f => f.UserId == userId && f.VariantId == variantId);
+            if (existingFav != null)
+            {
+                _context.Favorites.Remove(existingFav);
+            }
+
+            // Add to cart or increase quantity
+            var existingCart = await _context.CartItems.FirstOrDefaultAsync(ci => ci.UserId == userId && ci.VariantId == variantId);
+            if (existingCart != null)
+            {
+                existingCart.Quantity += quantity;
+                existingCart.UpdatedAt = DateTime.UtcNow;
             }
             else
             {
@@ -435,6 +494,75 @@ namespace ZENITH.Controllers
             }).ToList();
 
             return Ok(new { items });
+        }
+
+        [HttpGet]
+        [Route("Favorites/CartPreview")]
+        public async Task<IActionResult> CartPreview()
+        {
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userId))
+            {
+                var culture = new System.Globalization.CultureInfo("vi-VN");
+                return Ok(new { count = 0, subtotalFormatted = 0m.ToString("N0", culture) + " VND", items = Array.Empty<object>() });
+            }
+
+            var culture2 = new System.Globalization.CultureInfo("vi-VN");
+            var cartItems = await _context.CartItems
+                .AsNoTracking()
+                .Where(c => c.UserId == userId)
+                .OrderByDescending(c => c.UpdatedAt)
+                .Include(c => c.ProductVariant)
+                    .ThenInclude(v => v.Product)
+                        .ThenInclude(p => p.ProductImages)
+                .ToListAsync();
+
+            int count = cartItems.Sum(c => c.Quantity);
+            decimal subtotal = cartItems.Sum(c => (c.ProductVariant.SalePrice ?? c.ProductVariant.Price) * c.Quantity);
+
+            var recent = cartItems.Take(3).Select(ci => new
+            {
+                productId = ci.ProductVariant.ProductId,
+                productName = ci.ProductVariant.Product.ProductName,
+                imageUrlRaw = ci.ProductVariant.Product.ProductImages
+                    .OrderByDescending(i => i.IsPrimary)
+                    .ThenBy(i => i.DisplayOrder)
+                    .Select(i => i.ImageUrl)
+                    .FirstOrDefault(),
+                quantity = ci.Quantity,
+                priceEach = ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price
+            }).ToList();
+
+            string ResolveImageUrl(string? s)
+            {
+                if (string.IsNullOrWhiteSpace(s)) return Url.Content("~/image/default.avif");
+                s = s.Trim();
+                var lower = s.ToLowerInvariant();
+                if (lower.StartsWith("http://") || lower.StartsWith("https://")) return s;
+                if (s.StartsWith("~/")) return Url.Content(s);
+                if (s.StartsWith("/")) return Url.Content(s);
+                var marker = "wwwroot";
+                int idx = lower.IndexOf(marker);
+                if (idx >= 0)
+                {
+                    var tail = s.Substring(idx + marker.Length).Replace('\\', '/');
+                    return Url.Content("~" + (tail.StartsWith("/") ? tail : "/" + tail));
+                }
+                s = s.Replace('\\', '/');
+                s = s.TrimStart('~');
+                return Url.Content("~/" + s.TrimStart('/'));
+            }
+
+            var items = recent.Select(x => new
+            {
+                productId = x.productId,
+                productName = x.productName,
+                imgUrl = ResolveImageUrl(x.imageUrlRaw),
+                quantity = x.quantity,
+                priceEachFormatted = x.priceEach.ToString("N0", culture2) + " VND"
+            }).ToList();
+
+            return Ok(new { count, subtotalFormatted = subtotal.ToString("N0", culture2) + " VND", items });
         }
 
         [HttpPost]

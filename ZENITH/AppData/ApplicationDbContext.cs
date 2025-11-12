@@ -546,10 +546,11 @@ namespace ZENITH.AppData
             {
                 entity.HasKey(e => e.ReviewId);
                 entity.Property(e => e.Rating).IsRequired();
-                entity.Property(e => e.Comment).HasColumnType("text");
+                entity.Property(e => e.Comment).HasColumnType("nvarchar(max)");
                 entity.Property(e => e.IsApproved).HasDefaultValue(false);
                 entity.Property(e => e.IsVerifiedPurchase).HasDefaultValue(false);
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
+                entity.HasIndex(e => new { e.UserId, e.ProductId }).IsUnique();
 
                 entity.HasOne(e => e.User)
                     .WithMany(u => u.Reviews)

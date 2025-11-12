@@ -133,79 +133,83 @@
             <div class="top-act__separate"></div>
 
             <div class="top-act__btn-wrap">
-                <button class="top-act__btn">
+                @{ 
+                    var cartItems = DbContext.CartItems
+                        .AsNoTracking()
+                        .Where(c => c.UserId == userId)
+                        .OrderByDescending(c => c.UpdatedAt)
+                        .Include(c => c.ProductVariant)
+                            .ThenInclude(v => v.Product)
+                                .ThenInclude(p => p.ProductImages)
+                        .ToList();
+                    var cartCount = cartItems.Sum(c => c.Quantity);
+                    var subtotal = cartItems.Sum(c => (c.ProductVariant.SalePrice ?? c.ProductVariant.Price) * c.Quantity);
+                    var shipping = cartItems.Count * 15000m;
+                    var tax = 0m;
+                    var total = subtotal + shipping + tax;
+                    var culture2 = new System.Globalization.CultureInfo("vi-VN");
+                    var recentCart = cartItems.Take(3).ToList();
+                }
+                <a asp-controller="Checkout" asp-action="Index" class="top-act__btn">
                     <img src="/image/icons/buy.svg" alt="" class="icon top-act__icon" />
-                    <span class="top-act__title">$65.42</span>
-                </button>
+                    <span class="top-act__title" id="js-header-cart-subtotal">@subtotal.ToString("N0", culture2) VND</span>
+                </a>
 
-                <!-- Dropdown cart -->
                 <div class="act-dropdown act-dropdown--cart">
                     <div class="act-dropdown__inner">
                         <img src="/image/icons/arrow-up.png" alt="" class="act-dropdown__arrow" />
                         <div class="act-dropdown__top">
-                            <h2 class="act-dropdown__title">You have 3 item(s)</h2>
-                            <a href="./checkout.html" class="act-dropdown__view-all">See All</a>
+                            <h2 class="act-dropdown__title" id="js-cart-title">Bạn có @cartCount sản phẩm</h2>
+                            <a asp-controller="Checkout" asp-action="Index" class="act-dropdown__view-all">Xem tất cả</a>
                         </div>
-                        <div class="row row-cols-3 gx-2 act-dropdown__list">
-                            <div class="col">
-                                <article class="cart-preview-item">
-                                    <div class="cart-preview-item__img-wrap">
-                                        <img src="/image/img/product/item-1.png"
-                                             alt=""
-                                             class="cart-preview-item__thumb" />
+                        <div class="row row-cols-3 gx-2 act-dropdown__list" id="js-cart-dropdown-list">
+                            @if (recentCart.Any())
+                            {
+                                foreach (var ci in recentCart)
+                                {
+                                    var product = ci.ProductVariant.Product;
+                                    var imgUrl = product.ProductImages.OrderByDescending(i => i.IsPrimary).ThenBy(i => i.DisplayOrder).Select(i => i.ImageUrl).FirstOrDefault() ?? "/image/default.avif";
+                                    var priceEach = ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price;
+                                    <div class="col">
+                                        <article class="cart-preview-item">
+                                            <div class="cart-preview-item__img-wrap">
+                                                <a asp-controller="Product" asp-action="Detail" asp-route-id="@product.ProductId">
+                                                    <img src="@Url.Content(imgUrl)" alt="@product.ProductName" class="cart-preview-item__thumb" />
+                                                </a>
+                                            </div>
+                                            <h3 class="cart-preview-item__title">@product.ProductName</h3>
+                                            <p class="cart-preview-item__price">@priceEach.ToString("N0", culture2) VND x @ci.Quantity</p>
+                                        </article>
                                     </div>
-                                    <h3 class="cart-preview-item__title">Lavazza Coffee Blends</h3>
-                                    <p class="cart-preview-item__price">$329.00</p>
-                                </article>
-                            </div>
-
-                            <div class="col">
-                                <article class="cart-preview-item">
-                                    <div class="cart-preview-item__img-wrap">
-                                        <img src="/image/img/product/item-2.png"
-                                             alt=""
-                                             class="cart-preview-item__thumb" />
-                                    </div>
-                                    <h3 class="cart-preview-item__title">Coffee Beans Espresso</h3>
-                                    <p class="cart-preview-item__price">$39.99</p>
-                                </article>
-                            </div>
-
-                            <div class="col">
-                                <article class="cart-preview-item">
-                                    <div class="cart-preview-item__img-wrap">
-                                        <img src="/image/img/product/item-3.png"
-                                             alt=""
-                                             class="cart-preview-item__thumb" />
-                                    </div>
-                                    <h3 class="cart-preview-item__title">Qualità Oro Mountain</h3>
-                                    <p class="cart-preview-item__price">$47.00</p>
-                                </article>
-                            </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="col">
+                                    <p class="text-muted">Giỏ hàng của bạn đang trống</p>
+                                </div>
+                            }
                         </div>
                         <div class="act-dropdown__bottom">
                             <div class="act-dropdown__row">
-                                <span class="act-dropdown__label">Subtotal</span>
-                                <span class="act-dropdown__value">$415.99</span>
+                                <span class="act-dropdown__label">Tạm tính</span>
+                                <span class="act-dropdown__value" id="js-cart-subtotal">@subtotal.ToString("N0", culture2) VND</span>
                             </div>
                             <div class="act-dropdown__row">
-                                <span class="act-dropdown__label">Texes</span>
-                                <span class="act-dropdown__value">Free</span>
+                                <span class="act-dropdown__label">Thuế</span>
+                                <span class="act-dropdown__value">@tax.ToString("N0", culture2) VND</span>
                             </div>
                             <div class="act-dropdown__row">
-                                <span class="act-dropdown__label">Shipping</span>
-                                <span class="act-dropdown__value">$10.00</span>
+                                <span class="act-dropdown__label">Vận chuyển</span>
+                                <span class="act-dropdown__value" id="js-cart-shipping">@shipping.ToString("N0", culture2) VND</span>
                             </div>
                             <div class="act-dropdown__row act-dropdown__row--bold">
-                                <span class="act-dropdown__label">Total Price</span>
-                                <span class="act-dropdown__value">$425.99</span>
+                                <span class="act-dropdown__label">Tổng</span>
+                                <span class="act-dropdown__value" id="js-cart-total">@total.ToString("N0", culture2) VND</span>
                             </div>
                         </div>
                         <div class="act-dropdown__checkout">
-                            <a href="./checkout.html"
-                               class="btn btn--primary btn--rounded act-dropdown__checkout-btn">
-                                Check Out All
-                            </a>
+                            <a asp-controller="Checkout" asp-action="Index" class="btn btn--primary btn--rounded act-dropdown__checkout-btn">Xem giỏ hàng</a>
                         </div>
                     </div>
                 </div>
@@ -266,4 +270,3 @@ else
         <a id="register" asp-area="Identity" asp-page="/Account/Register" class="top-act__sign-up btn btn--primary">Đăng Ký</a>
     </div>
 }
-

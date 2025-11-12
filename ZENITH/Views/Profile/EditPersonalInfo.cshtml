@@ -1,0 +1,132 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@using ZENITH.Models
+@{
+    ViewData["Title"] = "| Thông Tin Cá Nhân";
+}
+<main class="profile">
+    <div class="container">
+        <!-- Search bar -->
+        <div class="profile-container">
+            <div class="search-bar d-none d-md-flex">
+                <input type="text" name="" id="" placeholder="Tìm kiếm sản phẩm" class="search-bar__input" />
+                <button class="search-bar__submit">
+                    <img src="~/image/icons/search.svg" alt="" class="search-bar__icon icon" />
+                </button>
+            </div>
+        </div>
+
+        <!-- Profile content -->
+        <div class="profile-container">
+            <div class="row gy-md-3">
+                <partial name="_ProfilePartial" />
+                <div class="col-9 col-xl-8 col-lg-12">
+                    <div class="cart-info">
+                        <div class="row gy-3">
+                            <div class="col-12">
+                                <h2 class="cart-info__heading">
+                                    <a asp-controller ="Profile" asp-action="Index">
+                                        <img src="~/image/icons/arrow-left.svg"
+                                             alt=""
+                                             class="icon cart-info__back-arrow" />
+                                    </a>
+                                    Thông tin cá nhân
+                                </h2>
+
+                                <form asp-controller="Profile" asp-action="EditPersonalInfo" method="post" class="form form-card">
+                                    @Html.AntiForgeryToken()
+                                    <!-- Form row 1 -->
+                                    <div class="form__row">
+                                        <div class="form__group">
+                                            <label for="full-name" class="form__label form-card__label">
+                                                Họ & Tên
+                                            </label>
+                                            <div class="form__text-input">
+                                                <input type="text"
+                                                       name="fullName"
+                                                       id="full-name"
+                                                       placeholder="Họ & Tên"
+                                                       class="form__input"
+                                                       required
+                                                       autofocus value="@((ViewBag.FullName as string) ?? "")" />
+                                                <img src="~/image/icons/form-error.svg"
+                                                     alt=""
+                                                     class="form__input-icon-error" />
+                                            </div>
+                                            <p class="form__error">Please enter your full name</p>
+                                        </div>
+                                       
+                                    </div>
+                                    <div class="form__row">
+                                        <div class="form__group">
+                                            <label for="email-adress" class="form__label form-card__label">
+                                                Địa chỉ Email
+                                            </label>
+                                            <div class="form__text-input">
+                                                <input type="email"
+                                                       name="email"
+                                                       id="email-adress"
+                                                       placeholder="Email"
+                                                       class="form__input"
+                                                       required value="@((ViewBag.Email as string) ?? "")" />
+                                                <img src="~/image/icons/form-error.svg"
+                                                     alt=""
+                                                     class="form__input-icon-error" />
+                                            </div>
+                                            <p class="form__error">Please enter a valid email address</p>
+                                        </div>
+                                    </div>
+                                    <!-- Form row 3 -->
+                                    <div class="form__row">
+                                        <div class="form__group">
+                                            <label for="phone-number" class="form__label form-card__label">
+                                                Số điện thoại
+                                            </label>
+                                            <div class="form__text-input">
+                                                <input type="text"
+                                                       name="phoneNumber"
+                                                       id="phone-number"
+                                                       placeholder="Số điện thoại"
+                                                       class="form__input"
+                                                       required value="@((ViewBag.PhoneNumber as string) ?? "")" />
+                                                <img src="~/image/icons/form-error.svg"
+                                                     alt=""
+                                                     class="form__input-icon-error" />
+                                            </div>
+                                            <p class="form__error">Please enter a valid phone number</p>
+                                        </div>
+                                        @* <div class="form__group">
+                                            <label for="passowrd" class="form__label form-card__label">
+                                                Password
+                                            </label>
+                                            <div class="form__text-input">
+                                                <input type="password"
+                                                       name=""
+                                                       id="passowrd"
+                                                       placeholder="Password"
+                                                       class="form__input"
+                                                       required />
+                                                <img src="~/image/icons/form-error.svg"
+                                                     alt=""
+                                                     class="form__input-icon-error" />
+                                            </div>
+                                            <p class="form__error">Please enter new password</p>
+                                        </div> *@
+                                    </div>
+
+                                    <div class="form-card__bottom">
+                                        <a class="btn btn--text" asp-controller="Profile" asp-action="Index">Hủy</a>
+                                        <button class="btn btn--primary btn--rounded">Lưu</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

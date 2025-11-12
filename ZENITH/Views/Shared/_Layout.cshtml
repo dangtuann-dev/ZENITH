@@ -27,6 +27,7 @@
             asp-append-version="true"></script>
     <script>
         var isUserLoggedIn = @(SignInManager.IsSignedIn(User) ? "true" : "false");
+        var loginUrl = '@Url.Page("/Account/Login", new { area = "Identity" })';
     </script>
 </head>
 <body>
@@ -50,10 +51,11 @@
                         <img class="icon" src="~/image/icons/arrow-left.svg" alt="" />
                     </button>
 
-                    <a href="./checkout.html" class="nav-btn d-none d-md-flex">
+                    @{ var cartCount = SignInManager.IsSignedIn(User) ? DbContext.CartItems.Where(c => c.UserId == UserManager.GetUserId(User)).Sum(c => c.Quantity) : 0; }
+                    <a asp-controller="Checkout" asp-action="Index" class="nav-btn d-none d-md-flex">
                         <img src="~/image/icons/buy.svg" alt="" class="nav-btn__icon icon" />
                         <span class="nav-btn__title">Cart</span>
-                        <span class="nav-btn__qnt">3</span>
+                        <span class="nav-btn__qnt" id="js-navbar-cart-qnt">@cartCount</span>
                     </a>
 
                     @{ var favCount = SignInManager.IsSignedIn(User) ? DbContext.Favorites.Count(f => f.UserId == UserManager.GetUserId(User)) : 0; }

@@ -33,6 +33,12 @@ namespace ZENITH.ViewModels
         // Reviews summary
         public int ReviewCount { get; set; }
         public double AverageRating { get; set; }
+        public List<ReviewItemViewModel> Reviews { get; set; } = new List<ReviewItemViewModel>();
+
+        public bool IsUserFavorite { get; set; }
+
+        public ReviewItemViewModel? MyReview { get; set; }
+        public int? MyReviewId { get; set; }
 
         // Convenience formatting
         public string PriceFormatted => FormatCurrency(Price);
@@ -43,5 +49,15 @@ namespace ZENITH.ViewModels
             var culture = new CultureInfo("vi-VN");
             return string.Format(culture, "{0:N0} VND", value);
         }
+    }
+
+    public class ReviewItemViewModel
+    {
+        public string UserFullName { get; set; } = string.Empty;
+        public string AvatarUrl { get; set; } = string.Empty;
+        public double Rating { get; set; }
+        public string Comment { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public bool IsVerifiedPurchase { get; set; }
     }
 }
