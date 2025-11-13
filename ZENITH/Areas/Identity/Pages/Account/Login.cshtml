@@ -8,7 +8,6 @@
 @{
     ViewData["Title"] = "| Đăng Nhập - Chào Mừng Quay Lại!";
     Layout = "~/Views/Shared/_LoginLayout.cshtml";
-    var externalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 }
 <!-- Auth content -->
 <div class="auth__content">
@@ -49,13 +48,11 @@
             </div>
             <div class="form__group auth__btn-group">
                 <button class="btn btn--primary auth__btn form__submit-btn" id="login-submit" type="submit">Đăng Nhập</button>
-                <button class="btn btn--outline auth__btn btn--no-margin">
-                    <img src="~image/icons/google.svg" alt="" class="btn__icon icon" />
-                    Đăng nhập bằng Google
-                </button>
             </div>
 
         </form>
+
+        
 
         <p class="auth__text">
             Chưa có tài khoản?

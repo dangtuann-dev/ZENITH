@@ -52,6 +52,11 @@
     var displayName = string.IsNullOrWhiteSpace(user?.FullName) ? (user?.UserName ?? "") : user!.FullName;
     var displayAccount = user?.Email ?? user?.UserName ?? "";
 
+    <style>
+        .user-menu__top { position: relative; overflow: hidden; }
+        .user-menu__bg { position: absolute; inset: 0; background-size: cover; background-position: center; filter: blur(14px); transform: scale(1.1); opacity: .6; }
+        .user-menu__top .user-menu__avatar, .user-menu__top div { position: relative; z-index: 1; }
+    </style>
     <div class="top-act">
         <a asp-controller="Favorites">
             <div class="top-act__group d-md-none top-act__group--single">
@@ -229,6 +234,7 @@
                          class="act-dropdown__arrow top-act__dropdown-arrow" />
 
                     <div class="user-menu__top">
+                        <div class="user-menu__bg" style="background-image:url('@avatarUrl')"></div>
                         <img src="@avatarUrl" alt="" class="user-menu__avatar" onerror="this.onerror=null;this.src='@Url.Content("~/image/account/default-avatar.jpg")';" />
                         <div>
                             <p class="user-menu__name">@displayName</p>

@@ -1,0 +1,92 @@
+﻿@model ZENITH.Models.PaymentMethod
+@{
+    ViewData["Title"] = "| Địa Chỉ Giao Hàng";
+}
+<main class="profile">
+    <div class="container">
+        <!-- Search bar -->
+        <div class="profile-container">
+            <div class="search-bar d-none d-md-flex">
+                <input type="text" name="" id="" placeholder="Search for item" class="search-bar__input" />
+                <button class="search-bar__submit">
+                    <img src="~/image/icons/search.svg" alt="" class="search-bar__icon icon" />
+                </button>
+            </div>
+        </div>
+
+        <!-- Profile content -->
+        <div class="profile-container">
+            <div class="row gy-md-3">
+                <partial name="_ProfilePartial" />
+                <div class="col-9 col-xl-8 col-lg-12">
+                    <div class="cart-info">
+                        <div class="row gy-3">
+                            <div class="col-12">
+                                <h2 class="cart-info__heading">Thêm thẻ thanh toán</h2>
+
+                                <form asp-controller="Profile" asp-action="AddNewCard" method="post" class="form form-card">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                    <div class="form__row">
+                                        <div class="form__group">
+                                            <label class="form__label form-card__label" asp-for="CardHolder"></label>
+                                            <div class="form__text-input">
+                                                <input class="form__input" asp-for="CardHolder" autocomplete="cc-name" />
+                                                <img src="~/image/icons/form-error.svg" alt="" class="form__input-icon-error" />
+                                            </div>
+                                            <span class="form__error" asp-validation-for="CardHolder"></span>
+                                        </div>
+                                        <div class="form__group">
+                                            <label class="form__label form-card__label" asp-for="CardType"></label>
+                                            <div class="form__text-input">
+                                                <select class="form__input" asp-for="CardType">
+                                                    <option value="Visa">Visa</option>
+                                                    <option value="MasterCard">MasterCard</option>
+                                                    <option value="JCB">JCB</option>
+                                                    <option value="Amex">Amex</option>
+                                                    <option value="Khác">Khác</option>
+                                                </select>
+                                            </div>
+                                            <span class="form__error" asp-validation-for="CardType"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form__row">
+                                        <div class="form__group">
+                                            <label class="form__label form-card__label" asp-for="CardNumber"></label>
+                                            <div class="form__text-input">
+                                                <input class="form__input" asp-for="CardNumber" autocomplete="cc-number" placeholder="1234 5678 9012 3456" />
+                                                <img src="~/image/icons/form-error.svg" alt="" class="form__input-icon-error" />
+                                            </div>
+                                            <span class="form__error" asp-validation-for="CardNumber"></span>
+                                        </div>
+                                        <div class="form__group">
+                                            <label class="form__label form-card__label" asp-for="ExpiryDate"></label>
+                                            <div class="form__text-input">
+                                                <input class="form__input" asp-for="ExpiryDate" autocomplete="cc-exp" placeholder="MM/YY" />
+                                                <img src="~/image/icons/form-error.svg" alt="" class="form__input-icon-error" />
+                                            </div>
+                                            <span class="form__error" asp-validation-for="ExpiryDate"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form__group">
+                                        <label class="form__label form-card__label">Tùy chọn thẻ</label>
+                                        <label class="form__checkbox">
+                                            <input asp-for="IsDefault" class="form__checkbox-input d-none" />
+                                            <span class="form__checkbox-label">Đặt làm thẻ mặc định</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="form-card__bottom">
+                                        <a class="btn btn--text" asp-controller="Profile" asp-action="Index">Hủy</a>
+                                        <button type="submit" class="btn btn--primary btn--rounded">Lưu thẻ</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

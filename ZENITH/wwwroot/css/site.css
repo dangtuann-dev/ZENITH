@@ -2714,6 +2714,28 @@ html::-webkit-scrollbar-thumb {
 }
 
 @media (max-width: 991.98px) {
+  .menu-column__item--active .sub-menu,
+  .menu-column__item:hover .sub-menu {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .sub-menu {
+    position: initial;
+    inset: initial;
+    grid-template-columns: 1fr;
+    padding-left: 0;
+    gap: 10px;
+  }
+
+  .sub-menu .menu-column__list {
+    display: none;
+  }
+
+  .sub-menu .menu-column.menu-column--active .menu-column__list {
+    display: block;
+  }
+
   .sub-menu--not-main {
     grid-template-columns: 1fr;
     height: auto;

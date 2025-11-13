@@ -7,7 +7,6 @@
 @{
     ViewData["Title"] = "| Đăng Ký - Đăng ký để luôn nắm bắt thông tin mới nhất từ Zenith!";
     Layout = "~/Views/Shared/_LoginLayout.cshtml";
-    var externalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 }
 
 
@@ -56,13 +55,8 @@
                     <span class="form__checkbox-label">Đặt làm mặc định</span>
                 </label>
             </div>
-            @*Đăng nhập bằng gg chưa làm*@
             <div class="form__group auth__btn-group">
                 <button class="btn btn--primary auth__btn form__submit-btn">Đăng Ký</button>
-                <button class="btn btn--outline auth__btn btn--no-margin">
-                    <img src="~image/icons/google.svg" alt="" class="btn__icon icon" />
-                    Đăng nhập bằng Google
-                </button>
             </div>
 
             @* @{
@@ -96,6 +90,8 @@
                 }
             } *@
         </form>
+
+        
 
         <p class="auth__text">
             Bạn đã có tài khoản?

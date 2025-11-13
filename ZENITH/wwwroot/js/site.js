@@ -99,6 +99,7 @@ window.addEventListener("template-loaded", calArrowPos);
  *  nếu muốn reset lại item active khi ẩn menu
  */
 window.addEventListener("template-loaded", handleActiveMenu);
+document.addEventListener("DOMContentLoaded", handleActiveMenu);
 
 function handleActiveMenu() {
   const dropdowns = qsa(".js-dropdown");
@@ -107,6 +108,9 @@ function handleActiveMenu() {
   const removeActive = (menu) => {
     const activeItems = menu.querySelectorAll(`.${activeClass}`);
     activeItems.forEach((item) => item.classList.remove(activeClass));
+  };
+  const removeAllActive = () => {
+    menus.forEach((menu) => removeActive(menu));
   };
 
   // Khởi tạo menu
@@ -213,13 +217,62 @@ window.addEventListener("template-loaded", () => {
   const links = qsa(".js-dropdown-list > li > a");
 
   links.forEach((link) => {
-    link.onclick = () => {
+    link.onclick = (e) => {
       if (window.innerWidth > 991) return;
+      e.preventDefault();
       const item = link.closest("li");
       item.classList.toggle("navbar__item--active");
     };
   });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const links = qsa(".js-dropdown-list > li > a");
+
+  links.forEach((link) => {
+    link.onclick = (e) => {
+      if (window.innerWidth > 991) return;
+      e.preventDefault();
+      const item = link.closest("li");
+      item.classList.toggle("navbar__item--active");
+    };
+  });
+});
+
+function initMobileAccordion() {
+  if (window.innerWidth > 991) return;
+
+  qsa(".js-menu-list .menu-column__item > .menu-column__link").forEach(
+    (link) => {
+      link.onclick = (e) => {
+        e.preventDefault();
+        const item = link.closest(".menu-column__item");
+        const menu = item?.parentElement;
+        if (!item || !menu) return;
+        Array.from(menu.children).forEach((child) => {
+          if (child !== item) child.classList.remove("menu-column__item--active");
+        });
+        item.classList.toggle("menu-column__item--active");
+      };
+    }
+  );
+
+  qsa(".sub-menu .menu-column .menu-column__heading a").forEach((link) => {
+    link.onclick = (e) => {
+      e.preventDefault();
+      const column = link.closest(".menu-column");
+      const wrap = column?.parentElement;
+      if (!column || !wrap) return;
+      Array.from(wrap.children).forEach((c) => {
+        if (c !== column) c.classList.remove("menu-column--active");
+      });
+      column.classList.toggle("menu-column--active");
+    };
+  });
+}
+
+window.addEventListener("template-loaded", initMobileAccordion);
+document.addEventListener("DOMContentLoaded", initMobileAccordion);
 
 // Bật/tắt overlay mờ nền khi submenu mở
 function setupNavbarOverlay() {
