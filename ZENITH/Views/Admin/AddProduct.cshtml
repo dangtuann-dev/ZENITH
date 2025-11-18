@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = " Add Product";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header border-0"><h3 class="card-title">Thêm sản phẩm mới</h3></div>
+        <div class="card-body">
+            <form asp-action="AddProduct" asp-controller="Admin" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label>Tên sản phẩm</label>
+                    <input class="form-control" name="ProductName" required />
+                </div>
+                <div class="form-group">
+                    <label>Giới thiệu</label>
+                    <textarea class="form-control" name="Description" rows="4"></textarea>
+                </div>
+                <div class="form-row" style="display:flex;gap:12px;flex-wrap:wrap">
+                    <div class="form-group" style="min-width:220px">
+                        <label>Danh mục</label>
+                        <select class="form-control" name="CategoryId" asp-items="(IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.CreateCategoryList"></select>
+                    </div>
+                    <div class="form-group" style="min-width:220px">
+                        <label>Môn thể thao</label>
+                        <select class="form-control" name="SportId" asp-items="(IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.CreateSportList"></select>
+                    </div>
+                    <div class="form-group" style="min-width:220px">
+                        <label>Nhà cung cấp</label>
+                        <select class="form-control" name="SupplierId" asp-items="(IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.CreateSupplierList"></select>
+                    </div>
+                </div>
+                <hr />
+                <div class="form-row" style="display:flex;gap:12px;flex-wrap:wrap">
+                    <div class="form-group">
+                        <label>Giá (biến thể đầu tiên)</label>
+                        <input type="number" step="0.01" class="form-control" name="price" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Giảm giá</label>
+                        <input type="number" step="0.01" class="form-control" name="salePrice" />
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <label>Ảnh preview chính (tải lên hoặc URL)</label>
+                    <input type="file" class="form-control" name="primaryImageFile" accept="image/*" />
+                    <input class="form-control mt-2" name="primaryImageUrl" placeholder="~/image/productImage/xxx.webp" />
+                </div>
+                <div class="form-group">
+                    <label>Ảnh preview thêm (tải lên nhiều hoặc nhập URL)</label>
+                    <input type="file" class="form-control" name="extraImageFiles" multiple accept="image/*" />
+                    <textarea class="form-control mt-2" name="extraImageUrls" rows="3" placeholder="~/image/... , ~/image/..."></textarea>
+                </div>
+                <button class="btn btn-primary" type="submit">Tạo</button>
+                <a asp-controller="Admin" asp-action="ProductManagement" class="btn btn-outline-secondary">Quay lại</a>
+            </form>
+        </div>
+    </div>
+</div>

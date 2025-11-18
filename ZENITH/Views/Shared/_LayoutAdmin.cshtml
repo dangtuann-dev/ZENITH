@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+@inject Microsoft.AspNetCore.Identity.UserManager<ZENITH.Models.ApplicationUser> UserManager
+@inject ZENITH.AppData.ApplicationDbContext DbContext
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Zenith Management | @ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/admin/adminlte.min.css">
+   <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- IonIcons -->
+    @* <link rel="stylesheet" href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css">  *@
+
+</head>
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to to the body tag
+to get the desired effect
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+<body class="hold-transition sidebar-mini">
+    <style>
+        .nav-sidebar .nav-link.active{background-color:rgba(255,255,255,0.9)!important;color:rgb(52,58,64)!important}
+        .nav-sidebar .nav-link.active .nav-icon, .nav-sidebar .nav-link.active i{color:rgb(52,58,64)!important}
+    </style>
+    <div id="page-loader" class="page-loader">
+        <div class="loader">
+            <div class="box box0"><div></div></div>
+            <div class="box box1"><div></div></div>
+            <div class="box box2"><div></div></div>
+            <div class="box box3"><div></div></div>
+            <div class="box box4"><div></div></div>
+            <div class="box box5"><div></div></div>
+            <div class="box box6"><div></div></div>
+            <div class="box box7"><div></div></div>
+            <div class="ground"><div></div></div>
+        </div>
+    </div>
+    <div class="wrapper">
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <!-- Left navbar links -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#"><img src="~/image/icons/more.svg" alt="Menu" style="width:20px;height:20px"></a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a asp-controller="Home" asp-action="Index" class="nav-link">Trang Chủ</a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a asp-controller="Admin" asp-action="Index" class="nav-link">Dashboard</a>
+                </li>
+            </ul>
+
+           
+        </nav>
+        <!-- /.navbar -->
+        <!-- Main Sidebar Container -->
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <!-- Brand Logo -->
+            <a asp-controller="Admin" asp-action="Index" class="brand-link">
+                <img src="~/image/icons/zenith-logo-white.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+                     style="opacity: .8">
+                <span class="brand-text font-weight-light">Zenith Management</span>
+            </a>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Sidebar user panel (optional) -->
+                @{ var user = await UserManager.GetUserAsync(User); var avatar = (user?.Avatar ?? "/image/account/default-avatar.jpg"); if (!string.IsNullOrWhiteSpace(avatar)) { var s = avatar.Trim(); if (!s.StartsWith("http") && !s.StartsWith("~/") && !s.StartsWith("/")) { avatar = Url.Content("~/" + s); } else { avatar = Url.Content(s.StartsWith("~/") ? s : s); } } var name = user?.FullName ?? user?.Email ?? "Tài khoản"; var ctrl = (ViewContext.RouteData.Values["controller"] as string ?? ""); var act = (ViewContext.RouteData.Values["action"] as string ?? ""); bool isDash = ctrl == "Admin" && (act == "Index" || act == "Dashboard"); bool isProd = ctrl == "Admin" && act == "ProductManagement"; bool isUser = ctrl == "Admin" && act == "UserManagement"; bool isOrder = ctrl == "Admin" && act == "OrderManagement"; var latestOrder = DbContext.Orders.OrderByDescending(o=>o.OrderDate).Select(o=>o.OrderDate).FirstOrDefault(); var latestProduct = DbContext.Products.OrderByDescending(p=>p.CreatedAt).Select(p=>p.CreatedAt).FirstOrDefault(); var latestUser = DbContext.Users.OrderByDescending(u=>u.CreatedAt).Select(u=>u.CreatedAt).FirstOrDefault(); DateTime seenOrders = DateTime.MinValue; DateTime.TryParseExact(Context.Request.Cookies["admin_seen_orders"], "O", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.RoundtripKind, out seenOrders); DateTime seenProducts = DateTime.MinValue; DateTime.TryParseExact(Context.Request.Cookies["admin_seen_products"], "O", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.RoundtripKind, out seenProducts); DateTime seenUsers = DateTime.MinValue; DateTime.TryParseExact(Context.Request.Cookies["admin_seen_users"], "O", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.RoundtripKind, out seenUsers); DateTime seenDash = DateTime.MinValue; DateTime.TryParseExact(Context.Request.Cookies["admin_seen_dashboard"], "O", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.RoundtripKind, out seenDash); bool newOrders = latestOrder > seenOrders; bool newProducts = latestProduct > seenProducts; bool newUsers = latestUser > seenUsers; bool newDash = (newOrders || newProducts || newUsers) && (DateTime.UtcNow - seenDash).TotalMinutes > 0; }
+                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    <div class="image">
+                        <img src="@avatar" class="img-circle elevation-2" alt="User Image" onerror="this.onerror=null;this.src='/image/account/default-avatar.jpg'" style="width:40px;height:40px;object-fit:cover;border-radius:50%">
+                    </div>
+                    <div class="info">
+                        <a  class="d-block">@name</a>
+                    </div>
+                </div>
+
+                <!-- Sidebar Menu -->
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                        <!-- Add icons to the links using the .nav-icon class
+                             with font-awesome or any other icon font library -->
+                        <li class="nav-item menu-open">
+                          
+                            <ul class="nav nav-treeview">
+                             
+                                <li class="nav-item">
+                                    <a asp-controller="Admin" asp-action="Index" class="nav-link @(isDash ? "active" : "")">
+                                        <i class="fa-solid fa-gauge"></i>
+                                        <p>Dashboard</p>
+                                        @if (newDash && !isDash) { <span class="right badge badge-danger">New</span> }
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-controller="Admin" asp-action="ProductManagement" class="nav-link @(isProd ? "active" : "")">
+                                <i class="fa-brands fa-product-hunt"></i>
+                                <p>
+                                    Product Management @if (newProducts && !isProd) { <span class="right badge badge-danger">New</span> }
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-controller="Admin" asp-action="UserManagement" class="nav-link @(isUser ? "active" : "")">
+                                <i class="fa-solid fa-user"></i>
+                                <p>
+                                    User Management @if (newUsers && !isUser) { <span class="right badge badge-danger">New</span> }
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-controller="Admin" asp-action="OrderManagement" class="nav-link @(isOrder ? "active" : "")">
+                                <i class="fa-solid fa-cart-arrow-down"></i>
+                                <p>
+                                    Order Management @if (newOrders && !isOrder) { <span class="right badge badge-danger">New</span> }
+                                </p>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- /.sidebar-menu -->
+            </div>
+            <!-- /.sidebar -->
+        </aside>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1 class="m-0 text-dark">@ViewData["Admin"]</h1>
+                        </div><!-- /.col -->
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                                <li class="breadcrumb-item active">@ViewData["Admin"]</li>
+                            </ol>
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+                </div><!-- /.container-fluid -->
+            </div>
+            <!-- /.content-header -->
+            <!-- Main content -->
+            <div class="content">
+                @RenderBody()
+            
+                <!-- /.container-fluid -->
+            </div>
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+        <!-- Main Footer -->
+        <footer class="main-footer">
+            <strong>Copyright &copy; 2025 Zenith.</strong>
+            All rights reserved.
+           
+        </footer>
+    </div>
+    <!-- ./wrapper -->
+    <!-- REQUIRED SCRIPTS -->
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/adminlte.js"></script>
+    <script src="~/js/chart.js/Chart.min.js"></script>
+    <script src="~/js/demo.js"></script>
+    <script src="~/js/dashboard3.js"></script>
+    <script>
+        (function(){
+            var loader = document.getElementById('page-loader');
+            function hide(){ if(loader){ loader.classList.add('hide'); } }
+            function show(){ if(loader){ loader.classList.remove('hide'); } }
+            document.addEventListener('DOMContentLoaded', hide);
+            window.addEventListener('beforeunload', show);
+        })();
+    </script>
+    <script>
+        (function(){
+            var links = document.querySelectorAll('.nav-sidebar .nav-link');
+            links.forEach(function(a){
+                if (a.classList.contains('active')) {
+                    // ensure only one active
+                    links.forEach(function(x){ if (x!==a) x.classList.remove('active'); });
+                }
+                a.addEventListener('click', function(){
+                    links.forEach(function(x){ x.classList.remove('active'); });
+                    a.classList.add('active');
+                    a.querySelectorAll('.badge-danger').forEach(function(b){ b.remove(); });
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

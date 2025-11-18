@@ -1,17 +1,39 @@
 ﻿using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using ZENITH.AppData;
 using Microsoft.AspNetCore.Identity;
 using ZENITH.Models;
 using ZENITH.Services;
+using Microsoft.Data.SqlClient;
+using System.IO;
+using Microsoft.AspNetCore.Identity.UI.Services;
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+var rawConnectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var contentRoot = builder.Environment.ContentRootPath;
+var dbFile = Path.Combine(contentRoot, "AppData", "ZenithDB.mdf");
+var dbDir = Path.GetDirectoryName(dbFile);
+if (!string.IsNullOrEmpty(dbDir) && !Directory.Exists(dbDir)) Directory.CreateDirectory(dbDir);
+var connectionString = rawConnectionString;
+if (rawConnectionString.Contains("(localdb)\\mssqllocaldb", StringComparison.OrdinalIgnoreCase))
+{
+    var dbName = Path.GetFileNameWithoutExtension(dbFile) + "_AppData";
+    var csb = new SqlConnectionStringBuilder(rawConnectionString)
+    {
+        AttachDBFilename = dbFile,
+        InitialCatalog = dbName
+    };
+    connectionString = csb.ConnectionString;
+}
 
 // Đăng ký DbContext với SQL Server
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+{
+    options.UseSqlServer(connectionString);
+    options.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
+});
 
 // Removed Google authentication
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
@@ -30,6 +52,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IMenuService, MenuService>();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 var app = builder.Build();
 

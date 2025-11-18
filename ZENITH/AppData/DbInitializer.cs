@@ -562,7 +562,63 @@ public static class DbInitializer
         var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
 
-        await context.Database.MigrateAsync();
+        try
+        {
+            await context.Database.MigrateAsync();
+        }
+        catch (Microsoft.Data.SqlClient.SqlException ex)
+        {
+            if (ex.Message.Contains("Invalid column name 'PaymentType'"))
+            {
+                await context.Database.ExecuteSqlRawAsync("IF COL_LENGTH('Orders','PaymentType') IS NULL ALTER TABLE Orders ADD PaymentType nvarchar(20) NOT NULL DEFAULT 'COD';");
+                await context.Database.MigrateAsync();
+            }
+            else if (ex.Message.Contains("Cannot insert the value NULL into column 'PaymentId'"))
+            {
+                var script = @"
+DECLARE @fk NVARCHAR(128);
+SELECT TOP 1 @fk = fk.name
+FROM sys.foreign_keys fk
+JOIN sys.foreign_key_columns fkc ON fk.object_id = fkc.constraint_object_id
+JOIN sys.tables t ON fk.parent_object_id = t.object_id
+JOIN sys.columns c ON c.object_id = t.object_id AND c.column_id = fkc.parent_column_id
+WHERE t.name = 'Orders' AND c.name = 'PaymentId';
+
+IF @fk IS NOT NULL EXEC('ALTER TABLE Orders DROP CONSTRAINT [' + @fk + ']');
+
+DECLARE @idx NVARCHAR(128);
+SELECT TOP 1 @idx = i.name
+FROM sys.indexes i
+JOIN sys.index_columns ic ON ic.object_id = i.object_id AND ic.index_id = i.index_id
+JOIN sys.columns c ON c.object_id = ic.object_id AND c.column_id = ic.column_id
+JOIN sys.tables t ON t.object_id = i.object_id
+WHERE t.name = 'Orders' AND c.name = 'PaymentId';
+
+IF @idx IS NOT NULL EXEC('DROP INDEX [' + @idx + '] ON Orders');
+
+IF COL_LENGTH('Orders','PaymentId') IS NOT NULL
+BEGIN
+    ALTER TABLE Orders DROP COLUMN PaymentId;
+END
+
+IF OBJECT_ID('PaymentMethods','U') IS NOT NULL
+BEGIN
+    DROP TABLE PaymentMethods;
+END
+
+IF COL_LENGTH('Orders','PaymentType') IS NULL
+BEGIN
+    ALTER TABLE Orders ADD PaymentType nvarchar(20) NOT NULL DEFAULT 'COD';
+END
+";
+                await context.Database.ExecuteSqlRawAsync(script);
+                await context.Database.MigrateAsync();
+            }
+            else
+            {
+                throw;
+            }
+        }
 
         var now = DateTime.Now;
 

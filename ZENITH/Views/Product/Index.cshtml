@@ -1,0 +1,80 @@
+﻿@model ZENITH.ViewModels.ProductListViewModel
+@using System.Globalization
+@{
+    ViewData["Title"] = "| Kết quả tìm kiếm";
+}
+
+<main class="product-page">
+    <div class="container">
+        <div class="product-container">
+            <form method="get" asp-controller="Product" asp-action="Index" class="search-bar d-none d-md-flex" style="margin-bottom:16px;">
+                <input type="text" name="q" value="@Model.Query" placeholder="Tìm kiếm sản phẩm" class="search-bar__input" />
+                <button class="search-bar__submit">
+                    <img src="~/image/icons/search.svg" alt="" class="search-bar__icon icon" />
+                </button>
+            </form>
+        </div>
+
+        <div class="product-container">
+            <div class="row">
+                <div class="col-3 col-xl-12" style="margin-bottom:16px;">
+                    <div class="cart-info">
+                        <h2 class="cart-info__heading">Bộ lọc</h2>
+                        <div class="filter-accordion">
+                            <h3 class="cart-info__desc">Theo Sport</h3>
+                            <ul class="filter-list">
+                                @foreach (var parent in Model.SportsTree)
+                                {
+                                    var parentOpen = Model.SportId == parent.Id;
+                                    <li class="filter-node@(parentOpen ? " open" : "")">
+                                        <button type="button" class="filter-toggle filter-sport-parent" data-id="@parent.Id">@parent.Name</button>
+                                        <ul class="filter-children">
+                                            @foreach (var child in parent.Children)
+                                            {
+                                                var childOpen = Model.SportId == child.Id || Model.CategoryId.HasValue && child.Categories.Any(cat => cat.Id == Model.CategoryId.Value);
+                                                <li class="filter-node@(childOpen ? " open" : "")">
+                                                    <div class="filter-row">
+                                                        <a asp-controller="Product" asp-action="Index" asp-route-sportId="@child.Id" asp-route-q="@Model.Query" asp-route-sort="@Model.Sort" class="filter-link">@child.Name</a>
+                                                        <button type="button" class="filter-toggle filter-sport-child" data-id="@child.Id">+</button>
+                                                    </div>
+                                                    <ul class="filter-children">
+                                                        @foreach (var cat in child.Categories)
+                                                        {
+                                                            <li>
+                                                                <a asp-controller="Product" asp-action="Index" asp-route-categoryId="@cat.Id" asp-route-q="@Model.Query" asp-route-sort="@Model.Sort" class="filter-link">@cat.Name</a>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                            </ul>
+
+                            <h3 class="cart-info__desc" style="margin-top:12px;">Sắp xếp</h3>
+                            <div class="filter-sort">
+                                <a asp-controller="Product" asp-action="Index" asp-route-q="@Model.Query" asp-route-sportId="@Model.SportId" asp-route-categoryId="@Model.CategoryId" asp-route-sort="price_asc" class="filter-link">Giá tăng dần</a>
+                                <a asp-controller="Product" asp-action="Index" asp-route-q="@Model.Query" asp-route-sportId="@Model.SportId" asp-route-categoryId="@Model.CategoryId" asp-route-sort="price_desc" class="filter-link">Giá giảm dần</a>
+                                <a asp-controller="Product" asp-action="Index" asp-route-q="@Model.Query" asp-route-sportId="@Model.SportId" asp-route-categoryId="@Model.CategoryId" asp-route-sort="name_asc" class="filter-link">A → Z</a>
+                                <a asp-controller="Product" asp-action="Index" asp-route-q="@Model.Query" asp-route-sportId="@Model.SportId" asp-route-categoryId="@Model.CategoryId" asp-route-sort="name_desc" class="filter-link">Z → A</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-9 col-xl-12">
+                    <div class="product-grid">
+                        @if (Model.Products != null && Model.Products.Any())
+                        {
+                            @await Html.PartialAsync("_ProductCardList", Model.Products)
+                        }
+                        else
+                        {
+                            <p>Không có sản phẩm phù hợp.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

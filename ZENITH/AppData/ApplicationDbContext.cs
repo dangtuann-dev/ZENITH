@@ -16,7 +16,6 @@ namespace ZENITH.AppData
         // DbSets
         public DbSet<AdminLog> AdminLogs { get; set; }
         public DbSet<Address> Addresses { get; set; }
-        public DbSet<PaymentMethod> PaymentMethods { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Sport> Sports { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
@@ -124,25 +123,7 @@ namespace ZENITH.AppData
                 entity.HasIndex(e => e.UserId);
             });
 
-            // ==================== PAYMENT METHOD CONFIGURATION ====================
-
-            modelBuilder.Entity<PaymentMethod>(entity =>
-            {
-                entity.HasKey(e => e.PaymentId);
-                entity.Property(e => e.CardType).IsRequired().HasMaxLength(50);
-                entity.Property(e => e.CardNumber).IsRequired().HasMaxLength(20);
-                entity.Property(e => e.CardHolder).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.ExpiryDate).IsRequired().HasMaxLength(7);
-                entity.Property(e => e.IsDefault).HasDefaultValue(false);
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
-
-                entity.HasOne(e => e.User)
-                    .WithMany(u => u.PaymentMethods)
-                    .HasForeignKey(e => e.UserId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasIndex(e => e.UserId);
-            });
+            
 
             // ==================== CATEGORY CONFIGURATION ====================
 
@@ -443,10 +424,7 @@ namespace ZENITH.AppData
                     .HasForeignKey(e => e.AddressId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                entity.HasOne(e => e.PaymentMethod)
-                    .WithMany(pm => pm.Orders)
-                    .HasForeignKey(e => e.PaymentId)
-                    .OnDelete(DeleteBehavior.Restrict);
+                entity.Property(e => e.PaymentType).HasMaxLength(20);
 
                 entity.HasIndex(e => e.OrderCode).IsUnique();
                 entity.HasIndex(e => e.UserId);

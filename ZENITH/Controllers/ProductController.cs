@@ -8,6 +8,7 @@ using ZENITH.ViewModels;
 using ZENITH.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using System;
 
 namespace ZENITH.Controllers
 {
@@ -20,9 +21,148 @@ namespace ZENITH.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        private IQueryable<Product> BaseQuery()
         {
-            return View();
+            return _context.Products
+                .Include(p => p.Supplier)
+                .Include(p => p.ProductVariants)
+                .Include(p => p.ProductImages.Where(i => i.IsPrimary))
+                .Include(p => p.Reviews)
+                .Include(p => p.Category)
+                .Include(p => p.Sport)
+                .Where(p => p.IsActive)
+                .AsNoTracking();
+        }
+
+        private static List<ProductCardViewModel> MapToCards(List<Product> products)
+        {
+            return products.Select(p => new ProductCardViewModel
+            {
+                ProductId = p.ProductId,
+                ProductName = p.ProductName,
+                SkuBase = p.Sku,
+                SupplierName = p.Supplier != null ? p.Supplier.SupplierName : "N/A",
+                Price = p.ProductVariants.OrderByDescending(v => v.Price).FirstOrDefault()?.Price ?? 0,
+                SalePrice = p.ProductVariants.OrderBy(v => v.SalePrice).FirstOrDefault()?.SalePrice ?? 0,
+                VariantId = p.ProductVariants.OrderBy(v => v.SalePrice).FirstOrDefault()?.VariantId ??
+                            p.ProductVariants.FirstOrDefault()?.VariantId ?? 0,
+                ImageUrl = p.ProductImages.FirstOrDefault()?.ImageUrl ?? "~/image/default.webp",
+                Rating = p.Reviews != null && p.Reviews.Any() ? (double)p.Reviews.Average(r => r.Rating) : 0
+            }).ToList();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index(string? q, int? categoryId, int? sportId, string? sort)
+        {
+            var query = BaseQuery();
+
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                var text = q.Trim();
+                query = query.Where(p => p.ProductName.Contains(text) || p.Description.Contains(text) || p.Sku.Contains(text));
+            }
+            if (categoryId.HasValue && categoryId.Value > 0)
+            {
+                var cid = categoryId.Value;
+                query = query.Where(p => p.CategoryId == cid || (p.Category != null && p.Category.ParentCategoryId == cid));
+            }
+            if (sportId.HasValue && sportId.Value > 0)
+            {
+                var sid = sportId.Value;
+                query = query.Where(p => p.SportId == sid || (p.Sport != null && p.Sport.ParentSportId == sid));
+            }
+
+            var products = await query
+                .OrderByDescending(p => p.ViewCount)
+                .ThenByDescending(p => p.CreatedAt)
+                .Take(200)
+                .ToListAsync();
+
+            var vm = new ProductListViewModel
+            {
+                Query = q,
+                Sort = sort,
+                CategoryId = categoryId,
+                SportId = sportId,
+                TotalCount = products.Count,
+                Products = MapToCards(products),
+                Categories = await _context.Categories
+                    .Where(c => c.IsActive && c.ParentCategoryId == null)
+                    .OrderBy(c => c.DisplayOrder)
+                    .Select(c => new CategoryItem { Id = c.CategoryId, Name = c.CategoryName })
+                    .AsNoTracking().ToListAsync(),
+                Sports = await _context.Sports
+                    .Where(s => s.IsActive && s.ParentSportId == null)
+                    .OrderBy(s => s.DisplayOrder)
+                    .Select(s => new SportItem { Id = s.SportId, Name = s.SportName })
+                    .AsNoTracking().ToListAsync(),
+            };
+
+            // Build sports tree (parent -> subSports -> categories)
+            var parentSports = await _context.Sports
+                .Where(s => s.IsActive && s.ParentSportId == null)
+                .OrderBy(s => s.DisplayOrder)
+                .AsNoTracking()
+                .ToListAsync();
+
+            var subSports = await _context.Sports
+                .Where(s => s.IsActive && s.ParentSportId != null)
+                .OrderBy(s => s.DisplayOrder)
+                .AsNoTracking()
+                .ToListAsync();
+
+            var sportCats = await _context.SportCategories
+                .Include(sc => sc.Category)
+                .AsNoTracking()
+                .ToListAsync();
+
+            var subByParent = subSports.GroupBy(s => s.ParentSportId!.Value)
+                .ToDictionary(g => g.Key, g => g.ToList());
+            var catsBySport = sportCats.GroupBy(sc => sc.SportId)
+                .ToDictionary(g => g.Key, g => g.Select(x => new CategoryItem { Id = x.CategoryId, Name = x.Category.CategoryName }).DistinctBy(c => c.Id).OrderBy(c => c.Name).ToList());
+
+            vm.SportsTree = parentSports.Select(ps => new SportNode
+            {
+                Id = ps.SportId,
+                Name = ps.SportName,
+                Children = (subByParent.TryGetValue(ps.SportId, out var children) ? children : new List<Models.Sport>())
+                    .Select(ch => new SportNode
+                    {
+                        Id = ch.SportId,
+                        Name = ch.SportName,
+                        Categories = catsBySport.TryGetValue(ch.SportId, out var catList) ? catList : new List<CategoryItem>()
+                    }).ToList()
+            }).ToList();
+
+            // Đánh dấu yêu thích nếu người dùng đăng nhập
+            if (User?.Identity?.IsAuthenticated == true)
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    var favIds = await _context.Favorites
+                        .Where(f => f.UserId == userId)
+                        .Select(f => f.VariantId)
+                        .ToListAsync();
+                    var set = favIds.ToHashSet();
+                    foreach (var p in vm.Products)
+                    {
+                        p.IsUserFavorite = set.Contains(p.VariantId);
+                    }
+                }
+            }
+
+            // Apply sort to view model list
+            vm.Products = sort switch
+            {
+                "price_asc" => vm.Products.OrderBy(p => p.SalePrice).ThenBy(p => p.Price).ToList(),
+                "price_desc" => vm.Products.OrderByDescending(p => p.SalePrice).ThenByDescending(p => p.Price).ToList(),
+                "name_asc" => vm.Products.OrderBy(p => p.ProductName).ToList(),
+                "name_desc" => vm.Products.OrderByDescending(p => p.ProductName).ToList(),
+                _ => vm.Products
+            };
+
+            return View(vm);
         }
 
         [HttpGet]

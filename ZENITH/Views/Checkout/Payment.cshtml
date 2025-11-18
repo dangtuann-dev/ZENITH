@@ -1,5 +1,5 @@
 ﻿@model ZENITH.ViewModels.PaymentViewModel
-<main class="checkout-page">
+<main class="checkout-page" data-item-count="@Model.ItemCount" data-line-count="@Model.Items.Count" data-subtotal="@Model.Subtotal" data-address-id="@Model.SelectedAddress?.AddressId">
     <div class="container">
         <!-- Search bar -->
         <div class="checkout-container">
@@ -90,8 +90,9 @@
                                         <input type="radio"
                                                name="delivery-method"
                                                checked
+                                               data-rate="15000"
                                                class="cart-info__checkbox-input payment-item__checkbox-input" />
-                                        <span class="payment-item__cost">Miễn phí</span>
+                                        <span class="payment-item__cost">0 VND</span>
                                     </span>
                                 </div>
                             </article>
@@ -112,8 +113,9 @@
                                     <span class="cart-info__checkbox payment-item__checkbox">
                                         <input type="radio"
                                                name="delivery-method"
+                                               data-rate="30000"
                                                class="cart-info__checkbox-input payment-item__checkbox-input" />
-                                        <span class="payment-item__cost">15.000 VND</span>
+                                        <span class="payment-item__cost">0 VND</span>
                                     </span>
                                 </div>
                             </article>
@@ -123,103 +125,32 @@
                 <div class="col-4 col-xl-4 col-lg-12">
                     <div class="cart-info">
                         <h2 class="cart-info__heading cart-info__heading--lv2">Thông tin thanh toán</h2>
-                        <p class="cart-info__desc">Vui lòng nhập thông tin để hoàn tất đơn hàng.</p>
-                        <form action="" class="form cart-info__form">
-                            <div class="form__group">
-                                <label for="email" class="form__label form__label--medium">Email</label>
-                                <div class="form__text-input">
-                                    <input type="email"
-                                           name="email"
-                                           id="email"
-                                           placeholder="Email"
-                                           class="form__input"
-                                           required />
-                                    <img src="~/image/icons/form-error.svg"
-                                         alt=""
-                                         class="form__input-icon-error" />
-                                </div>
-                                <p class="form__error">Vui lòng nhập đúng định dạng email</p>
-                            </div>
-                            <div class="form__group">
-                                <label for="card-holder" class="form__label form__label--medium">Tên chủ thẻ</label>
-                                <div class="form__text-input">
-                                    <input type="text"
-                                           name="card-holder"
-                                           id="card-holder"
-                                           placeholder="Tên chủ thẻ"
-                                           class="form__input"
-                                           required />
-                                    <img src="~/image/icons/form-error.svg"
-                                         alt=""
-                                         class="form__input-icon-error" />
-                                </div>
-                                <p class="form__error">Vui lòng nhập tên chủ thẻ</p>
-                            </div>
-                            <div class="form__group">
-                                <label for="card-details" class="form__label form__label--medium">Thông tin thẻ</label>
-                                <div class="form__text-input">
-                                    <input type="text"
-                                           name="card-details"
-                                           id="card-details"
-                                           placeholder="Số thẻ"
-                                           class="form__input"
-                                           required />
-                                    <img src="~/image/icons/form-error.svg"
-                                         alt=""
-                                         class="form__input-icon-error" />
-                                </div>
-                                <p class="form__error">Vui lòng nhập số thẻ hợp lệ</p>
-                            </div>
-                            <div class="form__row cart-info__form-row">
-                                <div class="form__group">
-                                    <div class="form__text-input">
-                                        <input type="text"
-                                               name="card-expire"
-                                               id="card-expire"
-                                               placeholder="MM/YY"
-                                               class="form__input"
-                                               required />
-                                        <img src="~/image/icons/form-error.svg"
-                                             alt=""
-                                             class="form__input-icon-error" />
-                                    </div>
-                                    <p class="form__error">Vui lòng nhập hạn thẻ</p>
-                                </div>
-                                <div class="form__group">
-                                    <div class="form__text-input">
-                                        <input type="text"
-                                               name="card-cvc"
-                                               id="card-cvc"
-                                               placeholder="CVC"
-                                               class="form__input"
-                                               required />
-                                        <img src="~/image/icons/form-error.svg"
-                                             alt=""
-                                             class="form__input-icon-error" />
-                                    </div>
-                                    <p class="form__error">Vui lòng nhập mã CVC</p>
-                                </div>
-                            </div>
-                        </form>
+                        <div class="cart-info__row">
+                            <span>Phương thức thanh toán</span>
+                            <span class="cart-info__sub-label">Tiền mặt khi nhận hàng</span>
+                        </div>
                         <div class="cart-info__row">
                             <span>Tổng số <span class="cart-info__sub-label">(sản phẩm)</span></span>
                             <span>@Model.ItemCount</span>
                         </div>
                         <div class="cart-info__row">
                             <span>Tổng cộng</span>
-                            <span>@Model.SubtotalFormatted</span>
+                            <span id="js-pay-subtotal">@Model.SubtotalFormatted</span>
                         </div>
                         <div class="cart-info__row">
                             <span>Phí vận chuyển</span>
-                            <span>@Model.ShippingFormatted</span>
+                            <span id="js-pay-shipping">@Model.ShippingFormatted</span>
                         </div>
                         <div class="cart-info__separate"></div>
                         <div class="cart-info__row">
                             <span>Tổng dự kiến</span>
-                            <span>@Model.TotalFormatted</span>
+                            <span id="js-pay-total">@Model.TotalFormatted</span>
                         </div>
-                        <a href="#" class="cart-info__next-btn btn btn--primary btn--rounded">Thanh toán @Model.TotalFormatted</a>
+                        <a href="#" class="cart-info__next-btn btn btn--primary btn--rounded" id="js-pay-submit-btn">Thanh toán @Model.TotalFormatted</a>
                     </div>
+                    <form method="post" style="display:none">
+                        @Html.AntiForgeryToken()
+                    </form>
                     
                 </div>
             </div>

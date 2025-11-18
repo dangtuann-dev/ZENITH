@@ -118,11 +118,7 @@ function handleActiveMenu() {
     // Xóa tất cả active trước
     removeAllActive();
 
-    // Thêm active cho phần tử đầu tiên của menu chính
-    const mainMenu = document.querySelector(".navbar__list .js-menu-list");
-    if (mainMenu && mainMenu.children.length > 0 && window.innerWidth > 991) {
-      mainMenu.children[0].classList.add(activeClass);
-    }
+    // Không set active mặc định để hiển thị ảnh quảng cáo
 
     // Thêm sự kiện cho tất cả các menu item
     menus.forEach((menu) => {
@@ -258,15 +254,26 @@ function initMobileAccordion() {
   );
 
   qsa(".sub-menu .menu-column .menu-column__heading a").forEach((link) => {
-    link.onclick = (e) => {
-      e.preventDefault();
-      const column = link.closest(".menu-column");
+    const activate = (el) => {
+      const column = el.closest(".menu-column");
       const wrap = column?.parentElement;
       if (!column || !wrap) return;
       Array.from(wrap.children).forEach((c) => {
         if (c !== column) c.classList.remove("menu-column--active");
       });
       column.classList.toggle("menu-column--active");
+    };
+
+    link.onclick = (e) => {
+      e.preventDefault();
+      activate(link);
+    };
+  });
+
+  qsa(".sub-menu .menu-column .menu-column__heading").forEach((heading) => {
+    heading.onclick = (e) => {
+      e.preventDefault();
+      activate(heading);
     };
   });
 }
@@ -529,13 +536,31 @@ window.addEventListener("template-loaded", () => {
       document.querySelector("html").classList.toggle("dark", !isDark);
       localStorage.setItem("dark", !isDark);
       switchBtn.querySelector("span").textContent = isDark
-        ? "Dark mode"
-        : "Light mode";
+        ? "Nền tối"
+        : "Nền sáng";
     };
     const isDark = localStorage.dark === "true";
     switchBtn.querySelector("span").textContent = isDark
-      ? "Light mode"
-      : "Dark mode";
+      ? "Nền sáng"
+      : "Nền tối";
+  }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const switchBtn = document.querySelector("#switch-theme-btn");
+  if (switchBtn) {
+    switchBtn.onclick = function () {
+      const isDark = localStorage.dark === "true";
+      document.querySelector("html").classList.toggle("dark", !isDark);
+      localStorage.setItem("dark", !isDark);
+      switchBtn.querySelector("span").textContent = isDark
+        ? "Nền tối"
+        : "Nền sáng";
+    };
+    const isDark = localStorage.dark === "true";
+    switchBtn.querySelector("span").textContent = isDark
+      ? "Nền sáng"
+      : "Nền tối";
   }
 });
 
@@ -890,6 +915,138 @@ document.addEventListener("DOMContentLoaded", initSimilarCarousel);
     });
   });
 })();
+
+// Payment: redirect to Home and show success modal
+document.addEventListener("DOMContentLoaded", function () {
+  var path = (window.location.pathname || "").toLowerCase();
+  if (path.indexOf("/checkout/payment") === -1) return;
+  (function(){
+    function fmt(n){ try{ return new Intl.NumberFormat('vi-VN').format(n) + ' VND'; }catch(_){ return String(Math.round(n)) + ' VND'; } }
+    var main = document.querySelector('main.checkout-page');
+    if (!main) return;
+    var itemCount = parseInt(main.getAttribute('data-item-count') || '0', 10) || 0;
+    var subtotal = parseFloat(main.getAttribute('data-subtotal') || '0') || 0;
+    var radios = Array.prototype.slice.call(document.querySelectorAll('.payment-item__checkbox-input'));
+    var shippingEl = document.getElementById('js-pay-shipping');
+    var totalEl = document.getElementById('js-pay-total');
+    var subtotalEl = document.getElementById('js-pay-subtotal');
+    var submitBtn = document.getElementById('js-pay-submit-btn');
+  var pmRadios = [];
+  var cardForm = null;
+  var cardHolderEl = null;
+  var cardNumberEl = null;
+  var cardExpireEl = null;
+  var cardCvcEl = null;
+    
+    function applyCosts(){
+      radios.forEach(function(r){
+        var rate = parseFloat(r.getAttribute('data-rate') || '0') || 0;
+        var wrap = r.closest('.payment-item__checkbox');
+        var label = wrap ? wrap.querySelector('.payment-item__cost') : null;
+        var lineCount = parseInt(main.getAttribute('data-line-count') || '0', 10) || 0;
+        if (label) label.textContent = fmt(rate * lineCount);
+      });
+    }
+
+    function updateSummary(){
+      var sel = radios.find(function(r){ return r.checked; });
+      var rate = sel ? parseFloat(sel.getAttribute('data-rate') || '0') || 0 : 0;
+      var lineCount = parseInt(main.getAttribute('data-line-count') || '0', 10) || 0;
+      var shipping = rate * lineCount;
+      if (shippingEl) shippingEl.textContent = fmt(shipping);
+      var total = subtotal + shipping;
+      if (totalEl) totalEl.textContent = fmt(total);
+      if (submitBtn) submitBtn.textContent = 'Thanh toán ' + fmt(total);
+      if (subtotalEl && !subtotalEl.textContent) subtotalEl.textContent = fmt(subtotal);
+    }
+
+    applyCosts();
+    updateSummary();
+    radios.forEach(function(r){ r.addEventListener('change', updateSummary); });
+
+  function toggleCardForm(){
+    var v = (pmRadios.find(function(r){ return r.checked; })?.value || 'card');
+    if (cardForm) cardForm.style.display = v === 'card' ? '' : 'none';
+    // Toggle required attributes for card inputs
+    var req = v === 'card';
+    if (cardHolderEl) cardHolderEl.required = req;
+    if (cardNumberEl) cardNumberEl.required = req;
+    if (cardExpireEl) cardExpireEl.required = req;
+    if (cardCvcEl) cardCvcEl.required = req;
+  }
+    toggleCardForm();
+  })();
+    var payBtn = document.querySelector(".checkout-page .cart-info__next-btn");
+    if (!payBtn) return;
+    payBtn.addEventListener("click", async function (e) {
+      e.preventDefault();
+      try {
+        var mainEl = document.querySelector('main.checkout-page');
+        var radiosNow = Array.prototype.slice.call(document.querySelectorAll('.payment-item__checkbox-input'));
+        var sel = radiosNow.find(function(r){ return r.checked; });
+        var rate = sel ? parseFloat(sel.getAttribute('data-rate') || '0') || 0 : 0;
+        var method = rate>=30000? 'express':'standard';
+        var addrId = parseInt((mainEl?.getAttribute('data-address-id') || '0'),10) || null;
+        var paymentType = 'cod';
+        var cardHolder = '';
+        var cardNumber = '';
+        var cardExpire = '';
+
+        var token = (document.querySelector('input[name="__RequestVerificationToken"]')?.value || '');
+        var resp = await fetch('/Checkout/PlaceOrder', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
+          credentials: 'include',
+          body: JSON.stringify({ addressId: addrId, shippingMethod: method, shippingRate: rate, paymentType: paymentType, cardHolder: cardHolder, cardNumber: cardNumber, expiryDate: cardExpire })
+        });
+        var data;
+        try { data = await resp.json(); } catch(_) { data = null; }
+        if (!resp.ok || !data || !data.success) {
+          var msg = (data && data.message) ? data.message : 'Không thể tạo đơn hàng. Vui lòng thử lại!';
+          alert(msg);
+          if (msg.toLowerCase().includes('address') || msg.toLowerCase().includes('địa chỉ')) {
+            window.location.href = '/Checkout/Shipping';
+          }
+          return;
+        }
+        try { localStorage.setItem('checkoutSuccess', 'true'); } catch (_){ }
+        window.location.href = '/';
+      } catch (err) {
+        console.error('PlaceOrder error:', err);
+        alert('Có lỗi xảy ra khi thanh toán.');
+      }
+    });
+  });
+
+// Show checkout success modal on Home
+document.addEventListener("DOMContentLoaded", function () {
+  if (window.location.pathname !== "/") return;
+  var flag = null;
+  try { flag = localStorage.getItem("checkoutSuccess"); } catch (_) {}
+  if (flag === "true") {
+    try { localStorage.removeItem("checkoutSuccess"); } catch (_) {}
+    var modal = document.createElement("div");
+    modal.className = "modal modal--small show";
+    modal.innerHTML = (
+      '<div class="modal__overlay"></div>' +
+      '<div class="modal__content">' +
+      '  <button class="modal__close" aria-label="Đóng">×</button>' +
+      '  <h2 class="modal__heading">Thanh toán thành công</h2>' +
+      '  <div class="modal__body">' +
+      '    <p class="modal__text">Cảm ơn bạn đã mua sắm tại Zenith. Đơn hàng của bạn đang được xử lý và sẽ được giao tới trong thời gian sớm nhất.</p>' +
+      '  </div>' +
+      '  <div class="modal__bottom">' +
+      '    <button class="btn btn--primary">Đóng</button>' +
+      '  </div>' +
+      '</div>'
+    );
+    document.body.appendChild(modal);
+    var close = function () { modal.classList.remove("show"); setTimeout(function(){ modal.remove(); }, 200); };
+    modal.querySelector(".modal__close").addEventListener("click", close);
+    modal.querySelector(".modal__overlay").addEventListener("click", close);
+    modal.querySelector(".btn--primary").addEventListener("click", close);
+  }
+});
 
 // Avatar fallback: nếu ảnh bị xóa hoặc lỗi tải, tự động dùng ảnh mặc định
 (function () {
@@ -1288,6 +1445,88 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("Có lỗi xảy ra khi chuyển sang giỏ.");
       }
     });
+  });
+});
+
+// Filter accordion toggles on Product Index
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".filter-sport-parent").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const li = btn.closest(".filter-node");
+      if (!li) return;
+      li.classList.toggle("open");
+    });
+  });
+  document.querySelectorAll(".filter-sport-child").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const li = btn.closest(".filter-node");
+      if (!li) return;
+      li.classList.toggle("open");
+    });
+  });
+});
+
+// Header search: use external icon button to focus/submit
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".js-header-search-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var group = btn.closest(".top-act__group--search");
+      if (!group) return;
+      var form = group.querySelector(".header-search");
+      var input = group.querySelector(".header-search__input");
+      if (!form || !input) return;
+      var isOpen = form.classList.contains("header-search--open");
+      if (!isOpen) {
+        form.classList.add("header-search--open");
+        input.focus();
+        return;
+      }
+      var val = (input.value || "").trim();
+      if (val.length > 0) {
+        form.submit();
+      } else {
+        input.focus();
+      }
+    });
+  });
+});
+
+// Close header search when clicking outside or pressing Escape (empty only)
+document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("click", function (e) {
+    document.querySelectorAll(".top-act__group--search").forEach(function (group) {
+      var form = group.querySelector(".header-search");
+      var input = group.querySelector(".header-search__input");
+      if (!form) return;
+      var inside = !!e.target.closest(".top-act__group--search");
+      if (!inside && form.classList.contains("header-search--open")) {
+        var val = (input && input.value || "").trim();
+        if (!val) form.classList.remove("header-search--open");
+      }
+    });
+  });
+  document.querySelectorAll(".header-search__input").forEach(function (input) {
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        var form = input.closest(".header-search");
+        if (form && !input.value.trim()) form.classList.remove("header-search--open");
+      }
+    });
+  });
+});
+
+// Search bar navigation: redirect to Product Index with query
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".search-bar").forEach((bar) => {
+    const input = bar.querySelector(".search-bar__input");
+    const submit = bar.querySelector(".search-bar__submit");
+    const go = () => {
+      const q = input?.value?.trim();
+      const url = q ? `/Product?q=${encodeURIComponent(q)}` : `/Product`;
+      window.location.href = url;
+    };
+    if (submit) submit.addEventListener("click", (e) => { e.preventDefault(); go(); });
+    if (input) input.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); go(); } });
   });
 });
 

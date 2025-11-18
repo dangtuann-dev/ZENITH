@@ -1,0 +1,106 @@
+﻿@model ZENITH.Models.Product
+@{
+    ViewData["Title"] = " Edit Product";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header border-0"><h3 class="card-title">Chỉnh sửa sản phẩm</h3></div>
+        <div class="card-body">
+            <form asp-action="EditProduct" asp-controller="Admin" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.ProductId" />
+                <div class="form-group">
+                    <label>Tên sản phẩm</label>
+                    <input class="form-control" name="ProductName" value="@Model.ProductName" />
+                </div>
+                <div class="form-group">
+                    <label>Giới thiệu</label>
+                    <textarea class="form-control" name="Description" rows="5">@Model.Description</textarea>
+                </div>
+                <div class="form-row" style="display:flex;gap:12px;flex-wrap:wrap">
+                    <div class="form-group" style="min-width:220px">
+                        <label>Danh mục</label>
+                        <select class="form-control" name="CategoryId" asp-items="(IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.EditCategoryList"></select>
+                    </div>
+                    <div class="form-group" style="min-width:220px">
+                        <label>Môn thể thao</label>
+                        <select class="form-control" name="SportId" asp-items="(IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.EditSportList"></select>
+                    </div>
+                </div>
+                <hr />
+                <div class="form-row" style="display:flex;gap:12px;flex-wrap:wrap">
+                    <div class="form-group">
+                        <label>Giá (biến thể đầu tiên)</label>
+                        <input type="number" step="0.01" class="form-control" name="price" value="@Model.ProductVariants.OrderBy(v=>v.VariantId).FirstOrDefault()?.Price" />
+                    </div>
+                    <div class="form-group">
+                        <label>Giảm giá</label>
+                        <input type="number" step="0.01" class="form-control" name="salePrice" value="@Model.ProductVariants.OrderBy(v=>v.VariantId).FirstOrDefault()?.SalePrice" />
+                    </div>
+                </div>
+                <hr />
+                <h5>Ảnh preview</h5>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Preview</th>
+                                <th>URL</th>
+                                <th>Chính</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var i in Model.ProductImages.OrderByDescending(x=>x.IsPrimary).ThenBy(x=>x.DisplayOrder)) {
+                            var url = Url.Content(i.ImageUrl.StartsWith("~/") ? i.ImageUrl : (i.ImageUrl.StartsWith("/")? i.ImageUrl : "~/"+ i.ImageUrl));
+                            <tr>
+                                <td>
+                                    <form asp-controller="Admin" asp-action="ReplaceProductImage" method="post" enctype="multipart/form-data" id="form-rep-@i.ImageId">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="imageId" value="@i.ImageId" />
+                                        <input type="file" name="file" accept="image/*" style="display:none" id="input-rep-@i.ImageId" onchange="document.getElementById('form-rep-@i.ImageId').submit();" />
+                                        <img src="@url" style="width:64px;height:64px;object-fit:cover;border-radius:6px;cursor:pointer" onclick="document.getElementById('input-rep-@i.ImageId').click();" />
+                                    </form>
+                                </td>
+                                <td>
+                                    <form asp-controller="Admin" asp-action="UpdateProductImage" method="post" style="display:flex;gap:8px;align-items:center">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="imageId" value="@i.ImageId" />
+                                        <input class="form-control" name="imageUrl" value="@i.ImageUrl" style="min-width:320px" />
+                                        <label style="margin:0 8px 0 0">Chính</label>
+                                        <input type="checkbox" name="isPrimary" value="true" @(i.IsPrimary ? "checked" : "") />
+                                        <button class="btn btn-sm btn-outline-primary" type="submit">Lưu</button>
+                                    </form>
+                                </td>
+                                <td>@(i.IsPrimary?"✔":"")</td>
+                                <td>
+                                    <form asp-controller="Admin" asp-action="DeleteProductImage" method="post" onsubmit="return confirm('Xoá ảnh này?');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="imageId" value="@i.ImageId" />
+                                        <button class="btn btn-sm btn-outline-danger" type="submit">Xoá</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card mt-2">
+                    <div class="card-body">
+                        <form asp-controller="Admin" asp-action="AddProductImage" method="post" style="display:flex;gap:8px;align-items:center">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="productId" value="@Model.ProductId" />
+                            <input class="form-control" name="imageUrl" placeholder="~/image/..." style="min-width:320px" />
+                            <label style="margin:0 8px 0 0">Chính</label>
+                            <input type="checkbox" name="isPrimary" value="true" />
+                            <button class="btn btn-sm btn-primary" type="submit">Thêm ảnh</button>
+                        </form>
+                    </div>
+                </div>
+                <button class="btn btn-primary" type="submit">Lưu</button>
+                <a asp-controller="Admin" asp-action="ProductManagement" class="btn btn-outline-secondary">Quay lại</a>
+            </form>
+        </div>
+    </div>
+</div>

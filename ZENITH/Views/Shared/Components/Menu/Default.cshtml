@@ -21,7 +21,7 @@
 
                                     <li class="menu-column__item">
                                         @* Tên Sport Cha *@
-                                        <a href="#!" class="menu-column__link">
+                                        <a asp-controller="Product" asp-action="Index" asp-route-sportId="@parentSport.Id" class="menu-column__link">
                                             @parentSport.Name
                                         </a>
                                         @*SubMenu*@
@@ -43,13 +43,13 @@
                                                         </div>
                                                         <div class="menu-column__content">
                                                             <h2 class="menu-column__heading">
-                                                                <strong><a href="#!"> @subSport.Name</a></strong>
+                                                                <strong><a asp-controller="Product" asp-action="Index" asp-route-sportId="@subSport.Id"> @subSport.Name</a></strong>
                                                             </h2>
                                                             <ul class="menu-column__list">
                                                                 @foreach (var category in subSport.Categories)
                                                                 {
                                                                     <li class="menu-column__item">
-                                                                        <a href="#!"
+                                                                        <a asp-controller="Product" asp-action="Index" asp-route-categoryId="@category.Id"
                                                                            class="menu-column__link">
                                                                             @category.Name
                                                                         </a>
@@ -100,13 +100,13 @@
                                              style="filter: invert(19%) sepia(85%) saturate(3015%) hue-rotate(222deg) brightness(97%) contrast(98%);" />
                                         <div class="menu-column__content">
                                             <h2 class="menu-column__heading">
-                                                <a href="#!">@subSport.Name</a>
+                                                <a asp-controller="Product" asp-action="Index" asp-route-sportId="@subSport.Id">@subSport.Name</a>
                                             </h2>
                                             <ul class="menu-column__list">
                                                 @foreach (var category in subSport.Categories)
                                                 {
                                                     <li class="menu-column__item">
-                                                        <a href="#!" class="menu-column__link">@category.Name</a>
+                                                        <a asp-controller="Product" asp-action="Index" asp-route-categoryId="@category.Id" class="menu-column__link">@category.Name</a>
                                                     </li>
                                                 }
                                             </ul>
@@ -144,7 +144,7 @@
 
                                     <li class="menu-column__item">
                                         @* Tên Sport Cha *@
-                                        <a href="#!" class="menu-column__link">
+                                        <a asp-controller="Product" asp-action="Index" asp-route-sportId="@parentSport.Id" class="menu-column__link">
                                             @parentSport.Name
                                         </a>
                                         @*SubMenu*@
@@ -166,13 +166,13 @@
                                                         </div>
                                                         <div class="menu-column__content">
                                                             <h2 class="menu-column__heading">
-                                                                <strong><a href="#!"> @subSport.Name</a></strong>
+                                                                <strong><a asp-controller="Product" asp-action="Index" asp-route-sportId="@subSport.Id"> @subSport.Name</a></strong>
                                                             </h2>
                                                             <ul class="menu-column__list">
                                                                 @foreach (var category in subSport.Categories)
                                                                 {
                                                                     <li class="menu-column__item">
-                                                                        <a href="#!"
+                                                                        <a asp-controller="Product" asp-action="Index" asp-route-categoryId="@category.Id"
                                                                            class="menu-column__link">
                                                                             @category.Name
                                                                         </a>

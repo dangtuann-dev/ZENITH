@@ -1,4 +1,7 @@
 ﻿@model ZENITH.ViewModels.CheckoutIndexViewModel
+@{
+    ViewData["Title"] = " Giỏ Hàng";
+}
 <main class="checkout-page">
     <div class="container">
         <!-- Search bar -->
@@ -90,7 +93,7 @@
                             else
                             {
                                 <div class="cart-info__continue">
-                                    <p class="text-muted">Giỏ hàng của bạn đang trống</p>
+                                    <p class="text-muted" style="top: 265px;">Giỏ hàng của bạn đang trống</p>
                                 </div>
                             }
                         </div>

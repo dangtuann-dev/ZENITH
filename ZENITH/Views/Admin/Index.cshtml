@@ -1,6 +1,261 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = " Dashboard";
+    ViewData["Admin"] = "Dashboard";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
-<P>Admin index page</P>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header border-0">
+                    <h3 class="card-title">Tổng quan</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-sm-6 col-md-3 mb-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-info"><i class="fas fa-users"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Người dùng</span>
+                                    <span class="info-box-number">@Model.TotalUsers</span>
+                                    <span class="info-box-text">+@Model.NewUsers7Days trong 7 ngày</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-3 mb-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-success"><i class="fas fa-shopping-cart"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Đơn hàng</span>
+                                    <span class="info-box-number">@Model.TotalOrders</span>
+                                    <span class="info-box-text">Chờ xử lý: @Model.PendingOrders</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-3 mb-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-warning"><i class="fas fa-box"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Sản phẩm</span>
+                                    <span class="info-box-number">@Model.TotalProducts</span>
+                                    <span class="info-box-text">Đang bán: @Model.ActiveProducts</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-3 mb-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-danger"><i class="fas fa-exclamation-triangle"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Cảnh báo tồn kho</span>
+                                    <span class="info-box-number">@Model.LowStockVariants</span>
+                                    <span class="info-box-text">Đánh giá chờ duyệt: @Model.ReviewsPending</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-sm-4 mb-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-primary"><i class="fas fa-coins"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Doanh thu hôm nay</span>
+                                    <span class="info-box-number">@Model.RevenueToday.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) VND</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-secondary"><i class="fas fa-chart-line"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Doanh thu 30 ngày</span>
+                                    <span class="info-box-number">@Model.Revenue30Days.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) VND</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-light"><i class="fas fa-receipt"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Giá trị đơn TB</span>
+                                    <span class="info-box-number">@Model.AverageOrderValue.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) VND</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header border-0">
+                    <div class="d-flex justify-content-between">
+                        <h3 class="card-title">Lượng truy cập cửa hàng</h3>
+                        <a href="javascript:void(0);">Xem báo cáo</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex">
+                        <p class="d-flex flex-column">
+                            <span class="text-bold text-lg">—</span>
+                            <span>Truy cập theo thời gian</span>
+                        </p>
+                        <p class="ml-auto d-flex flex-column text-right">
+                            <span class="text-success">
+                                <i class="fas fa-arrow-up"></i> —
+                            </span>
+                            <span class="text-muted">So với tuần trước</span>
+                        </p>
+                    </div>
+                    <!-- /.d-flex -->
+
+                    <div class="position-relative mb-4">
+                        <canvas id="visitors-chart" height="200"></canvas>
+                    </div>
+
+                    <div class="d-flex flex-row justify-content-end">
+                        <span class="mr-2">
+                            <i class="fas fa-square text-primary"></i> Tuần này
+                        </span>
+
+                        <span>
+                            <i class="fas fa-square text-gray"></i> Tuần trước
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card -->
+
+            <div class="card">
+                <div class="card-header border-0">
+                    <h3 class="card-title">Sản phẩm bán chạy</h3>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-striped table-valign-middle">
+                        <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th>Biến thể</th>
+                                <th>Đã bán</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in Model.TopProducts)
+                            {
+                                <tr>
+                                    <td>@p.ProductName</td>
+                                    <td>@p.VariantsCount</td>
+                                    <td>@p.TotalSold</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col-md-6 -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header border-0">
+                    <div class="d-flex justify-content-between">
+                        <h3 class="card-title">Doanh thu</h3>
+                        <a href="javascript:void(0);">Xem báo cáo</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex">
+                        <p class="d-flex flex-column">
+                            <span class="text-bold text-lg">@Model.Revenue30Days.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) VND</span>
+                            <span>Doanh thu theo thời gian</span>
+                        </p>
+                        <p class="ml-auto d-flex flex-column text-right">
+                            <span class="text-success">
+                                <i class="fas fa-arrow-up"></i> —
+                            </span>
+                            <span class="text-muted">So với tháng trước</span>
+                        </p>
+                    </div>
+                    <!-- /.d-flex -->
+
+                    <div class="position-relative mb-4">
+                        <canvas id="sales-chart" height="200"></canvas>
+                    </div>
+
+                    <div class="d-flex flex-row justify-content-end">
+                        <span class="mr-2">
+                            <i class="fas fa-square text-primary"></i> Năm nay
+                        </span>
+
+                        <span>
+                            <i class="fas fa-square text-gray"></i> Năm trước
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card -->
+
+            <div class="card">
+                <div class="card-header border-0">
+                    <h3 class="card-title">Đơn hàng gần đây</h3>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-striped table-valign-middle">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Khách hàng</th>
+                                <th>Tổng tiền</th>
+                                <th>Thanh toán</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày tạo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var o in Model.RecentOrders)
+                            {
+                                <tr>
+                                    <td>@o.OrderCode</td>
+                                    <td>@o.CustomerName</td>
+                                    <td>@o.TotalAmount.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) VND</td>
+                                    <td>@o.PaymentStatus</td>
+                                    <td>@o.OrderStatus</td>
+                                    <td>@o.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header border-0">
+                    <h3 class="card-title">Sản phẩm cảnh báo tồn kho</h3>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-striped table-valign-middle">
+                        <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>Sản phẩm</th>
+                                <th>Tồn kho</th>
+                                <th>Ngưỡng cảnh báo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var v in Model.LowStocks)
+                            {
+                                <tr>
+                                    <td>@v.VariantSku</td>
+                                    <td>@v.ProductName</td>
+                                    <td>@v.StockQuantity</td>
+                                    <td>@v.LowStockThreshold</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /.col-md-6 -->
+    </div>
+    <!-- /.row -->
+</div>

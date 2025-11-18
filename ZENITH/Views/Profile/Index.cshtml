@@ -22,61 +22,10 @@
                 <div class="col-9 col-xl-8 col-lg-7 col-md-12">
                     <div class="cart-info">
                         <div class="row gy-3">
-                            <!-- My Wallet -->
+                            <!-- Payment method (COD only) -->
                             <div class="col-12">
-                                <h2 class="cart-info__heading">Ví của tôi</h2>
-                                <p class="cart-info__desc profile__desc">Phương thức thanh toán</p>
-
-                                <style>
-                                    .payment-card__logo-img{width:40px;height:auto}
-                                    .payment-card__top{display:flex;align-items:center;gap:8px}
-                                    .payment-card__type{font-weight:600}
-                                </style>
-                                <div class="row gy-md-2 row-cols-3 row-cols-xl-2 row-cols-lg-1">
-                                    @{ var cards = ViewBag.PaymentMethods as List<PaymentMethod>; }
-                                    @if (cards != null && cards.Count > 0)
-                                    {
-                                        foreach (var c in cards)
-                                        {
-                                            <div class="col">
-                                                <article class="payment-card">
-                                                    <div class="payment-card__top">
-                                                        @{ var t = (c.CardType ?? "").Trim().ToLowerInvariant(); var logo = t == "visa" ? "~/image/icons/visa.svg" : t == "mastercard" ? "~/image/icons/mastercard.svg" : t == "jcb" ? "~/image/icons/jcb.svg" : t == "amex" ? "~/image/icons/amex.svg" : "~/image/icons/zenith-logo.png"; }
-                                                        <div class="payment-card__logo">
-                                                            <img src="@Url.Content(logo)" alt="@c.CardType" class="payment-card__logo-img" onerror="this.style.display='none';var f=this.closest('.payment-card__logo').querySelector('.payment-card__logo-fallback');if(f)f.style.display='inline-block';" />
-                                                            <span class="payment-card__logo-fallback" style="display:none">@c.CardType</span>
-                                                        </div>
-                                                        <span class="payment-card__type">@c.CardType</span>
-                                                    </div>
-                                                    <div class="payment-card__number">
-                                                        @{ var last4 = !string.IsNullOrWhiteSpace(c.CardNumber) && c.CardNumber.Length >= 4 ? c.CardNumber.Substring(c.CardNumber.Length - 4) : c.CardNumber; }
-                                                        **** **** **** @last4
-                                                    </div>
-                                                    <div class="payment-card__bottom">
-                                                        <div class="payment-card__holder">
-                                                            <p class="payment-card__label">Card Holder</p>
-                                                            <p class="payment-card__value">@c.CardHolder</p>
-                                                        </div>
-                                                        <div class="payment-card__expired">
-                                                            <p class="payment-card__label">Expired</p>
-                                                            <p class="payment-card__value">@c.ExpiryDate</p>
-                                                        </div>
-                                                        <div class="payment-card__circle"></div>
-                                                    </div>
-                                                </article>
-                                            </div>
-                                        }
-                                    }
-                                    @if (cards == null || cards.Count < 3)
-                                    {
-                                        <div class="col">
-                                            <a class="new-card" asp-controller="Profile" asp-action="AddNewCard">
-                                                <img src="~/image/icons/plus.svg" alt="" class="new-card__icon icon" />
-                                                <p class="new-card__text">Thêm thẻ mới</p>
-                                            </a>
-                                        </div>
-                                    }
-                                </div>
+                                <h2 class="cart-info__heading">Phương thức thanh toán</h2>
+                                <p class="cart-info__desc profile__desc">Mặc định: Tiền mặt khi nhận hàng (COD)</p>
                             </div>
 
                             <!-- Account info -->

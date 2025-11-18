@@ -1,0 +1,26 @@
+﻿# Build outputs
+bin/
+obj/
+
+# IDE/Tooling
+.vscode/
+.vs/
+*.user
+*.suo
+
+# Local database files
+AppData/*.mdf
+AppData/*.ldf
+
+# Logs and caches
+*.log
+*.cache
+
+# Publish artifacts
+*.publishsettings
+
+# Node (if any)
+node_modules/
+
+# Generated static assets caches
+**/*.gz

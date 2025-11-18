@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ZENITH.AppData;
 using ZENITH.ViewModels;
+using Microsoft.Data.SqlClient;
 
 namespace ZENITH.Controllers
 {
@@ -654,6 +655,175 @@ namespace ZENITH.Controllers
             };
 
             return View(model);
+        }
+
+        public class PlaceOrderRequest
+        {
+            public int? AddressId { get; set; }
+            public string? ShippingMethod { get; set; } // standard | express
+            public decimal? ShippingRate { get; set; } // per item line
+            public string? PaymentType { get; set; } // card | cod
+            public string? CardHolder { get; set; }
+            public string? CardNumber { get; set; }
+            public string? ExpiryDate { get; set; }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("Checkout/PlaceOrder")]
+        public async Task<IActionResult> PlaceOrder([FromBody] PlaceOrderRequest request)
+        {
+            try
+            {
+                var userId = _userManager.GetUserId(User);
+                if (string.IsNullOrEmpty(userId)) return Unauthorized(new { success = false, message = "Not logged in" });
+
+                var cartItems = await _context.CartItems
+                    .Where(c => c.UserId == userId)
+                    .Include(c => c.ProductVariant)
+                        .ThenInclude(v => v.VariantAttributeValues)
+                            .ThenInclude(vav => vav.AttributeValue)
+                                .ThenInclude(av => av.Attribute)
+                    .ToListAsync();
+                if (cartItems.Count == 0) return BadRequest(new { success = false, message = "Cart is empty" });
+
+                int? addressId = request?.AddressId;
+                var address = addressId.HasValue
+                    ? await _context.Addresses.FirstOrDefaultAsync(a => a.AddressId == addressId && a.UserId == userId)
+                    : await _context.Addresses.OrderByDescending(a => a.IsDefault).ThenByDescending(a => a.AddressId).FirstOrDefaultAsync(a => a.UserId == userId);
+                if (address == null) return BadRequest(new { success = false, message = "Address not found" });
+
+                decimal subtotal = cartItems.Sum(c => (c.ProductVariant.SalePrice ?? c.ProductVariant.Price) * c.Quantity);
+                int lineCount = cartItems.Count;
+                string method = (request?.ShippingMethod ?? "standard").ToLowerInvariant();
+                decimal perLine = method == "express" ? 30000m : 15000m;
+                if (request?.ShippingRate is decimal sr && sr > 0) perLine = sr; // allow client-provided consistent rate
+                decimal shippingFee = perLine * lineCount;
+                decimal total = subtotal + shippingFee;
+
+                string ptype = "cod";
+
+                string orderCode = $"ORD-{DateTime.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid().ToString("N").Substring(0,6)}";
+                var order = new ZENITH.Models.Order
+                {
+                    UserId = userId,
+                    AddressId = address.AddressId,
+                    PaymentType = ptype.ToUpperInvariant(),
+                    OrderCode = orderCode,
+                    Subtotal = subtotal,
+                    ShippingFee = shippingFee,
+                    Discount = 0,
+                    TotalAmount = total,
+                    PaymentStatus = "Pending",
+                    OrderStatus = "Processing",
+                    Note = null,
+                    OrderDate = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+                _context.Orders.Add(order);
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    var msg = ex.InnerException?.Message ?? ex.Message;
+                    if (!string.IsNullOrWhiteSpace(msg) && (msg.Contains("Invalid column name 'PaymentType'") || msg.Contains("Cannot insert the value NULL into column 'PaymentId'")))
+                    {
+                        await EnsurePaymentSchemaAsync();
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                string BuildVariantText(ZENITH.Models.ProductVariant v)
+                {
+                    if (v.VariantAttributeValues != null && v.VariantAttributeValues.Any())
+                    {
+                        var parts = v.VariantAttributeValues
+                            .OrderBy(x => x.AttributeValue.Attribute.DisplayOrder)
+                            .Select(x => $"{x.AttributeValue.Attribute.DisplayName}: {x.AttributeValue.ValueName}");
+                        return string.Join(", ", parts);
+                    }
+                    if (!string.IsNullOrWhiteSpace(v.Attributes)) return v.Attributes.Trim();
+                    if (!string.IsNullOrWhiteSpace(v.VariantSku)) return v.VariantSku;
+                    return $"SKU {v.VariantId}";
+                }
+
+                foreach (var ci in cartItems)
+                {
+                    var unit = ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price;
+                    var item = new ZENITH.Models.OrderItem
+                    {
+                        OrderId = order.OrderId,
+                        VariantId = ci.VariantId,
+                        Quantity = ci.Quantity,
+                        UnitPrice = unit,
+                        TotalPrice = unit * ci.Quantity,
+                        VariantDescription = BuildVariantText(ci.ProductVariant)
+                    };
+                    _context.OrderItems.Add(item);
+
+                    ci.ProductVariant.StockQuantity = Math.Max(0, ci.ProductVariant.StockQuantity - ci.Quantity);
+                    ci.ProductVariant.SoldCount += ci.Quantity;
+                }
+
+                _context.CartItems.RemoveRange(cartItems);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { success = true, orderId = order.OrderId, orderCode = order.OrderCode, total });
+            }
+            catch (Exception ex)
+            {
+                var inner = ex.InnerException?.Message;
+                var msg = string.IsNullOrWhiteSpace(inner) ? ex.Message : ($"{ex.Message} | {inner}");
+                return StatusCode(500, new { success = false, message = msg });
+            }
+        }
+
+        private async Task EnsurePaymentSchemaAsync()
+        {
+            var script = @"
+DECLARE @fk NVARCHAR(128);
+SELECT TOP 1 @fk = fk.name
+FROM sys.foreign_keys fk
+JOIN sys.foreign_key_columns fkc ON fk.object_id = fkc.constraint_object_id
+JOIN sys.tables t ON fk.parent_object_id = t.object_id
+JOIN sys.columns c ON c.object_id = t.object_id AND c.column_id = fkc.parent_column_id
+WHERE t.name = 'Orders' AND c.name = 'PaymentId';
+
+IF @fk IS NOT NULL EXEC('ALTER TABLE Orders DROP CONSTRAINT [' + @fk + ']');
+
+DECLARE @idx NVARCHAR(128);
+SELECT TOP 1 @idx = i.name
+FROM sys.indexes i
+JOIN sys.index_columns ic ON ic.object_id = i.object_id AND ic.index_id = i.index_id
+JOIN sys.columns c ON c.object_id = ic.object_id AND c.column_id = ic.column_id
+JOIN sys.tables t ON t.object_id = i.object_id
+WHERE t.name = 'Orders' AND c.name = 'PaymentId';
+
+IF @idx IS NOT NULL EXEC('DROP INDEX [' + @idx + '] ON Orders');
+
+IF COL_LENGTH('Orders','PaymentId') IS NOT NULL
+BEGIN
+    ALTER TABLE Orders DROP COLUMN PaymentId;
+END
+
+IF OBJECT_ID('PaymentMethods','U') IS NOT NULL
+BEGIN
+    DROP TABLE PaymentMethods;
+END
+
+IF COL_LENGTH('Orders','PaymentType') IS NULL
+BEGIN
+    ALTER TABLE Orders ADD PaymentType nvarchar(20) NOT NULL DEFAULT 'COD';
+END
+";
+            await _context.Database.ExecuteSqlRawAsync(script);
+            await _context.Database.MigrateAsync();
         }
     }
 }

@@ -58,13 +58,15 @@
         .user-menu__top .user-menu__avatar, .user-menu__top div { position: relative; z-index: 1; }
     </style>
     <div class="top-act">
-        <a asp-controller="Favorites">
-            <div class="top-act__group d-md-none top-act__group--single">
-                <button class="top-act__btn">
-                    <img src="/image/icons/search.svg" alt="" class="icon top-act__icon" />
-                </button>
-            </div>
-        </a>
+        <div class="top-act__group top-act__group--search">
+            <button class="top-act__btn js-header-search-btn" style="
+                    padding-left: 8px;">
+                <img src="/image/icons/search.svg" alt="" class="icon top-act__icon" />
+            </button>
+            <form class="header-search" style="margin-left: 8px;" action="/Product" method="get">
+                <input type="text" name="q" class="header-search__input" placeholder="Tìm kiếm sản phẩm" />
+            </form>
+        </div>
 
 
         <div class="top-act__group d-md-none">
@@ -255,6 +257,12 @@
                                 <img src="/image/icons/sun.svg" alt="" class="icon user-menu__icon" />
                             </a>
                         </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li>
+                                <a asp-controller="Admin" asp-action="Index" class="user-menu__link">Dashboard</a>
+                            </li>
+                        }
                         <li>
                             <a href="#" class="user-menu__link">Cài đặt</a>
                         </li>
@@ -272,6 +280,14 @@
 else
 {
     <div class="top-act">
+        <div class="top-act__group top-act__group--search">
+            <button class="top-act__btn js-header-search-btn">
+                <img src="/image/icons/search.svg" alt="" class="icon top-act__icon" />
+            </button>
+            <form class="header-search" action="/Product" method="get">
+                <input type="text" name="q" class="header-search__input" placeholder="Tìm kiếm sản phẩm" />
+            </form>
+        </div>
         <a id="login" asp-area="Identity" asp-page="/Account/Login" class="btn btn--text d-md-none">Đăng Nhập</a>
         <a id="register" asp-area="Identity" asp-page="/Account/Register" class="top-act__sign-up btn btn--primary">Đăng Ký</a>
     </div>

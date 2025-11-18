@@ -146,14 +146,7 @@ namespace ZENITH.Controllers
                 favorites[i].ImageUrl = ResolveImageUrl(favorites[i].ImageUrl);
             }
             ViewBag.Favorites = favorites;
-            var paymentMethods = await _context.PaymentMethods
-                .AsNoTracking()
-                .Where(pm => pm.UserId == user.Id)
-                .OrderByDescending(pm => pm.IsDefault)
-                .ThenByDescending(pm => pm.CreatedAt)
-                .Take(3)
-                .ToListAsync();
-            ViewBag.PaymentMethods = paymentMethods;
+            ViewBag.PaymentMethods = null;
 
             return View();
         }
@@ -415,77 +408,6 @@ namespace ZENITH.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToPage("/Account/Login", new { area = "Identity" });
         }
-        [HttpGet]
-        public IActionResult AddNewCard()
-        {
-            var userTask = _userManager.GetUserAsync(User);
-            userTask.Wait();
-            var user = userTask.Result;
-            if (user == null)
-            {
-                return RedirectToPage("/Account/Login", new { area = "Identity" });
-            }
-
-            ViewBag.UserId = user.Id;
-            ViewBag.FullName = user.FullName;
-            ViewBag.Email = user.Email ?? string.Empty;
-            ViewBag.PhoneNumber = user.PhoneNumber ?? string.Empty;
-            ViewBag.RegisteredDate = user.CreatedAt;
-            ViewBag.AvatarUrl = ResolveAvatar(user.Avatar);
-
-            return View(new PaymentMethod());
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddNewCard(PaymentMethod model)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return RedirectToPage("/Account/Login", new { area = "Identity" });
-            }
-
-            var existingCount = await _context.PaymentMethods.CountAsync(pm => pm.UserId == user.Id);
-            if (existingCount >= 3)
-            {
-                ModelState.AddModelError(string.Empty, "Bạn đã lưu tối đa 3 thẻ.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                ViewBag.UserId = user.Id;
-                ViewBag.FullName = user.FullName;
-                ViewBag.Email = user.Email ?? string.Empty;
-                ViewBag.PhoneNumber = user.PhoneNumber ?? string.Empty;
-                ViewBag.RegisteredDate = user.CreatedAt;
-                ViewBag.AvatarUrl = ResolveAvatar(user.Avatar);
-                return View(model);
-            }
-
-            model.UserId = user.Id;
-            if (!string.IsNullOrWhiteSpace(model.CardNumber))
-            {
-                model.CardNumber = new string(model.CardNumber.Where(char.IsDigit).ToArray());
-            }
-
-            if (model.IsDefault)
-            {
-                var others = _context.PaymentMethods.Where(pm => pm.UserId == user.Id);
-                foreach (var o in others)
-                {
-                    o.IsDefault = false;
-                }
-            }
-            else if (existingCount == 0)
-            {
-                model.IsDefault = true;
-            }
-
-            _context.PaymentMethods.Add(model);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index), new { t = DateTime.UtcNow.Ticks });
-        }
+        
     }
 }

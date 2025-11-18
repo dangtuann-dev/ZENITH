@@ -31,6 +31,19 @@
     </script>
 </head>
 <body>
+    <div id="page-loader" class="page-loader">
+        <div class="loader">
+            <div class="box box0"><div></div></div>
+            <div class="box box1"><div></div></div>
+            <div class="box box2"><div></div></div>
+            <div class="box box3"><div></div></div>
+            <div class="box box4"><div></div></div>
+            <div class="box box5"><div></div></div>
+            <div class="box box6"><div></div></div>
+            <div class="box box7"><div></div></div>
+            <div class="ground"><div></div></div>
+        </div>
+    </div>
     <header class="site-header">
         <div class="container">
             <div class="top-bar">
@@ -51,19 +64,22 @@
                         <img class="icon" src="~/image/icons/arrow-left.svg" alt="" />
                     </button>
 
-                    @{ var cartCount = SignInManager.IsSignedIn(User) ? DbContext.CartItems.Where(c => c.UserId == UserManager.GetUserId(User)).Sum(c => c.Quantity) : 0; }
-                    <a asp-controller="Checkout" asp-action="Index" class="nav-btn d-none d-md-flex">
-                        <img src="~/image/icons/buy.svg" alt="" class="nav-btn__icon icon" />
-                        <span class="nav-btn__title">Cart</span>
-                        <span class="nav-btn__qnt" id="js-navbar-cart-qnt">@cartCount</span>
-                    </a>
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        var cartCount = DbContext.CartItems.Where(c => c.UserId == UserManager.GetUserId(User)).Sum(c => c.Quantity);
+                        <a asp-controller="Checkout" asp-action="Index" class="nav-btn d-none d-md-flex">
+                            <img src="~/image/icons/buy.svg" alt="" class="nav-btn__icon icon" />
+                            <span class="nav-btn__title">Cart</span>
+                            <span class="nav-btn__qnt" id="js-navbar-cart-qnt">@cartCount</span>
+                        </a>
 
-                    @{ var favCount = SignInManager.IsSignedIn(User) ? DbContext.Favorites.Count(f => f.UserId == UserManager.GetUserId(User)) : 0; }
-                    <a asp-controller="Favorites" asp-action="Index" class="nav-btn d-none d-md-flex">
-                        <img src="~/image/icons/heart.svg" alt="" class="nav-btn__icon icon" />
-                        <span class="nav-btn__title">Favorite</span>
-                        <span class="nav-btn__qnt">@favCount</span>
-                    </a>
+                        var favCount = DbContext.Favorites.Count(f => f.UserId == UserManager.GetUserId(User));
+                        <a asp-controller="Favorites" asp-action="Index" class="nav-btn d-none d-md-flex">
+                            <img src="~/image/icons/heart.svg" alt="" class="nav-btn__icon icon" />
+                            <span class="nav-btn__title">Favorite</span>
+                            <span class="nav-btn__qnt">@favCount</span>
+                        </a>
+                    }
 
                     <ul class="navbar__list js-dropdown-list">
                         @await Component.InvokeAsync("Menu")
@@ -217,5 +233,14 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        (function(){
+            var loader = document.getElementById('page-loader');
+            function hide(){ if(loader){ loader.classList.add('hide'); } }
+            function show(){ if(loader){ loader.classList.remove('hide'); } }
+            document.addEventListener('DOMContentLoaded', hide);
+            window.addEventListener('beforeunload', show);
+        })();
+    </script>
 </body>
 </html>

@@ -1,0 +1,60 @@
+﻿@model List<ZENITH.Models.ApplicationUser>
+@{
+    ViewData["Title"] = " User Management";
+    ViewData["Admin"] = "UserManagement";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="container-fluid">
+    <form method="get" class="mb-3">
+        <div class="form-row" style="display:flex;gap:12px;flex-wrap:wrap">
+            <input type="text" name="query" value="@((string)ViewBag.Query ?? "")" class="form-control" placeholder="Tìm theo tên hoặc email" style="max-width:320px" />
+            <button class="btn btn-primary" type="submit">Tìm</button>
+        </div>
+    </form>
+    <div class="card">
+        <div class="card-header border-0"><h3 class="card-title">Danh sách người dùng</h3></div>
+        <div class="card-body table-responsive p-0">
+            <table class="table table-striped table-valign-middle">
+                <thead>
+                    <tr>
+                        <th>Avatar</th>
+                        <th>Họ tên</th>
+                        <th>Email</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var u in Model) {
+                        var raw = string.IsNullOrWhiteSpace(u.Avatar) ? "~/image/account/default-avatar.jpg" : u.Avatar.Trim();
+                        string src = raw;
+                        if (raw.StartsWith("http://", System.StringComparison.OrdinalIgnoreCase) || raw.StartsWith("https://", System.StringComparison.OrdinalIgnoreCase)) {
+                            src = raw;
+                        } else if (raw.StartsWith("~/")) {
+                            src = Url.Content(raw);
+                        } else if (raw.StartsWith("/")) {
+                            src = raw;
+                        } else {
+                            src = Url.Content("~/" + raw);
+                        }
+                        <tr>
+                            <td><img src="@src" style="width:40px;height:40px;object-fit:cover;border-radius:50%" onerror="this.onerror=null;this.src='/image/account/default-avatar.jpg'" /></td>
+                            <td>@u.FullName</td>
+                            <td>@u.Email</td>
+                            <td>
+                                <a asp-controller="Admin" asp-action="EditUser" asp-route-id="@u.Id" class="btn btn-sm btn-outline-primary">Sửa</a>
+                                <form asp-controller="Admin" asp-action="DeleteUser" method="post" style="display:inline" onsubmit="return confirm('Bạn có chắc muốn xoá người dùng này?');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@u.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Xoá</button>
+                                </form>
+                                @if (TempData["Error"] != null) {
+                                    <span class="text-danger ml-2">@TempData["Error"]</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -21,7 +21,7 @@ namespace ZENITH.Models
         public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
         public virtual ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
         public virtual ICollection<Address> Addresses { get; set; } = new List<Address>();
-        public virtual ICollection<PaymentMethod> PaymentMethods { get; set; } = new List<PaymentMethod>();
+        
         public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
         public virtual ICollection<AdminLog> AdminLogs { get; set; } = new List<AdminLog>();
         public virtual ICollection<InventoryLog> InventoryLogs { get; set; } = new List<InventoryLog>();
