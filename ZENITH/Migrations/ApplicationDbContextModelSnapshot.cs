@@ -638,15 +638,17 @@ namespace ZENITH.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasDefaultValue("Pending");
 
-                    b.Property<int>("PaymentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("PaymentStatus")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasDefaultValue("Pending");
+
+                    b.Property<string>("PaymentType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<decimal>("ShippingFee")
                         .HasColumnType("decimal(18,2)");
@@ -674,8 +676,6 @@ namespace ZENITH.Migrations
                         .IsUnique();
 
                     b.HasIndex("OrderDate");
-
-                    b.HasIndex("PaymentId");
 
                     b.HasIndex("UserId");
 
@@ -783,55 +783,6 @@ namespace ZENITH.Migrations
                     b.HasIndex("VoucherId");
 
                     b.ToTable("OrderVouchers");
-                });
-
-            modelBuilder.Entity("ZENITH.Models.PaymentMethod", b =>
-                {
-                    b.Property<int>("PaymentId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentId"));
-
-                    b.Property<string>("CardHolder")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("CardNumber")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("CardType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("ExpiryDate")
-                        .IsRequired()
-                        .HasMaxLength(7)
-                        .HasColumnType("nvarchar(7)");
-
-                    b.Property<bool>("IsDefault")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("PaymentId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("PaymentMethods");
                 });
 
             modelBuilder.Entity("ZENITH.Models.Product", b =>
@@ -1461,12 +1412,6 @@ namespace ZENITH.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ZENITH.Models.PaymentMethod", "PaymentMethod")
-                        .WithMany("Orders")
-                        .HasForeignKey("PaymentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("ZENITH.Models.ApplicationUser", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
@@ -1474,8 +1419,6 @@ namespace ZENITH.Migrations
                         .IsRequired();
 
                     b.Navigation("Address");
-
-                    b.Navigation("PaymentMethod");
 
                     b.Navigation("User");
                 });
@@ -1535,17 +1478,6 @@ namespace ZENITH.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Voucher");
-                });
-
-            modelBuilder.Entity("ZENITH.Models.PaymentMethod", b =>
-                {
-                    b.HasOne("ZENITH.Models.ApplicationUser", "User")
-                        .WithMany("PaymentMethods")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ZENITH.Models.Product", b =>
@@ -1694,8 +1626,6 @@ namespace ZENITH.Migrations
 
                     b.Navigation("Orders");
 
-                    b.Navigation("PaymentMethods");
-
                     b.Navigation("Reviews");
                 });
 
@@ -1727,11 +1657,6 @@ namespace ZENITH.Migrations
                     b.Navigation("OrderVouchers");
 
                     b.Navigation("Shipment");
-                });
-
-            modelBuilder.Entity("ZENITH.Models.PaymentMethod", b =>
-                {
-                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("ZENITH.Models.Product", b =>

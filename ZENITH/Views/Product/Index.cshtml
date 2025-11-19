@@ -7,62 +7,50 @@
 <main class="product-page">
     <div class="container">
         <div class="product-container">
-            <form method="get" asp-controller="Product" asp-action="Index" class="search-bar d-none d-md-flex" style="margin-bottom:16px;">
-                <input type="text" name="q" value="@Model.Query" placeholder="Tìm kiếm sản phẩm" class="search-bar__input" />
-                <button class="search-bar__submit">
-                    <img src="~/image/icons/search.svg" alt="" class="search-bar__icon icon" />
-                </button>
+            <form method="get" asp-controller="Product" asp-action="Index" class="mb-3" style="display:flex;gap:12px;flex-wrap:wrap">
+                <input type="text" name="q" value="@Model.Query" class="form-control" placeholder="Tìm theo tên hoặc SKU" style="max-width:260px" />
+                <select name="categoryId" class="form-control" style="max-width:220px">
+                    <option value="">Danh mục</option>
+                    @foreach (var c in (Model.Categories ?? new List<ZENITH.ViewModels.CategoryItem>()))
+                    {
+                        if (Model.CategoryId == c.Id)
+                        {
+                            <option value="@c.Id" selected="selected">@c.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@c.Id">@c.Name</option>
+                        }
+                    }
+                </select>
+                <select name="sportId" class="form-control" style="max-width:220px">
+                    <option value="">Môn thể thao</option>
+                    @foreach (var s in (Model.Sports ?? new List<ZENITH.ViewModels.SportItem>()))
+                    {
+                        if (Model.SportId == s.Id)
+                        {
+                            <option value="@s.Id" selected="selected">@s.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@s.Id">@s.Name</option>
+                        }
+                    }
+                </select>
+                <select name="sort" class="form-control" style="max-width:200px">
+                    <option value="">Sắp xếp</option>
+                    @if (Model.Sort=="name_asc") { <option value="name_asc" selected="selected">Tên A→Z</option> } else { <option value="name_asc">Tên A→Z</option> }
+                    @if (Model.Sort=="name_desc") { <option value="name_desc" selected="selected">Tên Z→A</option> } else { <option value="name_desc">Tên Z→A</option> }
+                    @if (Model.Sort=="price_asc") { <option value="price_asc" selected="selected">Giá tăng dần</option> } else { <option value="price_asc">Giá tăng dần</option> }
+                    @if (Model.Sort=="price_desc") { <option value="price_desc" selected="selected">Giá giảm dần</option> } else { <option value="price_desc">Giá giảm dần</option> }
+                </select>
+                <button class="btn btn-primary" type="submit">Lọc</button>
             </form>
         </div>
 
         <div class="product-container">
             <div class="row">
-                <div class="col-3 col-xl-12" style="margin-bottom:16px;">
-                    <div class="cart-info">
-                        <h2 class="cart-info__heading">Bộ lọc</h2>
-                        <div class="filter-accordion">
-                            <h3 class="cart-info__desc">Theo Sport</h3>
-                            <ul class="filter-list">
-                                @foreach (var parent in Model.SportsTree)
-                                {
-                                    var parentOpen = Model.SportId == parent.Id;
-                                    <li class="filter-node@(parentOpen ? " open" : "")">
-                                        <button type="button" class="filter-toggle filter-sport-parent" data-id="@parent.Id">@parent.Name</button>
-                                        <ul class="filter-children">
-                                            @foreach (var child in parent.Children)
-                                            {
-                                                var childOpen = Model.SportId == child.Id || Model.CategoryId.HasValue && child.Categories.Any(cat => cat.Id == Model.CategoryId.Value);
-                                                <li class="filter-node@(childOpen ? " open" : "")">
-                                                    <div class="filter-row">
-                                                        <a asp-controller="Product" asp-action="Index" asp-route-sportId="@child.Id" asp-route-q="@Model.Query" asp-route-sort="@Model.Sort" class="filter-link">@child.Name</a>
-                                                        <button type="button" class="filter-toggle filter-sport-child" data-id="@child.Id">+</button>
-                                                    </div>
-                                                    <ul class="filter-children">
-                                                        @foreach (var cat in child.Categories)
-                                                        {
-                                                            <li>
-                                                                <a asp-controller="Product" asp-action="Index" asp-route-categoryId="@cat.Id" asp-route-q="@Model.Query" asp-route-sort="@Model.Sort" class="filter-link">@cat.Name</a>
-                                                            </li>
-                                                        }
-                                                    </ul>
-                                                </li>
-                                            }
-                                        </ul>
-                                    </li>
-                                }
-                            </ul>
-
-                            <h3 class="cart-info__desc" style="margin-top:12px;">Sắp xếp</h3>
-                            <div class="filter-sort">
-                                <a asp-controller="Product" asp-action="Index" asp-route-q="@Model.Query" asp-route-sportId="@Model.SportId" asp-route-categoryId="@Model.CategoryId" asp-route-sort="price_asc" class="filter-link">Giá tăng dần</a>
-                                <a asp-controller="Product" asp-action="Index" asp-route-q="@Model.Query" asp-route-sportId="@Model.SportId" asp-route-categoryId="@Model.CategoryId" asp-route-sort="price_desc" class="filter-link">Giá giảm dần</a>
-                                <a asp-controller="Product" asp-action="Index" asp-route-q="@Model.Query" asp-route-sportId="@Model.SportId" asp-route-categoryId="@Model.CategoryId" asp-route-sort="name_asc" class="filter-link">A → Z</a>
-                                <a asp-controller="Product" asp-action="Index" asp-route-q="@Model.Query" asp-route-sportId="@Model.SportId" asp-route-categoryId="@Model.CategoryId" asp-route-sort="name_desc" class="filter-link">Z → A</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-9 col-xl-12">
+                <div class="col-12">
                     <div class="product-grid">
                         @if (Model.Products != null && Model.Products.Any())
                         {
