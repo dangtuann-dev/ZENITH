@@ -914,6 +914,15 @@ document.addEventListener("DOMContentLoaded", initSimilarCarousel);
       });
     });
   });
+  document.addEventListener('DOMContentLoaded', function(){
+    try{
+      var imgs = document.querySelectorAll('img');
+      imgs.forEach(function(img){
+        if (!img.hasAttribute('loading')) img.setAttribute('loading','lazy');
+        if (!img.hasAttribute('decoding')) img.setAttribute('decoding','async');
+      });
+    }catch(e){}
+  });
 })();
 
 // Payment: redirect to Home and show success modal
@@ -1004,8 +1013,11 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!resp.ok || !data || !data.success) {
           var msg = (data && data.message) ? data.message : 'Không thể tạo đơn hàng. Vui lòng thử lại!';
           alert(msg);
-          if (msg.toLowerCase().includes('address') || msg.toLowerCase().includes('địa chỉ')) {
+          var lower = msg.toLowerCase();
+          if (lower.includes('address') || lower.includes('địa chỉ')) {
             window.location.href = '/Checkout/Shipping';
+          } else if (lower.includes('hoàn tất thông tin') || lower.includes('hồ sơ')) {
+            window.location.href = '/Profile/Index';
           }
           return;
         }
