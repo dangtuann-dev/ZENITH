@@ -1,27 +1,3 @@
-wwwroot\css\admin\adminlte.css
-wwwroot\css\admin\adminlte.css.map
-wwwroot\css\admin\adminlte.min.css
-wwwroot\css\admin\adminlte.min.css.map
-wwwroot\css\admin\alt\adminlte.components.css
-wwwroot\css\admin\alt\adminlte.components.css.map
-wwwroot\css\admin\alt\adminlte.components.min.css
-wwwroot\css\admin\alt\adminlte.components.min.css.map
-wwwroot\css\admin\alt\adminlte.core.css
-wwwroot\css\admin\alt\adminlte.core.css.map
-wwwroot\css\admin\alt\adminlte.core.min.css
-wwwroot\css\admin\alt\adminlte.core.min.css.map
-wwwroot\css\admin\alt\adminlte.extra-components.css
-wwwroot\css\admin\alt\adminlte.extra-components.css.map
-wwwroot\css\admin\alt\adminlte.extra-components.min.css
-wwwroot\css\admin\alt\adminlte.extra-components.min.css.map
-wwwroot\css\admin\alt\adminlte.pages.css
-wwwroot\css\admin\alt\adminlte.pages.css.map
-wwwroot\css\admin\alt\adminlte.pages.min.css
-wwwroot\css\admin\alt\adminlte.pages.min.css.map
-wwwroot\css\admin\alt\adminlte.plugins.css
-wwwroot\css\admin\alt\adminlte.plugins.css.map
-wwwroot\css\admin\alt\adminlte.plugins.min.css
-wwwroot\css\admin\alt\adminlte.plugins.min.css.map
 wwwroot\css\carousel.css
 wwwroot\css\menu-advert.css
 wwwroot\css\overlay.css
@@ -238,8 +214,6 @@ wwwroot\image\icons\youtube.svg
 wwwroot\image\icons\zenith-logo-white.png
 wwwroot\image\icons\zenith-logo.png
 wwwroot\image\pageImage\login-page.jpg
-wwwroot\image\payment\delivery-1.png
-wwwroot\image\payment\delivery-2.png
 wwwroot\image\productImage\HT-001\HT-001-1.avif
 wwwroot\image\productImage\HT-001\HT-001-2.avif
 wwwroot\image\productImage\HT-001\HT-001-3.avif
@@ -360,16 +334,6 @@ wwwroot\image\productImage\HT-030\HT-030-1.avif
 wwwroot\image\productImage\HT-030\HT-030-2.avif
 wwwroot\image\productImage\HT-030\HT-030-3.avif
 wwwroot\image\productImage\HT-030\HT-030-4.avif
-wwwroot\js\adminlte.js
-wwwroot\js\chart.js\Chart.bundle.js
-wwwroot\js\chart.js\Chart.bundle.min.js
-wwwroot\js\chart.js\Chart.css
-wwwroot\js\chart.js\Chart.js
-wwwroot\js\chart.js\Chart.min.css
-wwwroot\js\chart.js\Chart.min.js
-wwwroot\js\dashboard3.js
-wwwroot\js\demo.js
-wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
@@ -431,30 +395,7 @@ wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
 wwwroot\css\site.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\adminlte.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\adminlte.css.map
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\adminlte.min.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\adminlte.min.css.map
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.components.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.components.css.map
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.components.min.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.components.min.css.map
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.core.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.core.css.map
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.core.min.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.core.min.css.map
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.extra-components.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.extra-components.css.map
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.extra-components.min.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.extra-components.min.css.map
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.pages.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.pages.css.map
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.pages.min.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.pages.min.css.map
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.plugins.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.plugins.css.map
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.plugins.min.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\css\admin\alt\adminlte.plugins.min.css.map
+wwwroot\js\site.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\css\carousel.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\css\menu-advert.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\css\overlay.css
@@ -534,16 +475,6 @@ D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\tiktok.svg
 D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\trash.svg
 D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\twitter.svg
 D:\Web Profile\ZENITH\ZENITH\wwwroot\image\icons\youtube.svg
-D:\Web Profile\ZENITH\ZENITH\wwwroot\js\adminlte.js
-D:\Web Profile\ZENITH\ZENITH\wwwroot\js\chart.js\Chart.bundle.js
-D:\Web Profile\ZENITH\ZENITH\wwwroot\js\chart.js\Chart.bundle.min.js
-D:\Web Profile\ZENITH\ZENITH\wwwroot\js\chart.js\Chart.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\js\chart.js\Chart.js
-D:\Web Profile\ZENITH\ZENITH\wwwroot\js\chart.js\Chart.min.css
-D:\Web Profile\ZENITH\ZENITH\wwwroot\js\chart.js\Chart.min.js
-D:\Web Profile\ZENITH\ZENITH\wwwroot\js\dashboard3.js
-D:\Web Profile\ZENITH\ZENITH\wwwroot\js\demo.js
-D:\Web Profile\ZENITH\ZENITH\wwwroot\js\site.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
@@ -604,3 +535,4 @@ D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\dist\jquery.slim.min.js
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\dist\jquery.slim.min.map
 D:\Web Profile\ZENITH\ZENITH\wwwroot\lib\jquery\LICENSE.txt
 D:\Web Profile\ZENITH\ZENITH\wwwroot\css\site.css
+D:\Web Profile\ZENITH\ZENITH\wwwroot\js\site.js

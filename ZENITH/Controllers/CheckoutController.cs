@@ -677,12 +677,6 @@ namespace ZENITH.Controllers
             {
                 var userId = _userManager.GetUserId(User);
                 if (string.IsNullOrEmpty(userId)) return Unauthorized(new { success = false, message = "Not logged in" });
-                var user = await _userManager.GetUserAsync(User);
-                if (user == null) return Unauthorized(new { success = false, message = "Not logged in" });
-                if (string.IsNullOrWhiteSpace(user.FullName) || string.IsNullOrWhiteSpace(user.PhoneNumber))
-                {
-                    return BadRequest(new { success = false, message = "Vui lòng hoàn tất thông tin cá nhân của bạn trong trang Hồ sơ trước khi thanh toán." });
-                }
 
                 var cartItems = await _context.CartItems
                     .Where(c => c.UserId == userId)

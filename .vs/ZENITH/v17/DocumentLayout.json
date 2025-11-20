@@ -1,7 +1,20 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\Web Profile\\ZENITH\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\controllers\\profilecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\controllers\\profilecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\views\\profile\\addnewcard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\views\\profile\\addnewcard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|d:\\web profile\\zenith\\zenith\\views\\profile\\editaddressinfo.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{EE933CAE-B6F3-487C-A02B-70168B20B907}|ZENITH\\ZENITH.csproj|solutionrelative:zenith\\views\\profile\\editaddressinfo.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,15 +22,48 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "EditAddressInfo.cshtml",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Views\\Profile\\EditAddressInfo.cshtml",
+              "RelativeDocumentMoniker": "ZENITH\\Views\\Profile\\EditAddressInfo.cshtml",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Views\\Profile\\EditAddressInfo.cshtml",
+              "RelativeToolTip": "ZENITH\\Views\\Profile\\EditAddressInfo.cshtml",
+              "ViewState": "AgIAAGcAAAAAAAAAAAAAAIgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-13T01:14:01.711Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AddNewCard.cshtml",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Views\\Profile\\AddNewCard.cshtml",
+              "RelativeDocumentMoniker": "ZENITH\\Views\\Profile\\AddNewCard.cshtml",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Views\\Profile\\AddNewCard.cshtml",
+              "RelativeToolTip": "ZENITH\\Views\\Profile\\AddNewCard.cshtml",
+              "ViewState": "AgIAAEAAAAAAAAAAAAAAAFcAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-13T01:13:55.147Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ProfileController.cs",
+              "DocumentMoniker": "D:\\Web Profile\\ZENITH\\ZENITH\\Controllers\\ProfileController.cs",
+              "RelativeDocumentMoniker": "ZENITH\\Controllers\\ProfileController.cs",
+              "ToolTip": "D:\\Web Profile\\ZENITH\\ZENITH\\Controllers\\ProfileController.cs",
+              "RelativeToolTip": "ZENITH\\Controllers\\ProfileController.cs",
+              "ViewState": "AgIAAHkBAAAAAAAAAAAuwH8BAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-13T01:12:57.891Z",
+              "EditorCaption": ""
             }
           ]
         }

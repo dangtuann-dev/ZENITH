@@ -2363,10 +2363,7 @@ html {
 
 .footer__link {
   display: inline-block;
-  color: var(--footer-text-color);
 }
-.footer__link:visited { color: var(--footer-text-color); }
-.footer__col .footer__list .footer__link { color: var(--footer-text-color) !important; text-decoration: none; }
 
 .footer__link:hover {
   color: #0071dc;

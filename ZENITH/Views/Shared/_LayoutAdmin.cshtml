@@ -204,15 +204,6 @@ to get the desired effect
                     a.querySelectorAll('.badge-danger').forEach(function(b){ b.remove(); });
                 });
             });
-            document.addEventListener('DOMContentLoaded', function(){
-                try{
-                    var imgs = document.querySelectorAll('img');
-                    imgs.forEach(function(img){
-                        if (!img.hasAttribute('loading')) img.setAttribute('loading','lazy');
-                        if (!img.hasAttribute('decoding')) img.setAttribute('decoding','async');
-                    });
-                }catch(e){}
-            });
         })();
     </script>
 </body>
