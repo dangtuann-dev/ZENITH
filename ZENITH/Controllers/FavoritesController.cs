@@ -101,9 +101,6 @@ namespace ZENITH.Controllers
                 var variants = await _context.ProductVariants
                     .AsNoTracking()
                     .Where(v => v.ProductId == item.ProductId && v.IsActive)
-                    .Include(v => v.VariantAttributeValues)
-                        .ThenInclude(vav => vav.AttributeValue)
-                            .ThenInclude(av => av.Attribute)
                     .OrderBy(v => v.SalePrice ?? v.Price)
                     .ToListAsync();
 
@@ -122,14 +119,7 @@ namespace ZENITH.Controllers
 
             string BuildVariantText(ProductVariant v)
             {
-                // Ưu tiên hiển thị theo bảng liên kết VariantAttributeValues (ví dụ: "Size: L, Color: Red")
-                if (v.VariantAttributeValues != null && v.VariantAttributeValues.Any())
-                {
-                    var parts = v.VariantAttributeValues
-                        .OrderBy(x => x.AttributeValue.Attribute.DisplayOrder)
-                        .Select(x => $"{x.AttributeValue.Attribute.DisplayName}: {x.AttributeValue.ValueName}");
-                    return string.Join(", ", parts);
-                }
+                
 
                 // Fallback 1: dùng chuỗi mô tả thuộc tính trong cột ProductVariant.Attributes nếu có
                 if (!string.IsNullOrWhiteSpace(v.Attributes))

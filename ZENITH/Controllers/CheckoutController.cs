@@ -32,10 +32,7 @@ namespace ZENITH.Controllers
                 .Include(c => c.ProductVariant)
                     .ThenInclude(v => v.Product)
                         .ThenInclude(p => p.ProductImages)
-                .Include(c => c.ProductVariant)
-                    .ThenInclude(v => v.VariantAttributeValues)
-                        .ThenInclude(vav => vav.AttributeValue)
-                            .ThenInclude(av => av.Attribute)
+                
                 .ToListAsync();
 
             string ResolveImageUrl(string? path)
@@ -67,13 +64,6 @@ namespace ZENITH.Controllers
 
             string BuildVariantText(Models.ProductVariant v)
             {
-                if (v.VariantAttributeValues != null && v.VariantAttributeValues.Any())
-                {
-                    var parts = v.VariantAttributeValues
-                        .OrderBy(x => x.AttributeValue.Attribute.DisplayOrder)
-                        .Select(x => $"{x.AttributeValue.Attribute.DisplayName}: {x.AttributeValue.ValueName}");
-                    return string.Join(", ", parts);
-                }
                 if (!string.IsNullOrWhiteSpace(v.Attributes)) return v.Attributes.Trim();
                 if (!string.IsNullOrWhiteSpace(v.VariantSku)) return v.VariantSku;
                 return $"SKU {v.VariantId}";
@@ -109,9 +99,7 @@ namespace ZENITH.Controllers
                 var variants = await _context.ProductVariants
                     .AsNoTracking()
                     .Where(v => v.ProductId == it.ProductId && v.IsActive)
-                    .Include(v => v.VariantAttributeValues)
-                        .ThenInclude(vav => vav.AttributeValue)
-                            .ThenInclude(av => av.Attribute)
+                    
                     .OrderBy(v => v.SalePrice ?? v.Price)
                     .ToListAsync();
                 it.Variants = variants.Select(v => new ZENITH.ViewModels.VariantOptionViewModel
@@ -424,10 +412,7 @@ namespace ZENITH.Controllers
                 .Include(c => c.ProductVariant)
                     .ThenInclude(v => v.Product)
                         .ThenInclude(p => p.ProductImages)
-                .Include(c => c.ProductVariant)
-                    .ThenInclude(v => v.VariantAttributeValues)
-                        .ThenInclude(vav => vav.AttributeValue)
-                            .ThenInclude(av => av.Attribute)
+                
                 .ToList();
 
             string ResolveImageUrl(string? path)
@@ -459,13 +444,6 @@ namespace ZENITH.Controllers
 
             string BuildVariantText(Models.ProductVariant v)
             {
-                if (v.VariantAttributeValues != null && v.VariantAttributeValues.Any())
-                {
-                    var parts = v.VariantAttributeValues
-                        .OrderBy(x => x.AttributeValue.Attribute.DisplayOrder)
-                        .Select(x => $"{x.AttributeValue.Attribute.DisplayName}: {x.AttributeValue.ValueName}");
-                    return string.Join(", ", parts);
-                }
                 if (!string.IsNullOrWhiteSpace(v.Attributes)) return v.Attributes.Trim();
                 if (!string.IsNullOrWhiteSpace(v.VariantSku)) return v.VariantSku;
                 return $"SKU {v.VariantId}";
@@ -545,10 +523,7 @@ namespace ZENITH.Controllers
                 .Include(c => c.ProductVariant)
                     .ThenInclude(v => v.Product)
                         .ThenInclude(p => p.ProductImages)
-                .Include(c => c.ProductVariant)
-                    .ThenInclude(v => v.VariantAttributeValues)
-                        .ThenInclude(vav => vav.AttributeValue)
-                            .ThenInclude(av => av.Attribute)
+                
                 .ToList();
 
             string ResolveImageUrl(string? path)
@@ -580,13 +555,6 @@ namespace ZENITH.Controllers
 
             string BuildVariantText(Models.ProductVariant v)
             {
-                if (v.VariantAttributeValues != null && v.VariantAttributeValues.Any())
-                {
-                    var parts = v.VariantAttributeValues
-                        .OrderBy(x => x.AttributeValue.Attribute.DisplayOrder)
-                        .Select(x => $"{x.AttributeValue.Attribute.DisplayName}: {x.AttributeValue.ValueName}");
-                    return string.Join(", ", parts);
-                }
                 if (!string.IsNullOrWhiteSpace(v.Attributes)) return v.Attributes.Trim();
                 if (!string.IsNullOrWhiteSpace(v.VariantSku)) return v.VariantSku;
                 return $"SKU {v.VariantId}";
@@ -686,10 +654,7 @@ namespace ZENITH.Controllers
 
                 var cartItems = await _context.CartItems
                     .Where(c => c.UserId == userId)
-                    .Include(c => c.ProductVariant)
-                        .ThenInclude(v => v.VariantAttributeValues)
-                            .ThenInclude(vav => vav.AttributeValue)
-                                .ThenInclude(av => av.Attribute)
+                
                     .ToListAsync();
                 if (cartItems.Count == 0) return BadRequest(new { success = false, message = "Cart is empty" });
 
@@ -747,13 +712,6 @@ namespace ZENITH.Controllers
 
                 string BuildVariantText(ZENITH.Models.ProductVariant v)
                 {
-                    if (v.VariantAttributeValues != null && v.VariantAttributeValues.Any())
-                    {
-                        var parts = v.VariantAttributeValues
-                            .OrderBy(x => x.AttributeValue.Attribute.DisplayOrder)
-                            .Select(x => $"{x.AttributeValue.Attribute.DisplayName}: {x.AttributeValue.ValueName}");
-                        return string.Join(", ", parts);
-                    }
                     if (!string.IsNullOrWhiteSpace(v.Attributes)) return v.Attributes.Trim();
                     if (!string.IsNullOrWhiteSpace(v.VariantSku)) return v.VariantSku;
                     return $"SKU {v.VariantId}";

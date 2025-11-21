@@ -7,9 +7,9 @@
 <main class="product-page">
     <div class="container">
         <div class="product-container">
-            <form method="get" asp-controller="Product" asp-action="Index" class="mb-3" style="display:flex;gap:12px;flex-wrap:wrap">
+            <form id="product-filter-form" method="get" asp-controller="Product" asp-action="Index" class="mb-3" style="display:flex;gap:12px;flex-wrap:wrap">
                 <input type="text" name="q" value="@Model.Query" class="form-control" placeholder="Tìm theo tên hoặc SKU" style="max-width:260px" />
-                <select name="categoryId" class="form-control" style="max-width:220px">
+                <select id="product-category" name="categoryId" class="form-control" style="max-width:220px">
                     <option value="">Danh mục</option>
                     @foreach (var c in (Model.Categories ?? new List<ZENITH.ViewModels.CategoryItem>()))
                     {
@@ -23,7 +23,7 @@
                         }
                     }
                 </select>
-                <select name="sportId" class="form-control" style="max-width:220px">
+                <select id="product-sport" name="sportId" class="form-control" style="max-width:220px">
                     <option value="">Môn thể thao</option>
                     @foreach (var s in (Model.Sports ?? new List<ZENITH.ViewModels.SportItem>()))
                     {
@@ -65,4 +65,29 @@
             </div>
         </div>
     </div>
+    <script>
+    (function(){
+      var form = document.getElementById('product-filter-form');
+      var sport = document.getElementById('product-sport');
+      var cat = document.getElementById('product-category');
+      function setOptions(items){
+        while (cat.firstChild) cat.removeChild(cat.firstChild);
+        var opt = document.createElement('option');
+        opt.value = ''; opt.textContent = 'Danh mục';
+        cat.appendChild(opt);
+        (items||[]).forEach(function(i){
+          var o = document.createElement('option');
+          o.value = i.id; o.textContent = i.name; cat.appendChild(o);
+        });
+      }
+      if (sport){
+        sport.addEventListener('change', function(){
+          var sid = sport.value || '';
+          cat.value = '';
+          var url = '/Product/CategoriesBySport' + (sid? ('?sportId='+encodeURIComponent(sid)) : '');
+          fetch(url,{ credentials:'same-origin' }).then(function(r){ return r.json(); }).then(function(items){ setOptions(items); });
+        });
+      }
+    })();
+    </script>
 </main>

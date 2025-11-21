@@ -10,13 +10,14 @@
     <div class="mb-3" style="display:flex;justify-content:flex-end">
         <a asp-controller="Admin" asp-action="AddProduct" class="btn btn-primary">Thêm sản phẩm</a>
     </div>
-    <form method="get" class="mb-3">
+    
+    <form id="admin-pm-filter-form" method="get" class="mb-3">
         <div class="form-row" style="display:flex;gap:12px;flex-wrap:wrap">
             <input type="text" name="query" value="@((string)ViewBag.Query ?? "")" class="form-control" placeholder="Tìm theo tên hoặc SKU" style="max-width:260px" />
-            <select name="categoryId" class="form-control" style="max-width:220px" asp-items="(IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.CategoryList">
+            <select id="admin-pm-category" name="categoryId" class="form-control" style="max-width:220px" asp-items="(IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.CategoryList">
                 <option value="">Danh mục</option>
             </select>
-            <select name="sportId" class="form-control" style="max-width:220px" asp-items="(IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.SportList">
+            <select id="admin-pm-sport" name="sportId" class="form-control" style="max-width:220px" asp-items="(IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.SportList">
                 <option value="">Môn thể thao</option>
             </select>
             <select name="sort" class="form-control" style="max-width:200px">
@@ -69,3 +70,17 @@
         </div>
     </div>
 </div>
+<script>
+(function(){
+  var form = document.getElementById('admin-pm-filter-form');
+  if (!form) return;
+  var sport = document.getElementById('admin-pm-sport');
+  var cat = document.getElementById('admin-pm-category');
+  if (sport) {
+    sport.addEventListener('change', function(){
+      if (cat) { cat.value = ''; }
+      form.submit();
+    });
+  }
+})();
+</script>

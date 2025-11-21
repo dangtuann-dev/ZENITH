@@ -86,11 +86,20 @@ namespace ZENITH.Controllers
                 SportId = sportId,
                 TotalCount = products.Count,
                 Products = MapToCards(products),
-                Categories = await _context.Categories
-                    .Where(c => c.IsActive && c.ParentCategoryId == null)
-                    .OrderBy(c => c.DisplayOrder)
-                    .Select(c => new CategoryItem { Id = c.CategoryId, Name = c.CategoryName })
-                    .AsNoTracking().ToListAsync(),
+                Categories = sportId.HasValue && sportId.Value > 0
+                    ? await _context.SportCategories
+                        .Where(sc => (sc.SportId == sportId.Value) || _context.Sports.Any(s => s.ParentSportId == sportId.Value && s.SportId == sc.SportId))
+                        .Select(sc => sc.Category)
+                        .Where(c => c.IsActive)
+                        .OrderBy(c => c.DisplayOrder)
+                        .GroupBy(c => c.CategoryId)
+                        .Select(g => new CategoryItem { Id = g.Key, Name = g.First().CategoryName })
+                        .AsNoTracking().ToListAsync()
+                    : await _context.Categories
+                        .Where(c => c.IsActive && c.ParentCategoryId == null)
+                        .OrderBy(c => c.DisplayOrder)
+                        .Select(c => new CategoryItem { Id = c.CategoryId, Name = c.CategoryName })
+                        .AsNoTracking().ToListAsync(),
                 Sports = await _context.Sports
                     .Where(s => s.IsActive && s.ParentSportId == null)
                     .OrderBy(s => s.DisplayOrder)
@@ -166,6 +175,29 @@ namespace ZENITH.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> CategoriesBySport(int sportId)
+        {
+            if (sportId <= 0)
+            {
+                var cats = await _context.Categories
+                    .Where(c => c.IsActive && c.ParentCategoryId == null)
+                    .OrderBy(c => c.DisplayOrder)
+                    .Select(c => new CategoryItem { Id = c.CategoryId, Name = c.CategoryName })
+                    .AsNoTracking().ToListAsync();
+                return Ok(cats);
+            }
+            var linked = await _context.SportCategories
+                .Where(sc => (sc.SportId == sportId) || _context.Sports.Any(s => s.ParentSportId == sportId && s.SportId == sc.SportId))
+                .Select(sc => sc.Category)
+                .Where(c => c.IsActive)
+                .OrderBy(c => c.DisplayOrder)
+                .Select(c => new CategoryItem { Id = c.CategoryId, Name = c.CategoryName })
+                .Distinct()
+                .AsNoTracking().ToListAsync();
+            return Ok(linked);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Detail(int id)
         {
             var product = await _context.Products
@@ -173,9 +205,6 @@ namespace ZENITH.Controllers
                 .Include(p => p.Category)
                 .Include(p => p.ProductImages)
                 .Include(p => p.ProductVariants)
-                    .ThenInclude(v => v.VariantAttributeValues)
-                        .ThenInclude(vav => vav.AttributeValue)
-                            .ThenInclude(av => av.Attribute)
                 .Include(p => p.Reviews)
                     .ThenInclude(r => r.User)
                 .AsNoTracking()
@@ -217,42 +246,8 @@ namespace ZENITH.Controllers
                 })
                 .ToList();
 
-            // Build attribute groups (unique values across variants)
-            var allAttributeValues = product.ProductVariants
-                .SelectMany(v => v.VariantAttributeValues)
-                .Select(vav => vav.AttributeValue)
-                .ToList();
-
+            // Build attribute groups from ProductVariant.Attributes (e.g., "Size: L, Color: Red")
             List<AttributeGroupViewModel> attributeGroups;
-
-            if (allAttributeValues.Any())
-            {
-                // Preferred: use normalized VariantAttributeValues
-                attributeGroups = allAttributeValues
-                    .GroupBy(av => av.AttributeId)
-                    .OrderBy(g => g.First().Attribute.DisplayOrder)
-                    .Select(g => new AttributeGroupViewModel
-                    {
-                        AttributeId = g.Key,
-                        AttributeName = g.First().Attribute.AttributeName,
-                        DisplayName = g.First().Attribute.DisplayName,
-                        InputType = g.First().Attribute.InputType,
-                        Options = g
-                            .GroupBy(x => x.ValueId)
-                            .OrderBy(gg => gg.First().DisplayOrder)
-                            .Select(gg => new AttributeValueOptionViewModel
-                            {
-                                ValueId = gg.Key,
-                                ValueName = gg.First().ValueName,
-                                ColorCode = gg.First().ColorCode,
-                                IsAvailable = product.ProductVariants.Any(v => v.VariantAttributeValues.Any(vav => vav.ValueId == gg.Key)),
-                                IsSelected = defaultVariant != null && defaultVariant.VariantAttributeValues.Any(vav => vav.ValueId == gg.Key)
-                            })
-                            .ToList()
-                    })
-                    .ToList();
-            }
-            else
             {
                 // Fallback: parse from ProductVariant.Attributes column (e.g., "Size: L, Color: Red")
                 var parsed = new List<(string AttrName, string Value)>();
@@ -415,14 +410,22 @@ namespace ZENITH.Controllers
 
             var variants = await _context.ProductVariants
                 .Where(v => v.ProductId == req.ProductId && v.IsActive)
-                .Include(v => v.VariantAttributeValues)
                 .ToListAsync();
 
+            var targetValues = req.ValueIds.Select(id => id.ToString()).ToHashSet();
             var match = variants.FirstOrDefault(v =>
-                v.VariantAttributeValues != null &&
-                v.VariantAttributeValues.Count == req.ValueIds.Count &&
-                req.ValueIds.All(id => v.VariantAttributeValues.Any(x => x.ValueId == id))
-            );
+            {
+                if (string.IsNullOrWhiteSpace(v.Attributes)) return false;
+                var parts = v.Attributes.Split(',');
+                var values = parts.Select(p =>
+                {
+                    var seg = p.Trim();
+                    var idx = seg.IndexOf(':');
+                    return idx > 0 ? seg.Substring(idx + 1).Trim() : string.Empty;
+                }).Where(s => !string.IsNullOrEmpty(s)).ToList();
+                var pseudoIds = values.Select(val => Math.Abs(string.Concat("VAL:", val).GetHashCode()).ToString()).ToList();
+                return pseudoIds.Count == targetValues.Count && targetValues.SetEquals(pseudoIds);
+            });
 
             if (match == null)
             {
@@ -526,16 +529,8 @@ namespace ZENITH.Controllers
 
         private static string BuildVariantText(ProductVariant v)
         {
-            // Compose attribute text like "Size: L, Color: Red"; fallback to VariantSku
-            var parts = v.VariantAttributeValues
-                .OrderBy(x => x.AttributeValue.Attribute.DisplayOrder)
-                .Select(x => $"{x.AttributeValue.Attribute.DisplayName}: {x.AttributeValue.ValueName}")
-                .ToList();
-            if (parts.Count == 0)
-            {
-                return v.Attributes ?? v.VariantSku;
-            }
-            return string.Join(", ", parts);
+            if (!string.IsNullOrWhiteSpace(v.Attributes)) return v.Attributes.Trim();
+            return v.VariantSku;
         }
     }
 }

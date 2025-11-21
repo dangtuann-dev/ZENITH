@@ -263,9 +263,7 @@
                                 <a asp-controller="Admin" asp-action="Index" class="user-menu__link">Dashboard</a>
                             </li>
                         }
-                        <li>
-                            <a href="#" class="user-menu__link">Cài đặt</a>
-                        </li>
+                       
                         <li class="user-menu__separate">
                             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                                 <button type="submit" class="user-menu__link">Đăng xuất</button>

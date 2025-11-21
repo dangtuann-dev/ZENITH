@@ -289,12 +289,6 @@ D:\Web Profile\ZENITH\ZENITH\obj\Release\net9.0\ZENITH.dll
 D:\Web Profile\ZENITH\ZENITH\obj\Release\net9.0\refint\ZENITH.dll
 D:\Web Profile\ZENITH\ZENITH\bin\Release\net9.0\appsettings.Development.json
 D:\Web Profile\ZENITH\ZENITH\bin\Release\net9.0\appsettings.json
-D:\Web Profile\ZENITH\ZENITH\bin\Release\net9.0\bin-test\appsettings.Development.json
-D:\Web Profile\ZENITH\ZENITH\bin\Release\net9.0\bin-test\appsettings.json
-D:\Web Profile\ZENITH\ZENITH\bin\Release\net9.0\bin-test\ZENITH.deps.json
-D:\Web Profile\ZENITH\ZENITH\bin\Release\net9.0\bin-test\ZENITH.runtimeconfig.json
-D:\Web Profile\ZENITH\ZENITH\bin\Release\net9.0\bin-test\ZENITH.staticwebassets.endpoints.json
-D:\Web Profile\ZENITH\ZENITH\bin\Release\net9.0\bin-test\ZENITH.staticwebassets.runtime.json
 D:\Web Profile\ZENITH\ZENITH\bin\Release\net9.0\ZENITH.staticwebassets.runtime.json
 D:\Web Profile\ZENITH\ZENITH\bin\Release\net9.0\ZENITH.staticwebassets.endpoints.json
 D:\Web Profile\ZENITH\ZENITH\bin\Release\net9.0\ZENITH.exe
@@ -735,7 +729,6 @@ D:\Web Profile\ZENITH\ZENITH\obj\Release\net9.0\compressed\rm9hnccio5-{0}-zxtkyf
 D:\Web Profile\ZENITH\ZENITH\obj\Release\net9.0\compressed\e4ef8mms07-{0}-fug4sw4ko1-fug4sw4ko1.gz
 D:\Web Profile\ZENITH\ZENITH\obj\Release\net9.0\compressed\yar7xmhmqn-{0}-u07sq7joii-u07sq7joii.gz
 D:\Web Profile\ZENITH\ZENITH\obj\Release\net9.0\compressed\lb15wwjikm-{0}-6p4lzjmqcq-6p4lzjmqcq.gz
-D:\Web Profile\ZENITH\ZENITH\obj\Release\net9.0\compressed\55ijnuhlr7-{0}-o3ricg1qf4-o3ricg1qf4.gz
 D:\Web Profile\ZENITH\ZENITH\obj\Release\net9.0\compressed\pe85h3tczi-{0}-bqjiyaj88i-bqjiyaj88i.gz
 D:\Web Profile\ZENITH\ZENITH\obj\Release\net9.0\compressed\os94ffpk2s-{0}-c2jlpeoesf-c2jlpeoesf.gz
 D:\Web Profile\ZENITH\ZENITH\obj\Release\net9.0\compressed\hf2jwadktb-{0}-erw9l3u2r3-erw9l3u2r3.gz
@@ -798,4 +791,5 @@ D:\Web Profile\ZENITH\ZENITH\obj\Release\net9.0\compressed\3h1tl82y45-{0}-mlv21k
 D:\Web Profile\ZENITH\ZENITH\obj\Release\net9.0\compressed\uwfcah6yrg-{0}-i22rr1kqhq-i22rr1kqhq.gz
 D:\Web Profile\ZENITH\ZENITH\obj\Release\net9.0\compressed\77nj4dg8ah-{0}-i22rr1kqhq-i22rr1kqhq.gz
 D:\Web Profile\ZENITH\ZENITH\obj\Release\net9.0\swae.build.ex.cache
-D:\Web Profile\ZENITH\ZENITH\obj\Release\net9.0\compressed\ieammoqdi5-{0}-9bt3wbpsbc-9bt3wbpsbc.gz
+D:\Web Profile\ZENITH\ZENITH\obj\Release\net9.0\compressed\55ijnuhlr7-{0}-ypa0jz9lnu-ypa0jz9lnu.gz
+D:\Web Profile\ZENITH\ZENITH\obj\Release\net9.0\compressed\ieammoqdi5-{0}-gp5iuycse4-gp5iuycse4.gz

@@ -660,7 +660,7 @@ END
 
         foreach (var role in roles)
         {
-            if (!await roleManager.RoleExistsAsync(role.Name))
+            if (!await roleManager.RoleExistsAsync(role.Name ?? string.Empty))
             {
                 await roleManager.CreateAsync(role);
             }
@@ -693,7 +693,7 @@ END
         // ====================================================================
         {
             // Mảng dữ liệu SPORTS/CATEGORIES của bạn
-            var sportData = new (string ParentName, string SportName, string[] Categories)[]
+            var sportData = new (string? ParentName, string SportName, string[] Categories)[]
             {
                 // --- LEO NÚI & DÃ NGOẠI ---
                 (null, "Leo Núi & Dã Ngoại", Array.Empty<string>()),

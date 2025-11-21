@@ -37,7 +37,6 @@ namespace ZENITH.Models
 
         [ForeignKey("ProductId")]
         public virtual Product Product { get; set; } = null!;
-        public virtual ICollection<VariantAttributeValue> VariantAttributeValues { get; set; } = new List<VariantAttributeValue>();
         public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
         public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
         public virtual ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();

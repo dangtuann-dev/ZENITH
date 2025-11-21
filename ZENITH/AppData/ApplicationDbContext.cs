@@ -21,9 +21,6 @@ namespace ZENITH.AppData
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductVariant> ProductVariants { get; set; }
-        public DbSet<Models.Attribute> Attributes { get; set; }
-        public DbSet<AttributeValue> AttributeValues { get; set; }
-        public DbSet<VariantAttributeValue> VariantAttributeValues { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<InventoryLog> InventoryLogs { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
@@ -241,60 +238,7 @@ namespace ZENITH.AppData
                 entity.HasIndex(e => e.StockQuantity);
             });
 
-            // ==================== ATTRIBUTE CONFIGURATION ====================
-
-            modelBuilder.Entity<Models.Attribute>(entity =>
-            {
-                entity.HasKey(e => e.AttributeId);
-                entity.Property(e => e.AttributeName).IsRequired().HasMaxLength(50);
-                entity.Property(e => e.DisplayName).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.InputType).HasMaxLength(50).HasDefaultValue("select");
-                entity.Property(e => e.IsRequired).HasDefaultValue(false);
-                entity.Property(e => e.DisplayOrder).HasDefaultValue(0);
-
-                entity.HasIndex(e => e.AttributeName).IsUnique();
-                entity.HasIndex(e => e.DisplayOrder);
-            });
-
-            // ==================== ATTRIBUTE VALUE CONFIGURATION ====================
-
-            modelBuilder.Entity<AttributeValue>(entity =>
-            {
-                entity.HasKey(e => e.ValueId);
-                entity.Property(e => e.ValueName).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.ColorCode).HasMaxLength(50);
-                entity.Property(e => e.DisplayOrder).HasDefaultValue(0);
-
-                entity.HasOne(e => e.Attribute)
-                    .WithMany(a => a.AttributeValues)
-                    .HasForeignKey(e => e.AttributeId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasIndex(e => e.AttributeId);
-                entity.HasIndex(e => new { e.AttributeId, e.ValueName }).IsUnique();
-            });
-
-            // ==================== VARIANT ATTRIBUTE VALUE CONFIGURATION ====================
-
-            modelBuilder.Entity<VariantAttributeValue>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-
-                entity.HasOne(e => e.ProductVariant)
-                    .WithMany(v => v.VariantAttributeValues)
-                    .HasForeignKey(e => e.VariantId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasOne(e => e.AttributeValue)
-                    .WithMany(av => av.VariantAttributeValues)
-                    .HasForeignKey(e => e.ValueId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                // Composite unique index: một variant không thể có cùng attribute value 2 lần
-                entity.HasIndex(e => new { e.VariantId, e.ValueId }).IsUnique();
-                entity.HasIndex(e => e.VariantId);
-                entity.HasIndex(e => e.ValueId);
-            });
+            
 
             // ==================== PRODUCT IMAGE CONFIGURATION ====================
 

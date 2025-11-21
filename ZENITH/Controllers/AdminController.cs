@@ -177,7 +177,7 @@ namespace ZENITH.Controllers
                 .Include(p => p.Sport)
                 .AsNoTracking();
 
-            if (categoryId.HasValue) baseQ = baseQ.Where(p => p.CategoryId == categoryId);
+            if (sportId.HasValue) baseQ = baseQ.Where(p => p.CategoryId == categoryId);
             if (sportId.HasValue) baseQ = baseQ.Where(p => p.SportId == sportId);
             if (!string.IsNullOrWhiteSpace(query))
             {
@@ -208,7 +208,13 @@ namespace ZENITH.Controllers
                 _ => list
             };
 
-            var categories = await _context.Categories.AsNoTracking().OrderBy(c => c.DisplayOrder).ToListAsync();
+            var catQuery = _context.Categories.AsNoTracking();
+            if (sportId.HasValue && sportId.Value > 0)
+            {
+                var sid = sportId.Value;
+                catQuery = catQuery.Where(c => _context.SportCategories.Any(sc => sc.CategoryId == c.CategoryId && (sc.SportId == sid || _context.Sports.Any(s => s.ParentSportId == sid && s.SportId == sc.SportId))));
+            }
+            var categories = await catQuery.OrderBy(c => c.DisplayOrder).ToListAsync();
             var sports = await _context.Sports.AsNoTracking().OrderBy(s => s.SportId).ToListAsync();
             ViewBag.Categories = categories;
             ViewBag.Sports = sports;
