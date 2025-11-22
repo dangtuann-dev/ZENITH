@@ -15,15 +15,13 @@ namespace ZENITH.ViewModels
 
         // Danh sách các biến thể của sản phẩm để hiển thị lựa chọn
         public List<VariantOptionViewModel> Variants { get; set; } = new List<VariantOptionViewModel>();
-
-        // Convenience formatted strings for the view
         public string PriceFormatted => FormatCurrency(Price);
         public string? SalePriceFormatted => SalePrice.HasValue ? FormatCurrency(SalePrice.Value) : null;
         public string StockStatusText => StockQuantity > 0 ? "Còn hàng" : "Hết hàng";
 
         private static string FormatCurrency(decimal value)
         {
-            // Default to Vietnamese currency formatting
+           
             var culture = new CultureInfo("vi-VN");
             return string.Format(culture, "{0:C0}", value);
         }

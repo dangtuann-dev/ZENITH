@@ -52,14 +52,11 @@ namespace ZENITH.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            // --- 0. DỮ LIỆU CHUNG ---
             var totalCount = await _context.Products.CountAsync();
             var parentSports = await _context.Sports
     .Where(s => s.IsActive && s.ParentSportId == null)
     .OrderBy(s => s.DisplayOrder)
     .ToListAsync();
-            // Lấy Category cho mục "Danh Mục Các Môn Thể Thao Phổ Biến"
-            // Giả định bạn chỉ muốn Category gốc (ParentId == null)
             var parentCategories = await _context.Categories
                 .Where(c => c.IsActive && c.ParentCategoryId == null)
                 .OrderBy(c => c.DisplayOrder)

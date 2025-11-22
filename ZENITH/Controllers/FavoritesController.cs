@@ -64,9 +64,7 @@ namespace ZENITH.Controllers
                 s = s.Replace('\\', '/');
                 return Url.Content("~/" + s.TrimStart('/'));
             }
-
-            // Project raw data first so EF can translate to SQL, then normalize image URLs in memory
-            var items = await _context.Favorites
+ var items = await _context.Favorites
                 .AsNoTracking()
                 .Where(f => f.UserId == userId)
                 .OrderByDescending(f => f.AddedAt)
@@ -88,14 +86,11 @@ namespace ZENITH.Controllers
                     StockQuantity = f.ProductVariant.StockQuantity
                 })
                 .ToListAsync();
-
-            // Normalize image URL paths after fetching data from the database
-            for (int i = 0; i < items.Count; i++)
+ for (int i = 0; i < items.Count; i++)
             {
                 items[i].ImageUrl = ResolveImageUrl(items[i].ImageUrl);
             }
 
-            // Populate variant lists for each product
             foreach (var item in items)
             {
                 var variants = await _context.ProductVariants
@@ -121,20 +116,17 @@ namespace ZENITH.Controllers
             {
                 
 
-                // Fallback 1: dùng chuỗi mô tả thuộc tính trong cột ProductVariant.Attributes nếu có
                 if (!string.IsNullOrWhiteSpace(v.Attributes))
                 {
                     return v.Attributes.Trim();
                 }
 
-                // Fallback 2: dùng SKU của biến thể nếu không có dữ liệu thuộc tính
                 if (!string.IsNullOrWhiteSpace(v.VariantSku))
                 {
                     return v.VariantSku;
                 }
 
-                // Fallback cuối: hiển thị theo mã VariantId
-                return $"SKU {v.VariantId}";
+               return $"SKU {v.VariantId}";
             }
 
             return View(items);

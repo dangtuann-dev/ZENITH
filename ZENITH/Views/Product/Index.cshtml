@@ -48,9 +48,10 @@
             </form>
         </div>
 
-        <div class="product-container">
-            <div class="row">
-                <div class="col-12">
+    <div class="product-container">
+        <div class="row">
+            <div class="col-12">
+                <div style="display:flex;flex-direction:column;min-height:60vh;width:100%">
                     <div class="product-grid">
                         @if (Model.Products != null && Model.Products.Any())
                         {
@@ -61,9 +62,27 @@
                             <p>Không có sản phẩm phù hợp.</p>
                         }
                     </div>
+                    <div style="display:block;text-align:center;margin-top:auto;width:100%" class="mt-3">
+                        @{
+                            var prevPage = (Model.Page > 1) ? Model.Page - 1 : 1;
+                            var nextPage = (Model.Page < Model.TotalPages) ? Model.Page + 1 : Model.TotalPages;
+                        }
+                        <div style="display:inline-flex;gap:8px;align-items:center;justify-content:center;padding-top:20px;">
+                            <a class="btn btn-outline-secondary"
+                               asp-controller="Product" asp-action="Index"
+                               asp-route-q="@Model.Query" asp-route-categoryId="@Model.CategoryId" asp-route-sportId="@Model.SportId" asp-route-sort="@Model.Sort"
+                               asp-route-page="@prevPage" asp-route-pageSize="@Model.PageSize">Trang trước</a>
+                            <span>Trang @Model.Page/@Model.TotalPages</span>
+                            <a class="btn btn-outline-secondary"
+                               asp-controller="Product" asp-action="Index"
+                               asp-route-q="@Model.Query" asp-route-categoryId="@Model.CategoryId" asp-route-sportId="@Model.SportId" asp-route-sort="@Model.Sort"
+                               asp-route-page="@nextPage" asp-route-pageSize="@Model.PageSize">Trang sau</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <script>
     (function(){

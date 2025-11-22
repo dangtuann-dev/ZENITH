@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,7 +52,7 @@ namespace ZENITH.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string? q, int? categoryId, int? sportId, string? sort)
+        public async Task<IActionResult> Index(string? q, int? categoryId, int? sportId, string? sort, int page = 1, int pageSize = 24)
         {
             var query = BaseQuery();
 
@@ -72,10 +72,14 @@ namespace ZENITH.Controllers
                 query = query.Where(p => p.SportId == sid || (p.Sport != null && p.Sport.ParentSportId == sid));
             }
 
+            if (page <= 0) page = 1;
+            if (pageSize <= 0) pageSize = 24;
+            var totalCount = await query.CountAsync();
             var products = await query
                 .OrderByDescending(p => p.ViewCount)
                 .ThenByDescending(p => p.CreatedAt)
-                .Take(200)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
 
             var vm = new ProductListViewModel
@@ -84,7 +88,10 @@ namespace ZENITH.Controllers
                 Sort = sort,
                 CategoryId = categoryId,
                 SportId = sportId,
-                TotalCount = products.Count,
+                TotalCount = totalCount,
+                Page = page,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
                 Products = MapToCards(products),
                 Categories = sportId.HasValue && sportId.Value > 0
                     ? await _context.SportCategories
@@ -107,7 +114,7 @@ namespace ZENITH.Controllers
                     .AsNoTracking().ToListAsync(),
             };
 
-            // Build sports tree (parent -> subSports -> categories)
+            // Xây dựng cây thể thao (cha -> môn thể thao phụ -> danh mục)
             var parentSports = await _context.Sports
                 .Where(s => s.IsActive && s.ParentSportId == null)
                 .OrderBy(s => s.DisplayOrder)
@@ -161,7 +168,7 @@ namespace ZENITH.Controllers
                 }
             }
 
-            // Apply sort to view model list
+            // Áp dụng sắp xếp cho danh sách mô hình hiển thị
             vm.Products = sort switch
             {
                 "price_asc" => vm.Products.OrderBy(p => p.SalePrice).ThenBy(p => p.Price).ToList(),
@@ -209,30 +216,17 @@ namespace ZENITH.Controllers
                     .ThenInclude(r => r.User)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.ProductId == id && p.IsActive);
-
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            // Build images list (primary first then by display order)
+            if (product == null){return NotFound();}
             var images = product.ProductImages
                 .OrderByDescending(i => i.IsPrimary)
                 .ThenBy(i => i.DisplayOrder)
                 .Select(i => i.ImageUrl)
                 .ToList();
-            if (!images.Any())
-            {
-                images.Add("~/image/default.avif");
-            }
-
-            // Choose a default variant (prefer one with SalePrice)
+            if (!images.Any()){images.Add("~/image/default.avif");}
             var defaultVariant = product.ProductVariants
                 .OrderBy(v => v.SalePrice.HasValue ? 0 : 1)
                 .ThenByDescending(v => v.Price)
                 .FirstOrDefault();
-
-            // Map variants
             var variantOptions = product.ProductVariants
                 .OrderBy(v => v.VariantId)
                 .Select(v => new VariantOptionViewModel
@@ -245,11 +239,8 @@ namespace ZENITH.Controllers
                     IsSelected = defaultVariant != null && v.VariantId == defaultVariant.VariantId
                 })
                 .ToList();
-
-            // Build attribute groups from ProductVariant.Attributes (e.g., "Size: L, Color: Red")
             List<AttributeGroupViewModel> attributeGroups;
             {
-                // Fallback: parse from ProductVariant.Attributes column (e.g., "Size: L, Color: Red")
                 var parsed = new List<(string AttrName, string Value)>();
                 foreach (var v in product.ProductVariants)
                 {
@@ -275,7 +266,7 @@ namespace ZENITH.Controllers
                     .OrderBy(g => g.Key)
                     .Select(g => new AttributeGroupViewModel
                     {
-                        AttributeId = 0, // unknown id in fallback mode
+                        AttributeId = 0,
                         AttributeName = g.Key,
                         DisplayName = g.Key,
                         InputType = "select",
@@ -284,7 +275,7 @@ namespace ZENITH.Controllers
                             .OrderBy(gg => gg.Key)
                             .Select(gg => new AttributeValueOptionViewModel
                             {
-                                // generate a stable pseudo id from name+value to allow selection rendering
+                              
                                 ValueId = Math.Abs(string.Concat(g.Key, ":", gg.Key).GetHashCode()),
                                 ValueName = gg.Key,
                                 ColorCode = null,
@@ -297,8 +288,6 @@ namespace ZENITH.Controllers
                     })
                     .ToList();
             }
-
-            // Reviews summary
             var reviewCount = product.Reviews.Count;
             double avgRating = 0;
             if (reviewCount > 0)
@@ -362,7 +351,6 @@ namespace ZENITH.Controllers
                 })
                 .ToList();
 
-            // Similar products: same sport, highest views, exclude current
             var sportId = product.SportId;
             if (sportId.HasValue)
             {

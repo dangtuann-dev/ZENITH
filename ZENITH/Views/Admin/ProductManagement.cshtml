@@ -31,6 +31,7 @@
         </div>
     </form>
 
+    <div style="display:flex;flex-direction:column;min-height:60vh;width:100%">
     <div class="card">
         <div class="card-header border-0">
             <h3 class="card-title">Danh sách sản phẩm</h3>
@@ -68,6 +69,19 @@
                 </tbody>
             </table>
         </div>
+    </div>
+    <div class="d-flex justify-content-center align-items-center mt-3" style="gap:8px;margin-top:auto;width:100%">
+        @{ var currentPage = (int)(ViewBag.Page ?? 1); var totalPages = (int)(ViewBag.TotalPages ?? 1); var prev = currentPage > 1 ? currentPage - 1 : 1; var next = currentPage < totalPages ? currentPage + 1 : totalPages; }
+        <a class="btn btn-outline-secondary"
+           asp-controller="Admin" asp-action="ProductManagement"
+           asp-route-query="@((string)ViewBag.Query ?? "")" asp-route-categoryId="@ViewBag.CategoryList?.SelectedValue" asp-route-sportId="@ViewBag.SportList?.SelectedValue" asp-route-sort="@((string)ViewBag.Sort ?? "")"
+           asp-route-page="@prev" asp-route-pageSize="@ViewBag.PageSize">Trang trước</a>
+        <span>Trang @currentPage/@totalPages</span>
+        <a class="btn btn-outline-secondary"
+           asp-controller="Admin" asp-action="ProductManagement"
+           asp-route-query="@((string)ViewBag.Query ?? "")" asp-route-categoryId="@ViewBag.CategoryList?.SelectedValue" asp-route-sportId="@ViewBag.SportList?.SelectedValue" asp-route-sort="@((string)ViewBag.Sort ?? "")"
+           asp-route-page="@next" asp-route-pageSize="@ViewBag.PageSize">Trang sau</a>
+    </div>
     </div>
 </div>
 <script>

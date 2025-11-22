@@ -9,6 +9,9 @@ namespace ZENITH.ViewModels
         public int? CategoryId { get; set; }
         public int? SportId { get; set; }
         public int TotalCount { get; set; }
+        public int Page { get; set; }
+        public int PageSize { get; set; }
+        public int TotalPages { get; set; }
         public List<ProductCardViewModel> Products { get; set; } = new List<ProductCardViewModel>();
 
         public List<CategoryItem> Categories { get; set; } = new List<CategoryItem>();

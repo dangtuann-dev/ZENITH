@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -166,7 +166,7 @@ namespace ZENITH.Controllers
 
             return Ok(new { labels, visitors, sales });
         }
-        public async Task<IActionResult> ProductManagement(int? categoryId, int? sportId, string? query, string? sort)
+        public async Task<IActionResult> ProductManagement(int? categoryId, int? sportId, string? query, string? sort, int page = 1, int pageSize = 24)
         {
             var baseQ = _context.Products
                 .Include(p => p.Supplier)
@@ -208,6 +208,12 @@ namespace ZENITH.Controllers
                 _ => list
             };
 
+            if (page <= 0) page = 1;
+            if (pageSize <= 0) pageSize = 24;
+            var totalCount = list.Count;
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+            var pagedList = list.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
             var catQuery = _context.Categories.AsNoTracking();
             if (sportId.HasValue && sportId.Value > 0)
             {
@@ -222,9 +228,13 @@ namespace ZENITH.Controllers
             ViewBag.SportList = new SelectList(sports, nameof(Sport.SportId), nameof(Sport.SportName), sportId);
             ViewBag.Query = query;
             ViewBag.Sort = sort;
+            ViewBag.Page = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalCount = totalCount;
+            ViewBag.TotalPages = totalPages;
 
             Response.Cookies.Append("admin_seen_products", DateTime.UtcNow.ToString("O"), new CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(7) });
-            return View(list);
+            return View(pagedList);
         }
         [HttpGet]
         public async Task<IActionResult> AddProduct()
