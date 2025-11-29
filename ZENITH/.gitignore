@@ -8,9 +8,7 @@ obj/
 *.user
 *.suo
 
-# Local database files
-AppData/*.mdf
-AppData/*.ldf
+
 
 # Logs and caches
 *.log
