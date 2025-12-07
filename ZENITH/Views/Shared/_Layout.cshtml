@@ -83,6 +83,17 @@
 
                     <ul class="navbar__list js-dropdown-list">
                         @await Component.InvokeAsync("Menu")
+                        @if (!SignInManager.IsSignedIn(User))
+                        {
+                            <li class="navbar__item d-none d-sm-block d-md-none" id="navbar__item"><a id="login" href="@Url.Page("/Account/Login", new { area = "Identity" })" class="btn btn--text">Đăng Nhập</a></li>
+                            <li class="navbar__item d-none d-sm-block d-md-none" id="navbar__item"><a id="register" href="@Url.Page("/Account/Register", new { area = "Identity" })" class="btn btn--text">Đăng Ký</a></li>
+
+                        }
+                       
+                        
+                        
+                        
+                  
                     </ul>
                 </nav>
                 <div class="navbar__overlay js-toggle" toggle-target="#navbar"></div>
@@ -92,7 +103,6 @@
         </div>
 
     </header>
-    <!-- Site overlay for dim/blur background when submenu opens -->
     <div id="menu-overlay" class="menu-overlay" aria-hidden="true"></div>
     <main role="main" class="container home" 
         >

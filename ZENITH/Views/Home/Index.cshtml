@@ -63,7 +63,7 @@
        <div class="category-list">
           @foreach (var category in Model.Categories)
             {
-                <a href="#!">
+                <a asp-controller="Product" asp-action="Index" asp-route-categoryId="@category.CategoryId">
                     <div class="category-item">
                         <div class="category-image">
                             <img src="@category.ImageUrl" asp-append-version="true" />

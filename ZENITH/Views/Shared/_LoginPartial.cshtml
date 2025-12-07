@@ -289,7 +289,8 @@ else
             </form>
         </div>
         @* Thêm giỏ hàng lại đây *@
-        <div class="top-act__btn-wrap">
+        <div class="top-act__group">
+            <div class="top-act__btn-wrap">
             @{
                 var culture2 = new System.Globalization.CultureInfo("vi-VN");
                 var SessionCartKey = "cart.items";
@@ -386,7 +387,7 @@ else
             }
             <a asp-controller="Checkout" asp-action="Index" class="top-act__btn">
                 <img src="/image/icons/buy.svg" alt="" class="icon top-act__icon" />
-                <span class="top-act__title" id="js-header-cart-subtotal">@subtotal.ToString("N0", culture2) VND</span>
+                <span class="top-act__title d-md-none" id="js-header-cart-subtotal">@subtotal.ToString("N0", culture2) VND</span>
             </a>
 
             <div class="act-dropdown act-dropdown--cart">
@@ -445,8 +446,9 @@ else
                 </div>
             </div>
         </div>
+        </div>
 
-        <a id="login" asp-area="Identity" asp-page="/Account/Login" class="btn btn--text d-md-none">Đăng Nhập</a>
-        <a id="register" asp-area="Identity" asp-page="/Account/Register" class="top-act__sign-up btn btn--primary">Đăng Ký</a>
+        <a id="login" href="@Url.Page("/Account/Login", new { area = "Identity" })" class="btn btn--text d-md-none">Đăng Nhập</a>
+        <a id="register" href="@Url.Page("/Account/Register", new { area = "Identity" })" class="top-act__sign-up btn btn--primary d-md-none">Đăng Ký</a>
     </div>
 }

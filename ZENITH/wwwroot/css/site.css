@@ -2021,7 +2021,8 @@ html {
 
 @media (max-width: 767.98px) {
   .top-act {
-    margin-left: 0;
+    margin-left: auto;
+    gap: 10px;
   }
 
   .top-act__sign-up {
@@ -2136,6 +2137,14 @@ html {
   display: none;
 }
 
+@media (max-width: 767.98px) {
+  .act-dropdown {
+    right: 0;
+    width: min(320px, calc(100vw - 20px));
+    padding-top: 20px;
+  }
+}
+
 .act-dropdown__inner {
   position: relative;
   padding: 30px;
@@ -2143,6 +2152,13 @@ html {
   background: var(--header-act-dropdown-bg);
   box-shadow: 0px 40px 90px 20px var(--header-act-dropdown-shadow);
   border: 1px solid var(--header-act-dropdown-border-color);
+}
+
+@media (max-width: 767.98px) {
+  .act-dropdown__inner {
+    padding: 20px 15px;
+    border-radius: 12px;
+  }
 }
 
 .act-dropdown__arrow {
@@ -2166,10 +2182,22 @@ html {
   line-height: 145.455%;
 }
 
+@media (max-width: 767.98px) {
+  .act-dropdown__title {
+    font-size: 1.6rem;
+  }
+}
+
 .act-dropdown__view-all {
   color: #0071dc;
   font-size: 1.8rem;
   line-height: 145.455%;
+}
+
+@media (max-width: 767.98px) {
+  .act-dropdown__view-all {
+    font-size: 1.4rem;
+  }
 }
 .act-dropdown__view-all:hover {
   text-decoration: underline;
@@ -2217,6 +2245,13 @@ html {
   line-height: 145.455%;
 }
 
+@media (max-width: 767.98px) {
+  .act-dropdown__label,
+  .act-dropdown__value {
+    font-size: 1.4rem;
+  }
+}
+
 .act-dropdown__checkout {
   display: flex;
   justify-content: flex-end;
@@ -2224,6 +2259,14 @@ html {
 
 .act-dropdown__checkout-btn {
   min-width: 278px;
+}
+
+@media (max-width: 767.98px) {
+  .act-dropdown__checkout-btn {
+    min-width: 100%;
+    font-size: 1.4rem;
+    padding: 10px 15px;
+  }
 }
 
 .cart-preview-item {
@@ -2256,6 +2299,37 @@ html {
   overflow: hidden;
   height: 4rem;
   word-break: break-word;
+}
+
+@media (max-width: 767.98px) {
+  .act-dropdown__top {
+    margin-bottom: 15px;
+  }
+
+  .act-dropdown__bottom {
+    margin: 15px 0;
+    padding: 15px 0;
+  }
+
+  .act-dropdown__list {
+    padding-bottom: 8px;
+    gap: 8px;
+  }
+
+  .cart-preview-item__title {
+    font-size: 1.2rem;
+    margin-top: 10px;
+    height: 3.2rem;
+  }
+
+  .cart-preview-item__price {
+    font-size: 1.3rem;
+    margin-top: 4px;
+  }
+
+  .act-dropdown__checkout {
+    justify-content: stretch;
+  }
 }
 
 .cart-preview-item__price {
