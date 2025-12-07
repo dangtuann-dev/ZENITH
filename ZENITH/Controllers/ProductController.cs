@@ -405,14 +405,17 @@ namespace ZENITH.Controllers
             {
                 if (string.IsNullOrWhiteSpace(v.Attributes)) return false;
                 var parts = v.Attributes.Split(',');
-                var values = parts.Select(p =>
+                var attrIds = parts.Select(p =>
                 {
                     var seg = p.Trim();
                     var idx = seg.IndexOf(':');
-                    return idx > 0 ? seg.Substring(idx + 1).Trim() : string.Empty;
-                }).Where(s => !string.IsNullOrEmpty(s)).ToList();
-                var pseudoIds = values.Select(val => Math.Abs(string.Concat("VAL:", val).GetHashCode()).ToString()).ToList();
-                return pseudoIds.Count == targetValues.Count && targetValues.SetEquals(pseudoIds);
+                    if (idx <= 0) return (int?)null;
+                    var name = seg.Substring(0, idx).Trim();
+                    var val = seg.Substring(idx + 1).Trim();
+                    if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(val)) return (int?)null;
+                    return Math.Abs(string.Concat(name, ":", val).GetHashCode());
+                }).Where(id => id.HasValue).Select(id => id!.Value.ToString()).ToList();
+                return attrIds.Count == targetValues.Count && targetValues.SetEquals(attrIds);
             });
 
             if (match == null)
@@ -436,10 +439,10 @@ namespace ZENITH.Controllers
         public async Task<IActionResult> AddReview(int productId, decimal rating, string? comment)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-            {
-                return RedirectToPage("/Account/Login", new { area = "Identity" });
-            }
+            //if (string.IsNullOrEmpty(userId))
+            //{
+            //    return RedirectToPage("/Account/Login", new { area = "Identity" });
+            //}
 
             var product = await _context.Products
                 .Include(p => p.ProductVariants)
@@ -490,10 +493,10 @@ namespace ZENITH.Controllers
         public async Task<IActionResult> DeleteReview(int productId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-            {
-                return RedirectToPage("/Account/Login", new { area = "Identity" });
-            }
+            //if (string.IsNullOrEmpty(userId))
+            //{
+            //    return RedirectToPage("/Account/Login", new { area = "Identity" });
+            //}
 
             var existing = await _context.Reviews.FirstOrDefaultAsync(r => r.ProductId == productId && r.UserId == userId);
             if (existing != null)

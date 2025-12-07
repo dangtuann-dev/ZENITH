@@ -5,14 +5,17 @@ using Microsoft.EntityFrameworkCore;
 using ZENITH.AppData;
 using ZENITH.ViewModels;
 using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Http;
+using System.Text.Json;
 
 namespace ZENITH.Controllers
 {
-    [Authorize]
     public class CheckoutController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<Models.ApplicationUser> _userManager;
+        private const string SessionCartKey = "cart.items";
+        private const string SessionAddressKey = "checkout.address";
 
         public CheckoutController(ApplicationDbContext context, UserManager<Models.ApplicationUser> userManager)
         {
@@ -23,7 +26,107 @@ namespace ZENITH.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = _userManager.GetUserId(User);
-            if (string.IsNullOrEmpty(userId)) return RedirectToPage("/Account/Login", new { area = "Identity" });
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                // Ensure session is available
+                if (!HttpContext.Session.IsAvailable)
+                {
+                    await HttpContext.Session.LoadAsync();
+                }
+                
+                var sCart = HttpContext.Session.GetString(SessionCartKey);
+                List<Models.CartItemSession> cartItemsRaw;
+                if (string.IsNullOrEmpty(sCart)) cartItemsRaw = new List<Models.CartItemSession>();
+                else { try { cartItemsRaw = JsonSerializer.Deserialize<List<Models.CartItemSession>>(sCart) ?? new List<Models.CartItemSession>(); } catch { cartItemsRaw = new List<Models.CartItemSession>(); } }
+
+                cartItemsRaw = cartItemsRaw
+                    .Where(x => x != null && x.VariantId > 0)
+                    .GroupBy(x => x.VariantId)
+                    .Select(g => new Models.CartItemSession { VariantId = g.Key, Quantity = Math.Max(1, g.Sum(i => i.Quantity)) })
+                    .ToList();
+
+                var variantIds = cartItemsRaw.Select(x => x.VariantId).ToList();
+                var variants = await _context.ProductVariants
+                    .AsNoTracking()
+                    .Where(v => variantIds.Contains(v.VariantId))
+                    .Include(v => v.Product)
+                        .ThenInclude(p => p.ProductImages)
+                    .ToListAsync();
+
+                static string BuildVariantTextGuest(Models.ProductVariant v)
+                {
+                    if (!string.IsNullOrWhiteSpace(v.Attributes)) return v.Attributes.Trim();
+                    if (!string.IsNullOrWhiteSpace(v.VariantSku)) return v.VariantSku;
+                    return $"SKU {v.VariantId}";
+                }
+
+                var cultureG = new System.Globalization.CultureInfo("vi-VN");
+                
+                // Filter out invalid variants that no longer exist
+                var validCartItems = cartItemsRaw
+                    .Where(ci => variants.Any(v => v.VariantId == ci.VariantId && v.Product != null))
+                    .ToList();
+                
+                int itemCountG = validCartItems.Sum(c => Math.Max(c.Quantity,1));
+                decimal subtotalG = validCartItems.Sum(c => (variants.FirstOrDefault(v => v.VariantId == c.VariantId)?.SalePrice ?? variants.FirstOrDefault(v => v.VariantId == c.VariantId)?.Price ?? 0) * Math.Max(c.Quantity,1));
+                decimal shippingG = validCartItems.Count * 15000m;
+                decimal totalG = subtotalG + shippingG;
+
+                var itemsG = validCartItems.Select(ci =>
+                {
+                    var v = variants.FirstOrDefault(x => x.VariantId == ci.VariantId);
+                    if (v == null || v.Product == null) return null;
+                    return new CheckoutItemViewModel
+                    {
+                        VariantId = ci.VariantId,
+                        ProductId = v.ProductId,
+                        ProductName = v.Product.ProductName ?? string.Empty,
+                        ImageUrl = ResolveImageUrl(v.Product.ProductImages.OrderByDescending(i => i.IsPrimary).ThenBy(i => i.DisplayOrder).Select(i => i.ImageUrl).FirstOrDefault()),
+                        Quantity = Math.Max(ci.Quantity,1),
+                        UnitPrice = v.SalePrice ?? v.Price,
+                        LineTotal = ((v.SalePrice ?? v.Price) * Math.Max(ci.Quantity,1)),
+                        AttributesText = BuildVariantTextGuest(v),
+                        StockQuantity = v.StockQuantity,
+                        UnitPriceFormatted = ((v.SalePrice ?? v.Price)).ToString("N0", cultureG) + " VND",
+                        LineTotalFormatted = (((v.SalePrice ?? v.Price) * Math.Max(ci.Quantity,1))).ToString("N0", cultureG) + " VND"
+                    };
+                })
+                .Where(item => item != null)
+                .ToList();
+
+                foreach (var it in itemsG)
+                {
+                    var allVariants = await _context.ProductVariants
+                        .AsNoTracking()
+                        .Where(v => v.ProductId == it.ProductId && v.IsActive)
+                        .OrderBy(v => v.SalePrice ?? v.Price)
+                        .ToListAsync();
+                    it.Variants = allVariants.Select(v => new ZENITH.ViewModels.VariantOptionViewModel
+                    {
+                        VariantId = v.VariantId,
+                        Text = BuildVariantTextGuest(v),
+                        Price = v.Price,
+                        SalePrice = v.SalePrice,
+                        StockQuantity = v.StockQuantity,
+                        IsSelected = v.VariantId == it.VariantId
+                    }).ToList();
+                }
+
+                var modelG = new CheckoutIndexViewModel
+                {
+                    Items = itemsG,
+                    ItemCount = itemCountG,
+                    Subtotal = subtotalG,
+                    Shipping = shippingG,
+                    Total = totalG,
+                    SubtotalFormatted = subtotalG.ToString("N0", cultureG) + " VND",
+                    ShippingFormatted = shippingG.ToString("N0", cultureG) + " VND",
+                    TotalFormatted = totalG.ToString("N0", cultureG) + " VND"
+                };
+
+                return View(modelG);
+            }
 
             var cartItems = await _context.CartItems
                 .AsNoTracking()
@@ -35,33 +138,6 @@ namespace ZENITH.Controllers
                 
                 .ToListAsync();
 
-            string ResolveImageUrl(string? path)
-            {
-                if (string.IsNullOrWhiteSpace(path)) return Url.Content("~/image/default.avif");
-                var s = path.Trim();
-                if (s.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || s.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) return s;
-                if (s.StartsWith("~/")) return Url.Content(s);
-                if (s.StartsWith("/")) return s;
-                var lower = s.ToLowerInvariant();
-                int idxWwwroot = lower.IndexOf("wwwroot");
-                if (idxWwwroot >= 0)
-                {
-                    var after = s.Substring(idxWwwroot + "wwwroot".Length).Replace('\\', '/');
-                    return Url.Content("~" + (after.StartsWith("/") ? after : "/" + after));
-                }
-                foreach (var marker in new[] { "/uploads/", "uploads/", "\\uploads\\", "/images/", "images/", "\\images\\", "/image/", "image/", "\\image\\" })
-                {
-                    int idx = lower.IndexOf(marker);
-                    if (idx >= 0)
-                    {
-                        var tail = s.Substring(idx).Replace('\\', '/');
-                        return Url.Content("~" + (tail.StartsWith("/") ? tail : "/" + tail));
-                    }
-                }
-                s = s.Replace('\\', '/');
-                return Url.Content("~/" + s.TrimStart('/'));
-            }
-
             string BuildVariantText(Models.ProductVariant v)
             {
                 if (!string.IsNullOrWhiteSpace(v.Attributes)) return v.Attributes.Trim();
@@ -70,28 +146,37 @@ namespace ZENITH.Controllers
             }
 
             var culture = new System.Globalization.CultureInfo("vi-VN");
-            int itemCount = cartItems.Sum(c => c.Quantity);
-            decimal subtotal = cartItems.Sum(c => (c.ProductVariant.SalePrice ?? c.ProductVariant.Price) * c.Quantity);
-            decimal shipping = cartItems.Count * 15000m;
+            var merged = cartItems
+                .GroupBy(c => c.VariantId)
+                .Select(g => new
+                {
+                    Variant = g.First().ProductVariant,
+                    Quantity = g.Sum(x => x.Quantity)
+                })
+                .ToList();
+
+            int itemCount = merged.Sum(m => m.Quantity);
+            decimal subtotal = merged.Sum(m => (m.Variant.SalePrice ?? m.Variant.Price) * m.Quantity);
+            decimal shipping = merged.Count * 15000m;
             decimal total = subtotal + shipping;
 
-            var items = cartItems.Select(ci => new CheckoutItemViewModel
+            var items = merged.Select(m => new CheckoutItemViewModel
             {
-                VariantId = ci.VariantId,
-                ProductId = ci.ProductVariant.ProductId,
-                ProductName = ci.ProductVariant.Product.ProductName,
-                ImageUrl = ResolveImageUrl(ci.ProductVariant.Product.ProductImages
+                VariantId = m.Variant.VariantId,
+                ProductId = m.Variant.ProductId,
+                ProductName = m.Variant.Product.ProductName,
+                ImageUrl = ResolveImageUrl(m.Variant.Product.ProductImages
                     .OrderByDescending(i => i.IsPrimary)
                     .ThenBy(i => i.DisplayOrder)
                     .Select(i => i.ImageUrl)
                     .FirstOrDefault()),
-                Quantity = ci.Quantity,
-                UnitPrice = ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price,
-                LineTotal = (ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price) * ci.Quantity,
-                AttributesText = BuildVariantText(ci.ProductVariant),
-                StockQuantity = ci.ProductVariant.StockQuantity,
-                UnitPriceFormatted = (ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price).ToString("N0", culture) + " VND",
-                LineTotalFormatted = (((ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price) * ci.Quantity)).ToString("N0", culture) + " VND"
+                Quantity = m.Quantity,
+                UnitPrice = m.Variant.SalePrice ?? m.Variant.Price,
+                LineTotal = (m.Variant.SalePrice ?? m.Variant.Price) * m.Quantity,
+                AttributesText = BuildVariantText(m.Variant),
+                StockQuantity = m.Variant.StockQuantity,
+                UnitPriceFormatted = (m.Variant.SalePrice ?? m.Variant.Price).ToString("N0", culture) + " VND",
+                LineTotalFormatted = (((m.Variant.SalePrice ?? m.Variant.Price) * m.Quantity)).ToString("N0", culture) + " VND"
             }).ToList();
 
             foreach (var it in items)
@@ -99,7 +184,6 @@ namespace ZENITH.Controllers
                 var variants = await _context.ProductVariants
                     .AsNoTracking()
                     .Where(v => v.ProductId == it.ProductId && v.IsActive)
-                    
                     .OrderBy(v => v.SalePrice ?? v.Price)
                     .ToListAsync();
                 it.Variants = variants.Select(v => new ZENITH.ViewModels.VariantOptionViewModel
@@ -139,7 +223,25 @@ namespace ZENITH.Controllers
         public async Task<IActionResult> UpdateQuantity([FromBody] UpdateQuantityRequest request)
         {
             var userId = _userManager.GetUserId(User);
-            if (string.IsNullOrEmpty(userId)) return Unauthorized(new { success = false });
+            if (string.IsNullOrEmpty(userId))
+            {
+                int variantIdG = request?.VariantId ?? 0;
+                int deltaG = request?.Delta ?? 0;
+                if (variantIdG <= 0 || deltaG == 0) return BadRequest(new { success = false });
+                var sCart = HttpContext.Session.GetString(SessionCartKey);
+                List<(int VariantId,int Quantity)> cartRaw;
+                if (string.IsNullOrEmpty(sCart)) cartRaw = new List<(int,int)>();
+                else { try { cartRaw = JsonSerializer.Deserialize<List<(int VariantId,int Quantity)>>(sCart) ?? new List<(int,int)>(); } catch { cartRaw = new List<(int,int)>(); } }
+                var idx = cartRaw.FindIndex(x => x.VariantId == variantIdG);
+                if (idx >= 0)
+                {
+                    var next = cartRaw[idx].Quantity + deltaG;
+                    if (next <= 0) cartRaw.RemoveAt(idx);
+                    else cartRaw[idx] = (variantIdG, next);
+                }
+                HttpContext.Session.SetString(SessionCartKey, JsonSerializer.Serialize(cartRaw));
+                return Ok(new { success = true });
+            }
             int variantId = request?.VariantId ?? 0;
             int delta = request?.Delta ?? 0;
             if (variantId <= 0 || delta == 0) return BadRequest(new { success = false });
@@ -168,7 +270,18 @@ namespace ZENITH.Controllers
         public async Task<IActionResult> RemoveItem([FromBody] RemoveItemRequest request)
         {
             var userId = _userManager.GetUserId(User);
-            if (string.IsNullOrEmpty(userId)) return Unauthorized(new { success = false });
+            if (string.IsNullOrEmpty(userId))
+            {
+                int variantIdG = request?.VariantId ?? 0;
+                if (variantIdG <= 0) return BadRequest(new { success = false });
+                var sCart = HttpContext.Session.GetString(SessionCartKey);
+                List<(int VariantId,int Quantity)> cartRaw;
+                if (string.IsNullOrEmpty(sCart)) cartRaw = new List<(int,int)>();
+                else { try { cartRaw = JsonSerializer.Deserialize<List<(int VariantId,int Quantity)>>(sCart) ?? new List<(int,int)>(); } catch { cartRaw = new List<(int,int)>(); } }
+                cartRaw = cartRaw.Where(x => x.VariantId != variantIdG).ToList();
+                HttpContext.Session.SetString(SessionCartKey, JsonSerializer.Serialize(cartRaw));
+                return Ok(new { success = true });
+            }
             int variantId = request?.VariantId ?? 0;
             if (variantId <= 0) return BadRequest(new { success = false });
             var item = await _context.CartItems.FirstOrDefaultAsync(ci => ci.UserId == userId && ci.VariantId == variantId);
@@ -232,8 +345,7 @@ namespace ZENITH.Controllers
         public async Task<IActionResult> SaveAddress([FromBody] SaveAddressRequest request)
         {
             var userId = _userManager.GetUserId(User);
-            if (string.IsNullOrEmpty(userId)) return Unauthorized(new { success = false });
-
+            
             string fullName = (request?.FullName ?? string.Empty).Trim();
             string phone = (request?.Phone ?? string.Empty).Trim();
             string addressLine = (request?.AddressLine ?? string.Empty).Trim();
@@ -247,6 +359,48 @@ namespace ZENITH.Controllers
                 return BadRequest(new { success = false });
             }
 
+            // Handle guest users (not logged in) - save to session
+            if (string.IsNullOrEmpty(userId))
+            {
+                // Ensure session is available
+                if (!HttpContext.Session.IsAvailable)
+                {
+                    await HttpContext.Session.LoadAsync();
+                }
+
+                var addrVm = new AddressItemViewModel
+                {
+                    AddressId = 0, // Guest addresses don't have database IDs
+                    FullName = fullName,
+                    Phone = phone,
+                    AddressLine = addressLine,
+                    Ward = ward,
+                    District = district,
+                    City = city,
+                    IsDefault = true
+                };
+
+                HttpContext.Session.SetString(SessionAddressKey, JsonSerializer.Serialize(addrVm));
+
+                return Ok(new
+                {
+                    success = true,
+                    address = new
+                    {
+                        addressId = 0,
+                        fullName = addrVm.FullName,
+                        phone = addrVm.Phone,
+                        addressLine = addrVm.AddressLine,
+                        ward = addrVm.Ward,
+                        district = addrVm.District,
+                        city = addrVm.City,
+                        isDefault = addrVm.IsDefault,
+                        displayText = addrVm.DisplayText
+                    }
+                });
+            }
+
+            // Handle logged-in users - save to database
             int addrId = request?.AddressId ?? 0;
             ZENITH.Models.Address? entity = null;
             if (addrId > 0)
@@ -308,8 +462,23 @@ namespace ZENITH.Controllers
         public async Task<IActionResult> DeleteAddress([FromBody] DeleteAddressRequest request)
         {
             var userId = _userManager.GetUserId(User);
-            if (string.IsNullOrEmpty(userId)) return Unauthorized(new { success = false });
             int id = request?.AddressId ?? 0;
+            
+            // Handle guest users (not logged in) - delete from session
+            if (string.IsNullOrEmpty(userId))
+            {
+                // Ensure session is available
+                if (!HttpContext.Session.IsAvailable)
+                {
+                    await HttpContext.Session.LoadAsync();
+                }
+                
+                // For guest users, addressId is always 0, just clear the session
+                HttpContext.Session.Remove(SessionAddressKey);
+                return Ok(new { success = true });
+            }
+            
+            // Handle logged-in users - delete from database
             if (id <= 0) return BadRequest(new { success = false });
 
             var entity = await _context.Addresses.FirstOrDefaultAsync(a => a.AddressId == id && a.UserId == userId);
@@ -332,7 +501,25 @@ namespace ZENITH.Controllers
         public async Task<IActionResult> ChangeVariant([FromBody] ChangeVariantRequest request)
         {
             var userId = _userManager.GetUserId(User);
-            if (string.IsNullOrEmpty(userId)) return Unauthorized(new { success = false });
+            if (string.IsNullOrEmpty(userId))
+            {
+                int oldIdG = request?.OldVariantId ?? 0;
+                int newIdG = request?.NewVariantId ?? 0;
+                if (oldIdG <= 0 || newIdG <= 0 || oldIdG == newIdG) return BadRequest(new { success = false });
+                var sCart = HttpContext.Session.GetString(SessionCartKey);
+                List<(int VariantId,int Quantity)> cartRaw;
+                if (string.IsNullOrEmpty(sCart)) cartRaw = new List<(int,int)>();
+                else { try { cartRaw = JsonSerializer.Deserialize<List<(int VariantId,int Quantity)>>(sCart) ?? new List<(int,int)>(); } catch { cartRaw = new List<(int,int)>(); } }
+                var idxOld = cartRaw.FindIndex(x => x.VariantId == oldIdG);
+                if (idxOld < 0) return NotFound(new { success = false });
+                var qty = cartRaw[idxOld].Quantity;
+                cartRaw.RemoveAt(idxOld);
+                var idxNew = cartRaw.FindIndex(x => x.VariantId == newIdG);
+                if (idxNew >= 0) cartRaw[idxNew] = (newIdG, cartRaw[idxNew].Quantity + qty);
+                else cartRaw.Add((newIdG, qty));
+                HttpContext.Session.SetString(SessionCartKey, JsonSerializer.Serialize(cartRaw));
+                return Ok(new { success = true });
+            }
             int oldId = request?.OldVariantId ?? 0;
             int newId = request?.NewVariantId ?? 0;
             if (oldId <= 0 || newId <= 0 || oldId == newId) return BadRequest(new { success = false });
@@ -363,16 +550,36 @@ namespace ZENITH.Controllers
             var culture = new System.Globalization.CultureInfo("vi-VN");
             if (string.IsNullOrEmpty(userId))
             {
+                var sCart = HttpContext.Session.GetString(SessionCartKey);
+                System.Collections.Generic.List<Models.CartItemSession> cartItemsRaw;
+                if (string.IsNullOrEmpty(sCart)) cartItemsRaw = new System.Collections.Generic.List<Models.CartItemSession>();
+                else { try { cartItemsRaw = System.Text.Json.JsonSerializer.Deserialize<System.Collections.Generic.List<Models.CartItemSession>>(sCart) ?? new System.Collections.Generic.List<Models.CartItemSession>(); } catch { cartItemsRaw = new System.Collections.Generic.List<Models.CartItemSession>(); } }
+
+                cartItemsRaw = cartItemsRaw
+                    .Where(x => x != null && x.VariantId > 0)
+                    .GroupBy(x => x.VariantId)
+                    .Select(g => new Models.CartItemSession { VariantId = g.Key, Quantity = Math.Max(1, g.Sum(i => i.Quantity)) })
+                    .ToList();
+                var variantIds = cartItemsRaw.Select(x => x.VariantId).ToList();
+                var variants = await _context.ProductVariants
+                    .AsNoTracking()
+                    .Where(v => variantIds.Contains(v.VariantId))
+                    .ToListAsync();
+                int countG = cartItemsRaw.Sum(c => Math.Max(c.Quantity,1));
+                decimal subtotalG = cartItemsRaw.Sum(c => (variants.FirstOrDefault(v => v.VariantId == c.VariantId)?.SalePrice ?? variants.FirstOrDefault(v => v.VariantId == c.VariantId)?.Price ?? 0) * Math.Max(c.Quantity,1));
+                decimal shippingG = cartItemsRaw.Count * 15000m;
+                decimal taxG = 0m;
+                decimal totalG = subtotalG + shippingG + taxG;
                 return Ok(new
                 {
-                    count = 0,
-                    subtotal = 0m,
-                    shipping = 0m,
-                    tax = 0m,
-                    total = 0m,
-                    subtotalFormatted = 0m.ToString("N0", culture) + " VND",
-                    shippingFormatted = 0m.ToString("N0", culture) + " VND",
-                    totalFormatted = 0m.ToString("N0", culture) + " VND"
+                    count = countG,
+                    subtotal = subtotalG,
+                    shipping = shippingG,
+                    tax = taxG,
+                    total = totalG,
+                    subtotalFormatted = subtotalG.ToString("N0", culture) + " VND",
+                    shippingFormatted = shippingG.ToString("N0", culture) + " VND",
+                    totalFormatted = totalG.ToString("N0", culture) + " VND"
                 });
             }
 
@@ -400,10 +607,93 @@ namespace ZENITH.Controllers
                 totalFormatted = total.ToString("N0", culture) + " VND"
             });
         }
-        public IActionResult Shipping()
+        public async Task<IActionResult> Shipping()
         {
             var userId = _userManager.GetUserId(User);
-            if (string.IsNullOrEmpty(userId)) return RedirectToPage("/Account/Login", new { area = "Identity" });
+            if (string.IsNullOrEmpty(userId))
+            {
+                // Ensure session is available
+                if (!HttpContext.Session.IsAvailable)
+                {
+                    await HttpContext.Session.LoadAsync();
+                }
+                
+                var sCart = HttpContext.Session.GetString(SessionCartKey);
+                List<Models.CartItemSession> cartItemsRaw;
+                if (string.IsNullOrEmpty(sCart)) cartItemsRaw = new List<Models.CartItemSession>();
+                else { try { cartItemsRaw = JsonSerializer.Deserialize<List<Models.CartItemSession>>(sCart) ?? new List<Models.CartItemSession>(); } catch { cartItemsRaw = new List<Models.CartItemSession>(); } }
+
+                cartItemsRaw = cartItemsRaw
+                    .Where(x => x != null && x.VariantId > 0)
+                    .GroupBy(x => x.VariantId)
+                    .Select(g => new Models.CartItemSession { VariantId = g.Key, Quantity = Math.Max(1, g.Sum(i => i.Quantity)) })
+                    .ToList();
+                
+                var variantIds = cartItemsRaw.Select(x => x.VariantId).ToList();
+                var variants = _context.ProductVariants
+                    .AsNoTracking()
+                    .Where(v => variantIds.Contains(v.VariantId))
+                    .Include(v => v.Product)
+                        .ThenInclude(p => p.ProductImages)
+                    .ToList();
+
+                static string BuildVariantTextGuest(Models.ProductVariant v)
+                {
+                    if (!string.IsNullOrWhiteSpace(v.Attributes)) return v.Attributes.Trim();
+                    if (!string.IsNullOrWhiteSpace(v.VariantSku)) return v.VariantSku;
+                    return $"SKU {v.VariantId}";
+                }
+                var cultureG = new System.Globalization.CultureInfo("vi-VN");
+                
+                // Filter out invalid variants that no longer exist
+                var validCartItems = cartItemsRaw
+                    .Where(ci => variants.Any(v => v.VariantId == ci.VariantId && v.Product != null))
+                    .ToList();
+                
+                int itemCountG = validCartItems.Sum(c => Math.Max(c.Quantity, 1));
+                int lineCountG = validCartItems.Count;
+                decimal subtotalG = validCartItems.Sum(c => (variants.FirstOrDefault(v => v.VariantId == c.VariantId)?.SalePrice ?? variants.FirstOrDefault(v => v.VariantId == c.VariantId)?.Price ?? 0) * Math.Max(c.Quantity, 1));
+                decimal shippingG = lineCountG * 15000m;
+                decimal totalG = subtotalG + shippingG;
+                var itemsG = validCartItems.Select(ci =>
+                {
+                    var v = variants.FirstOrDefault(x => x.VariantId == ci.VariantId);
+                    if (v == null || v.Product == null) return null;
+                    return new CheckoutItemViewModel
+                    {
+                        VariantId = ci.VariantId,
+                        ProductId = v.ProductId,
+                        ProductName = v.Product.ProductName ?? string.Empty,
+                        ImageUrl = ResolveImageUrl(v.Product.ProductImages.OrderByDescending(i => i.IsPrimary).ThenBy(i => i.DisplayOrder).Select(i => i.ImageUrl).FirstOrDefault()),
+                        Quantity = Math.Max(ci.Quantity, 1),
+                        UnitPrice = v.SalePrice ?? v.Price,
+                        LineTotal = ((v.SalePrice ?? v.Price) * Math.Max(ci.Quantity, 1)),
+                        AttributesText = BuildVariantTextGuest(v),
+                        StockQuantity = v.StockQuantity,
+                        UnitPriceFormatted = ((v.SalePrice ?? v.Price)).ToString("N0", cultureG) + " VND",
+                        LineTotalFormatted = (((v.SalePrice ?? v.Price) * Math.Max(ci.Quantity, 1))).ToString("N0", cultureG) + " VND"
+                    };
+                })
+                .Where(item => item != null)
+                .ToList();
+                AddressItemViewModel? addr = null;
+                var sAddr = HttpContext.Session.GetString(SessionAddressKey);
+                if (!string.IsNullOrEmpty(sAddr)) { try { addr = JsonSerializer.Deserialize<AddressItemViewModel>(sAddr); } catch { addr = null; } }
+                var modelG = new ShippingViewModel
+                {
+                    Addresses = addr != null ? new List<AddressItemViewModel> { addr } : new List<AddressItemViewModel>(),
+                    SelectedAddressId = 0,
+                    Items = itemsG,
+                    ItemCount = itemCountG,
+                    Subtotal = subtotalG,
+                    Shipping = shippingG,
+                    Total = totalG,
+                    SubtotalFormatted = subtotalG.ToString("N0", cultureG) + " VND",
+                    ShippingFormatted = shippingG.ToString("N0", cultureG) + " VND",
+                    TotalFormatted = totalG.ToString("N0", cultureG) + " VND"
+                };
+                return View(modelG);
+            }
 
             var cartItems = _context.CartItems
                 .AsNoTracking()
@@ -415,32 +705,7 @@ namespace ZENITH.Controllers
                 
                 .ToList();
 
-            string ResolveImageUrl(string? path)
-            {
-                if (string.IsNullOrWhiteSpace(path)) return Url.Content("~/image/default.avif");
-                var s = path.Trim();
-                if (s.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || s.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) return s;
-                if (s.StartsWith("~/")) return Url.Content(s);
-                if (s.StartsWith("/")) return s;
-                var lower = s.ToLowerInvariant();
-                int idxWwwroot = lower.IndexOf("wwwroot");
-                if (idxWwwroot >= 0)
-                {
-                    var after = s.Substring(idxWwwroot + "wwwroot".Length).Replace('\\', '/');
-                    return Url.Content("~" + (after.StartsWith("/") ? after : "/" + after));
-                }
-                foreach (var marker in new[] { "/uploads/", "uploads/", "\\uploads\\", "/images/", "images/", "\\images\\", "/image/", "image/", "\\image\\" })
-                {
-                    int idx = lower.IndexOf(marker);
-                    if (idx >= 0)
-                    {
-                        var tail = s.Substring(idx).Replace('\\', '/');
-                        return Url.Content("~" + (tail.StartsWith("/") ? tail : "/" + tail));
-                    }
-                }
-                s = s.Replace('\\', '/');
-                return Url.Content("~/" + s.TrimStart('/'));
-            }
+
 
             string BuildVariantText(Models.ProductVariant v)
             {
@@ -511,10 +776,92 @@ namespace ZENITH.Controllers
 
             return View(model);
         }
-        public IActionResult Payment(int? addressId)
+        public async Task<IActionResult> Payment(int? addressId)
         {
             var userId = _userManager.GetUserId(User);
-            if (string.IsNullOrEmpty(userId)) return RedirectToPage("/Account/Login", new { area = "Identity" });
+            if (string.IsNullOrEmpty(userId))
+            {
+                // Ensure session is available
+                if (!HttpContext.Session.IsAvailable)
+                {
+                    await HttpContext.Session.LoadAsync();
+                }
+                
+                var sCart = HttpContext.Session.GetString(SessionCartKey);
+                List<Models.CartItemSession> cartItemsRaw;
+                if (string.IsNullOrEmpty(sCart)) cartItemsRaw = new List<Models.CartItemSession>();
+                else { try { cartItemsRaw = JsonSerializer.Deserialize<List<Models.CartItemSession>>(sCart) ?? new List<Models.CartItemSession>(); } catch { cartItemsRaw = new List<Models.CartItemSession>(); } }
+
+                cartItemsRaw = cartItemsRaw
+                    .Where(x => x != null && x.VariantId > 0)
+                    .GroupBy(x => x.VariantId)
+                    .Select(g => new Models.CartItemSession { VariantId = g.Key, Quantity = Math.Max(1, g.Sum(i => i.Quantity)) })
+                    .ToList();
+                
+                var variantIds = cartItemsRaw.Select(x => x.VariantId).ToList();
+                var variants = _context.ProductVariants
+                    .AsNoTracking()
+                    .Where(v => variantIds.Contains(v.VariantId))
+                    .Include(v => v.Product)
+                        .ThenInclude(p => p.ProductImages)
+                    .ToList();
+
+                static string BuildVariantTextGuest(Models.ProductVariant v)
+                {
+                    if (!string.IsNullOrWhiteSpace(v.Attributes)) return v.Attributes.Trim();
+                    if (!string.IsNullOrWhiteSpace(v.VariantSku)) return v.VariantSku;
+                    return $"SKU {v.VariantId}";
+                }
+                var cultureG = new System.Globalization.CultureInfo("vi-VN");
+                
+                // Filter out invalid variants that no longer exist
+                var validCartItems = cartItemsRaw
+                    .Where(ci => variants.Any(v => v.VariantId == ci.VariantId && v.Product != null))
+                    .ToList();
+                
+                int itemCountG = validCartItems.Sum(c => Math.Max(c.Quantity, 1));
+                int lineCountG = validCartItems.Count;
+                decimal subtotalG = validCartItems.Sum(c => (variants.FirstOrDefault(v => v.VariantId == c.VariantId)?.SalePrice ?? variants.FirstOrDefault(v => v.VariantId == c.VariantId)?.Price ?? 0) * Math.Max(c.Quantity, 1));
+                decimal shippingG = lineCountG * 15000m;
+                decimal totalG = subtotalG + shippingG;
+                var itemsG = validCartItems.Select(ci =>
+                {
+                    var v = variants.FirstOrDefault(x => x.VariantId == ci.VariantId);
+                    if (v == null || v.Product == null) return null;
+                    return new CheckoutItemViewModel
+                    {
+                        VariantId = ci.VariantId,
+                        ProductId = v.ProductId,
+                        ProductName = v.Product.ProductName ?? string.Empty,
+                        ImageUrl = ResolveImageUrl(v.Product.ProductImages.OrderByDescending(i => i.IsPrimary).ThenBy(i => i.DisplayOrder).Select(i => i.ImageUrl).FirstOrDefault()),
+                        Quantity = Math.Max(ci.Quantity, 1),
+                        UnitPrice = v.SalePrice ?? v.Price,
+                        LineTotal = ((v.SalePrice ?? v.Price) * Math.Max(ci.Quantity, 1)),
+                        AttributesText = BuildVariantTextGuest(v),
+                        StockQuantity = v.StockQuantity,
+                        UnitPriceFormatted = ((v.SalePrice ?? v.Price)).ToString("N0", cultureG) + " VND",
+                        LineTotalFormatted = (((v.SalePrice ?? v.Price) * Math.Max(ci.Quantity, 1))).ToString("N0", cultureG) + " VND"
+                    };
+                })
+                .Where(item => item != null)
+                .ToList();
+                AddressItemViewModel? addr = null;
+                var sAddr = HttpContext.Session.GetString(SessionAddressKey);
+                if (!string.IsNullOrEmpty(sAddr)) { try { addr = JsonSerializer.Deserialize<AddressItemViewModel>(sAddr); } catch { addr = null; } }
+                var modelG = new PaymentViewModel
+                {
+                    SelectedAddress = addr,
+                    Items = itemsG,
+                    ItemCount = itemCountG,
+                    Subtotal = subtotalG,
+                    Shipping = shippingG,
+                    Total = totalG,
+                    SubtotalFormatted = subtotalG.ToString("N0", cultureG) + " VND",
+                    ShippingFormatted = shippingG.ToString("N0", cultureG) + " VND",
+                    TotalFormatted = totalG.ToString("N0", cultureG) + " VND"
+                };
+                return View(modelG);
+            }
 
             var cartItems = _context.CartItems
                 .AsNoTracking()
@@ -526,32 +873,7 @@ namespace ZENITH.Controllers
                 
                 .ToList();
 
-            string ResolveImageUrl(string? path)
-            {
-                if (string.IsNullOrWhiteSpace(path)) return Url.Content("~/image/default.avif");
-                var s = path.Trim();
-                if (s.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || s.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) return s;
-                if (s.StartsWith("~/")) return Url.Content(s);
-                if (s.StartsWith("/")) return s;
-                var lower = s.ToLowerInvariant();
-                int idxWwwroot = lower.IndexOf("wwwroot");
-                if (idxWwwroot >= 0)
-                {
-                    var after = s.Substring(idxWwwroot + "wwwroot".Length).Replace('\\', '/');
-                    return Url.Content("~" + (after.StartsWith("/") ? after : "/" + after));
-                }
-                foreach (var marker in new[] { "/uploads/", "uploads/", "\\uploads\\", "/images/", "images/", "\\images\\", "/image/", "image/", "\\image\\" })
-                {
-                    int idx = lower.IndexOf(marker);
-                    if (idx >= 0)
-                    {
-                        var tail = s.Substring(idx).Replace('\\', '/');
-                        return Url.Content("~" + (tail.StartsWith("/") ? tail : "/" + tail));
-                    }
-                }
-                s = s.Replace('\\', '/');
-                return Url.Content("~/" + s.TrimStart('/'));
-            }
+
 
             string BuildVariantText(Models.ProductVariant v)
             {
@@ -644,19 +966,130 @@ namespace ZENITH.Controllers
             try
             {
                 var userId = _userManager.GetUserId(User);
-                if (string.IsNullOrEmpty(userId)) return Unauthorized(new { success = false, message = "Not logged in" });
-                var user = await _userManager.GetUserAsync(User);
-                if (user == null) return Unauthorized(new { success = false, message = "Not logged in" });
-                if (string.IsNullOrWhiteSpace(user.FullName) || string.IsNullOrWhiteSpace(user.PhoneNumber))
+                ZENITH.Models.ApplicationUser? user = null;
+
+                if (string.IsNullOrEmpty(userId))
                 {
-                    return BadRequest(new { success = false, message = "Vui lòng hoàn tất thông tin cá nhân của bạn trong trang Hồ sơ trước khi thanh toán." });
+                    AddressItemViewModel? addrVm = null;
+                    {
+                        var sAddr = HttpContext.Session.GetString(SessionAddressKey);
+                        if (!string.IsNullOrEmpty(sAddr))
+                        {
+                            try { addrVm = JsonSerializer.Deserialize<AddressItemViewModel>(sAddr); } catch { addrVm = null; }
+                        }
+                    }
+                    if (addrVm == null) return BadRequest(new { success = false, message = "Vui lòng nhập địa chỉ giao hàng." });
+
+                    var email = ($"guest-{Guid.NewGuid():N}@example.local").ToLowerInvariant();
+                    var guestUser = new ZENITH.Models.ApplicationUser { UserName = email, Email = email, FullName = addrVm.FullName, PhoneNumber = addrVm.Phone };
+                    var pwd = $"G{Guid.NewGuid():N}!9a";
+                    var create = await _userManager.CreateAsync(guestUser, pwd);
+                    if (!create.Succeeded) return StatusCode(500, new { success = false, message = "Không thể tạo tài khoản khách." });
+                    userId = guestUser.Id;
+                    user = guestUser;
+
+                    List<Models.CartItemSession> cartRaw;
+                    {
+                        var sCart = HttpContext.Session.GetString(SessionCartKey);
+                        if (string.IsNullOrEmpty(sCart)) cartRaw = new List<Models.CartItemSession>();
+                        else { try { cartRaw = JsonSerializer.Deserialize<List<Models.CartItemSession>>(sCart) ?? new List<Models.CartItemSession>(); } catch { cartRaw = new List<Models.CartItemSession>(); } }
+                    }
+                    
+                    cartRaw = cartRaw
+                        .Where(x => x != null && x.VariantId > 0)
+                        .GroupBy(x => x.VariantId)
+                        .Select(g => new Models.CartItemSession { VariantId = g.Key, Quantity = Math.Max(1, g.Sum(i => i.Quantity)) })
+                        .ToList();
+                    
+                    if (cartRaw.Count == 0) return BadRequest(new { success = false, message = "Giỏ hàng trống." });
+                    var variantIdsG = cartRaw.Select(x => x.VariantId).ToList();
+                    var variantsG = await _context.ProductVariants
+                        .Where(v => variantIdsG.Contains(v.VariantId) && v.IsActive)
+                        .ToListAsync();
+                    
+                    // Filter out invalid variants that no longer exist
+                    var validCartItemsG = cartRaw
+                        .Where(ci => variantsG.Any(v => v.VariantId == ci.VariantId))
+                        .ToList();
+                    
+                    if (validCartItemsG.Count == 0) return BadRequest(new { success = false, message = "Không có sản phẩm hợp lệ trong giỏ hàng." });
+
+                    string methodG = (request?.ShippingMethod ?? "standard").ToLowerInvariant();
+                    decimal perLineG = methodG == "express" ? 30000m : 15000m;
+                    if (request?.ShippingRate is decimal srG && srG > 0) perLineG = srG;
+                    decimal subtotalG = validCartItemsG.Sum(c => (variantsG.FirstOrDefault(v => v.VariantId == c.VariantId)?.SalePrice ?? variantsG.FirstOrDefault(v => v.VariantId == c.VariantId)?.Price ?? 0) * Math.Max(c.Quantity, 1));
+                    int lineCountG = validCartItemsG.Count;
+                    decimal shippingFeeG = perLineG * lineCountG;
+                    decimal totalG = subtotalG + shippingFeeG;
+
+                    var addrEntity = new ZENITH.Models.Address
+                    {
+                        UserId = userId,
+                        FullName = addrVm.FullName ?? string.Empty,
+                        Phone = addrVm.Phone ?? string.Empty,
+                        AddressLine = addrVm.AddressLine ?? string.Empty,
+                        Ward = addrVm.Ward ?? string.Empty,
+                        District = addrVm.District ?? string.Empty,
+                        City = addrVm.City ?? string.Empty,
+                        IsDefault = true
+                    };
+                    _context.Addresses.Add(addrEntity);
+                    await _context.SaveChangesAsync();
+
+                    string ptypeG = (request?.PaymentType ?? "cod").ToUpperInvariant();
+                    string orderCodeG = $"ORD-{DateTime.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid().ToString("N").Substring(0,6)}";
+                    var orderG = new ZENITH.Models.Order
+                    {
+                        UserId = userId,
+                        AddressId = addrEntity.AddressId,
+                        PaymentType = ptypeG,
+                        OrderCode = orderCodeG,
+                        Subtotal = subtotalG,
+                        ShippingFee = shippingFeeG,
+                        Discount = 0,
+                        TotalAmount = totalG,
+                        PaymentStatus = "Pending",
+                        OrderStatus = "Processing",
+                        Note = null,
+                        OrderDate = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    };
+                    _context.Orders.Add(orderG);
+                    await _context.SaveChangesAsync();
+
+                    foreach (var ci in validCartItemsG)
+                    {
+                        var v = variantsG.FirstOrDefault(x => x.VariantId == ci.VariantId);
+                        if (v == null) continue; // Skip invalid variants
+                        var unit = (v.SalePrice ?? v.Price);
+                        _context.OrderItems.Add(new ZENITH.Models.OrderItem
+                        {
+                            OrderId = orderG.OrderId,
+                            VariantId = ci.VariantId,
+                            Quantity = Math.Max(ci.Quantity, 1),
+                            UnitPrice = unit,
+                            TotalPrice = unit * Math.Max(ci.Quantity, 1),
+                            VariantDescription = !string.IsNullOrWhiteSpace(v.Attributes) ? v.Attributes.Trim() : (!string.IsNullOrWhiteSpace(v.VariantSku) ? v.VariantSku : $"SKU {v.VariantId}")
+                        });
+                        v.StockQuantity = Math.Max(0, v.StockQuantity - Math.Max(ci.Quantity, 1));
+                        v.SoldCount += Math.Max(ci.Quantity, 1);
+                    }
+                    await _context.SaveChangesAsync();
+                    HttpContext.Session.SetString(SessionCartKey, JsonSerializer.Serialize(new List<Models.CartItemSession>()));
+                    return Ok(new { success = true, orderId = orderG.OrderId, orderCode = orderG.OrderCode, total = totalG });
                 }
 
+                user = await _userManager.GetUserAsync(User);
+                if (user == null) return Unauthorized(new { success = false, message = "Not logged in" });
                 var cartItems = await _context.CartItems
                     .Where(c => c.UserId == userId)
-                
                     .ToListAsync();
                 if (cartItems.Count == 0) return BadRequest(new { success = false, message = "Cart is empty" });
+
+                var variantIds = cartItems.Select(ci => ci.VariantId).ToList();
+                var variants = await _context.ProductVariants
+                    .Where(v => variantIds.Contains(v.VariantId))
+                    .ToListAsync();
 
                 int? addressId = request?.AddressId;
                 var address = addressId.HasValue
@@ -664,22 +1097,21 @@ namespace ZENITH.Controllers
                     : await _context.Addresses.OrderByDescending(a => a.IsDefault).ThenByDescending(a => a.AddressId).FirstOrDefaultAsync(a => a.UserId == userId);
                 if (address == null) return BadRequest(new { success = false, message = "Address not found" });
 
-                decimal subtotal = cartItems.Sum(c => (c.ProductVariant.SalePrice ?? c.ProductVariant.Price) * c.Quantity);
-                int lineCount = cartItems.Count;
                 string method = (request?.ShippingMethod ?? "standard").ToLowerInvariant();
                 decimal perLine = method == "express" ? 30000m : 15000m;
-                if (request?.ShippingRate is decimal sr && sr > 0) perLine = sr; // allow client-provided consistent rate
+                if (request?.ShippingRate is decimal sr && sr > 0) perLine = sr;
+                decimal subtotal = cartItems.Sum(c => (variants.FirstOrDefault(v => v.VariantId == c.VariantId)?.SalePrice ?? variants.FirstOrDefault(v => v.VariantId == c.VariantId)?.Price ?? 0) * c.Quantity);
+                int lineCount = cartItems.Count;
                 decimal shippingFee = perLine * lineCount;
                 decimal total = subtotal + shippingFee;
 
-                string ptype = "cod";
-
+                string ptype = (request?.PaymentType ?? "cod").ToUpperInvariant();
                 string orderCode = $"ORD-{DateTime.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid().ToString("N").Substring(0,6)}";
                 var order = new ZENITH.Models.Order
                 {
                     UserId = userId,
                     AddressId = address.AddressId,
-                    PaymentType = ptype.ToUpperInvariant(),
+                    PaymentType = ptype,
                     OrderCode = orderCode,
                     Subtotal = subtotal,
                     ShippingFee = shippingFee,
@@ -692,47 +1124,26 @@ namespace ZENITH.Controllers
                     UpdatedAt = DateTime.UtcNow
                 };
                 _context.Orders.Add(order);
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateException ex)
-                {
-                    var msg = ex.InnerException?.Message ?? ex.Message;
-                    if (!string.IsNullOrWhiteSpace(msg) && (msg.Contains("Invalid column name 'PaymentType'") || msg.Contains("Cannot insert the value NULL into column 'PaymentId'")))
-                    {
-                        await EnsurePaymentSchemaAsync();
-                        await _context.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                string BuildVariantText(ZENITH.Models.ProductVariant v)
-                {
-                    if (!string.IsNullOrWhiteSpace(v.Attributes)) return v.Attributes.Trim();
-                    if (!string.IsNullOrWhiteSpace(v.VariantSku)) return v.VariantSku;
-                    return $"SKU {v.VariantId}";
-                }
+                await _context.SaveChangesAsync();
 
                 foreach (var ci in cartItems)
                 {
-                    var unit = ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price;
-                    var item = new ZENITH.Models.OrderItem
+                    var v = variants.FirstOrDefault(x => x.VariantId == ci.VariantId) ?? await _context.ProductVariants.FirstOrDefaultAsync(x => x.VariantId == ci.VariantId);
+                    var unit = (v?.SalePrice ?? v?.Price ?? 0);
+                    _context.OrderItems.Add(new ZENITH.Models.OrderItem
                     {
                         OrderId = order.OrderId,
                         VariantId = ci.VariantId,
                         Quantity = ci.Quantity,
                         UnitPrice = unit,
                         TotalPrice = unit * ci.Quantity,
-                        VariantDescription = BuildVariantText(ci.ProductVariant)
-                    };
-                    _context.OrderItems.Add(item);
-
-                    ci.ProductVariant.StockQuantity = Math.Max(0, ci.ProductVariant.StockQuantity - ci.Quantity);
-                    ci.ProductVariant.SoldCount += ci.Quantity;
+                        VariantDescription = v != null ? (!string.IsNullOrWhiteSpace(v.Attributes) ? v.Attributes.Trim() : (!string.IsNullOrWhiteSpace(v.VariantSku) ? v.VariantSku : $"SKU {v.VariantId}")) : $"SKU {ci.VariantId}"
+                    });
+                    if (v != null)
+                    {
+                        v.StockQuantity = Math.Max(0, v.StockQuantity - ci.Quantity);
+                        v.SoldCount += ci.Quantity;
+                    }
                 }
 
                 _context.CartItems.RemoveRange(cartItems);
@@ -748,46 +1159,31 @@ namespace ZENITH.Controllers
             }
         }
 
-        private async Task EnsurePaymentSchemaAsync()
+        private string ResolveImageUrl(string? path)
         {
-            var script = @"
-DECLARE @fk NVARCHAR(128);
-SELECT TOP 1 @fk = fk.name
-FROM sys.foreign_keys fk
-JOIN sys.foreign_key_columns fkc ON fk.object_id = fkc.constraint_object_id
-JOIN sys.tables t ON fk.parent_object_id = t.object_id
-JOIN sys.columns c ON c.object_id = t.object_id AND c.column_id = fkc.parent_column_id
-WHERE t.name = 'Orders' AND c.name = 'PaymentId';
-
-IF @fk IS NOT NULL EXEC('ALTER TABLE Orders DROP CONSTRAINT [' + @fk + ']');
-
-DECLARE @idx NVARCHAR(128);
-SELECT TOP 1 @idx = i.name
-FROM sys.indexes i
-JOIN sys.index_columns ic ON ic.object_id = i.object_id AND ic.index_id = i.index_id
-JOIN sys.columns c ON c.object_id = ic.object_id AND c.column_id = ic.column_id
-JOIN sys.tables t ON t.object_id = i.object_id
-WHERE t.name = 'Orders' AND c.name = 'PaymentId';
-
-IF @idx IS NOT NULL EXEC('DROP INDEX [' + @idx + '] ON Orders');
-
-IF COL_LENGTH('Orders','PaymentId') IS NOT NULL
-BEGIN
-    ALTER TABLE Orders DROP COLUMN PaymentId;
-END
-
-IF OBJECT_ID('PaymentMethods','U') IS NOT NULL
-BEGIN
-    DROP TABLE PaymentMethods;
-END
-
-IF COL_LENGTH('Orders','PaymentType') IS NULL
-BEGIN
-    ALTER TABLE Orders ADD PaymentType nvarchar(20) NOT NULL DEFAULT 'COD';
-END
-";
-            await _context.Database.ExecuteSqlRawAsync(script);
-            await _context.Database.MigrateAsync();
+            if (string.IsNullOrWhiteSpace(path)) return Url.Content("~/image/default.avif");
+            var s = path.Trim();
+            if (s.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || s.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) return s;
+            if (s.StartsWith("~/")) return Url.Content(s);
+            if (s.StartsWith("/")) return Url.Content(s);
+            var lower = s.ToLowerInvariant();
+            int idxWwwroot = lower.IndexOf("wwwroot");
+            if (idxWwwroot >= 0)
+            {
+                var after = s.Substring(idxWwwroot + "wwwroot".Length).Replace('\\', '/');
+                return Url.Content("~" + (after.StartsWith("/") ? after : "/" + after));
+            }
+            foreach (var marker in new[] { "/uploads/", "uploads/", "\\uploads\\", "/images/", "images/", "\\images\\", "/image/", "image/", "\\image\\" })
+            {
+                int idx = lower.IndexOf(marker);
+                if (idx >= 0)
+                {
+                    var tail = s.Substring(idx).Replace('\\', '/');
+                    return Url.Content("~" + (tail.StartsWith("/") ? tail : "/" + tail));
+                }
+            }
+            s = s.Replace('\\', '/');
+            return Url.Content("~/" + s.TrimStart('/'));
         }
     }
 }

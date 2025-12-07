@@ -147,7 +147,12 @@
                             <span>Tổng số tiền</span>
                             <span id="js-summary-total">@Model.TotalFormatted</span>
                         </div>
-                        <a asp-controller="Checkout" asp-action="Shipping" class="cart-info__next-btn btn btn--primary btn--rounded">
+                        @{
+                            var hasItems = Model.Items != null && Model.Items.Any();
+                        }
+                        <a asp-controller="Checkout" asp-action="Shipping" class="cart-info__next-btn btn btn--primary btn--rounded @(!hasItems ? "disabled" : "")" 
+                           style="@(!hasItems ? "pointer-events: none; opacity: 0.6; cursor: not-allowed;" : "")"
+                           onclick="@(!hasItems ? "return false;" : "")">
                             Mua hàng
                         </a>
                     </div>
@@ -235,7 +240,7 @@ document.querySelectorAll('.js-remove').forEach(function(btn){
           var empty = document.createElement('div'); empty.className = 'cart-info__continue'; empty.innerHTML = '<p class="text-muted">Giỏ hàng của bạn đang trống</p>';
           list.innerHTML = ''; list.appendChild(empty);
         }
-        recalcSummary(); });
+        recalcSummary(); updateCheckoutButtonState(); });
   });
 });
 document.querySelectorAll('.js-fav').forEach(function(btn){
@@ -258,7 +263,7 @@ document.querySelectorAll('.js-fav').forEach(function(btn){
           var favTextEl = document.getElementById('js-favorite-count-text');
           if (favTextEl){ favTextEl.textContent = 'Bạn có ' + fc + ' mục yêu thích'; }
         }
-        recalcSummary(); });
+        recalcSummary(); updateCheckoutButtonState(); });
   });
 });
 document.querySelectorAll('.cart-item__variant-select').forEach(function(sel){
@@ -270,6 +275,27 @@ document.querySelectorAll('.cart-item__variant-select').forEach(function(sel){
       .then(function(){ recalcSummary(); });
   });
 });
+function updateCheckoutButtonState(){
+  var items = Array.prototype.slice.call(document.querySelectorAll('.cart-item'));
+  var hasItems = items.length > 0;
+  var checkoutBtn = document.querySelector('.cart-info__next-btn');
+  if (checkoutBtn) {
+    if (hasItems) {
+      checkoutBtn.classList.remove('disabled');
+      checkoutBtn.style.pointerEvents = '';
+      checkoutBtn.style.opacity = '';
+      checkoutBtn.style.cursor = '';
+      checkoutBtn.onclick = null;
+    } else {
+      checkoutBtn.classList.add('disabled');
+      checkoutBtn.style.pointerEvents = 'none';
+      checkoutBtn.style.opacity = '0.6';
+      checkoutBtn.style.cursor = 'not-allowed';
+      checkoutBtn.onclick = function(e) { e.preventDefault(); return false; };
+    }
+  }
+}
 recalcSummary();
+updateCheckoutButtonState();
 </script>
 }

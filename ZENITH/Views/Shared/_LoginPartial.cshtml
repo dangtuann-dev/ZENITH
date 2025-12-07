@@ -2,17 +2,18 @@
 @using ZENITH.Models
 @using Microsoft.EntityFrameworkCore
 @using System.Linq
+@using System.Text.Json
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @inject ZENITH.AppData.ApplicationDbContext DbContext
 
+@{ var currentUserId = UserManager.GetUserId(User); }
 
 @if (SignInManager.IsSignedIn(User))
 {
     var user = await UserManager.GetUserAsync(User);
-    var userId = UserManager.GetUserId(User);
-    var favoriteCount = DbContext.Favorites.AsNoTracking().Count(f => f.UserId == userId);
+    var favoriteCount = DbContext.Favorites.AsNoTracking().Count(f => f.UserId == currentUserId);
 
     string avatarUrl;
     var raw = user?.Avatar;
@@ -87,7 +88,7 @@
                         @{ 
                             var recentFavorites = DbContext.Favorites
                                 .AsNoTracking()
-                                .Where(f => f.UserId == userId)
+                                .Where(f => f.UserId == currentUserId)
                                 .OrderByDescending(f => f.AddedAt)
                                 .Include(f => f.ProductVariant)
                                     .ThenInclude(v => v.Product)
@@ -143,7 +144,7 @@
                 @{ 
                     var cartItems = DbContext.CartItems
                         .AsNoTracking()
-                        .Where(c => c.UserId == userId)
+                        .Where(c => c.UserId == currentUserId)
                         .OrderByDescending(c => c.UpdatedAt)
                         .Include(c => c.ProductVariant)
                             .ThenInclude(v => v.Product)
@@ -221,6 +222,7 @@
                     </div>
                 </div>
             </div>
+     
         </div>
 
         <div class="top-act__user">
@@ -286,6 +288,164 @@ else
                 <input type="text" name="q" class="header-search__input" placeholder="Tìm kiếm sản phẩm" />
             </form>
         </div>
+        @* Thêm giỏ hàng lại đây *@
+        <div class="top-act__btn-wrap">
+            @{
+                var culture2 = new System.Globalization.CultureInfo("vi-VN");
+                var SessionCartKey = "cart.items";
+                if (!Context.Session.IsAvailable)
+                {
+                    await Context.Session.LoadAsync();
+                }
+                var sCart = Context.Session.GetString(SessionCartKey);
+                List<ZENITH.Models.CartItemSession> cartItemsRaw;
+                if (string.IsNullOrEmpty(sCart))
+                {
+                    cartItemsRaw = new List<ZENITH.Models.CartItemSession>();
+                }
+                else
+                {
+                    try
+                    {
+                        cartItemsRaw = JsonSerializer.Deserialize<List<ZENITH.Models.CartItemSession>>(sCart) ?? new List<ZENITH.Models.CartItemSession>();
+                    }
+                    catch
+                    {
+                        cartItemsRaw = new List<ZENITH.Models.CartItemSession>();
+                    }
+                }
+
+                cartItemsRaw = cartItemsRaw
+                    .Where(x => x != null && x.VariantId > 0)
+                    .GroupBy(x => x.VariantId)
+                    .Select(g => new ZENITH.Models.CartItemSession { VariantId = g.Key, Quantity = Math.Max(1, g.Sum(i => i.Quantity)) })
+                    .ToList();
+
+                var variantIds = cartItemsRaw.Select(x => x.VariantId).ToList();
+                var variants = variantIds.Any()
+                    ? await DbContext.ProductVariants
+                        .AsNoTracking()
+                        .Where(v => variantIds.Contains(v.VariantId))
+                        .Include(v => v.Product)
+                            .ThenInclude(p => p.ProductImages)
+                        .ToListAsync()
+                    : new List<ProductVariant>();
+
+                static string BuildVariantTextGuest(ProductVariant v)
+                {
+                    if (!string.IsNullOrWhiteSpace(v.Attributes)) return v.Attributes.Trim();
+                    if (!string.IsNullOrWhiteSpace(v.VariantSku)) return v.VariantSku;
+                    return $"SKU {v.VariantId}";
+                }
+
+                string ResolveImageUrl(string? path)
+                {
+                    if (string.IsNullOrWhiteSpace(path)) return Url.Content("~/image/default.avif");
+                    var s = path.Trim();
+                    if (s.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || s.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) return s;
+                    if (s.StartsWith("~/")) return Url.Content(s);
+                    if (s.StartsWith("/")) return Url.Content(s);
+                    var lower = s.ToLowerInvariant();
+                    int idxWwwroot = lower.IndexOf("wwwroot");
+                    if (idxWwwroot >= 0)
+                    {
+                        var after = s.Substring(idxWwwroot + "wwwroot".Length).Replace('\\', '/');
+                        return Url.Content("~" + (after.StartsWith("/") ? after : "/" + after));
+                    }
+                    foreach (var marker in new[] { "/uploads/", "uploads/", "\\uploads\\", "/images/", "images/", "\\images\\", "/image/", "image/", "\\image\\" })
+                    {
+                        int idx = lower.IndexOf(marker);
+                        if (idx >= 0)
+                        {
+                            var tail = s.Substring(idx).Replace('\\', '/');
+                            return Url.Content("~" + (tail.StartsWith("/") ? tail : "/" + tail));
+                        }
+                    }
+                    s = s.Replace('\\', '/');
+                    return Url.Content("~/" + s.TrimStart('/'));
+                }
+
+                var cartCount = cartItemsRaw.Sum(c => Math.Max(c.Quantity, 1));
+                var subtotal = cartItemsRaw.Sum(c => (variants.FirstOrDefault(v => v.VariantId == c.VariantId)?.SalePrice ?? variants.FirstOrDefault(v => v.VariantId == c.VariantId)?.Price ?? 0) * Math.Max(c.Quantity, 1));
+                var shipping = cartItemsRaw.Count * 15000m;
+                var tax = 0m;
+                var total = subtotal + shipping + tax;
+
+                var recentCart = cartItemsRaw.Take(3).Select(ci =>
+                {
+                    var v = variants.FirstOrDefault(x => x.VariantId == ci.VariantId);
+                    return new
+                    {
+                        Variant = v,
+                        Quantity = Math.Max(ci.Quantity, 1),
+                        Product = v?.Product,
+                        ImageUrl = v != null ? ResolveImageUrl(v.Product?.ProductImages.OrderByDescending(i => i.IsPrimary).ThenBy(i => i.DisplayOrder).Select(i => i.ImageUrl).FirstOrDefault()) : Url.Content("~/image/default.avif"),
+                        PriceEach = v?.SalePrice ?? v?.Price ?? 0
+                    };
+                }).Where(x => x.Variant != null && x.Product != null).ToList();
+            }
+            <a asp-controller="Checkout" asp-action="Index" class="top-act__btn">
+                <img src="/image/icons/buy.svg" alt="" class="icon top-act__icon" />
+                <span class="top-act__title" id="js-header-cart-subtotal">@subtotal.ToString("N0", culture2) VND</span>
+            </a>
+
+            <div class="act-dropdown act-dropdown--cart">
+                <div class="act-dropdown__inner">
+                    <img src="/image/icons/arrow-up.png" alt="" class="act-dropdown__arrow" />
+                    <div class="act-dropdown__top">
+                        <h2 class="act-dropdown__title" id="js-cart-title">Bạn có @cartCount sản phẩm</h2>
+                        <a asp-controller="Checkout" asp-action="Index" class="act-dropdown__view-all">Xem tất cả</a>
+                    </div>
+                    <div class="row row-cols-3 gx-2 act-dropdown__list" id="js-cart-dropdown-list">
+                        @if (recentCart.Any())
+                        {
+                            foreach (var ci in recentCart)
+                            {
+                                <div class="col">
+                                    <article class="cart-preview-item">
+                                        <div class="cart-preview-item__img-wrap">
+                                            <a asp-controller="Product" asp-action="Detail" asp-route-id="@ci.Product.ProductId">
+                                                <img src="@ci.ImageUrl" alt="@ci.Product.ProductName" class="cart-preview-item__thumb" />
+                                            </a>
+                                        </div>
+                                        <h3 class="cart-preview-item__title">@ci.Product.ProductName</h3>
+                                        <p class="cart-preview-item__price">@ci.PriceEach.ToString("N0", culture2) VND x @ci.Quantity</p>
+                                    </article>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="col">
+                                <p class="text-muted">Giỏ hàng của bạn đang trống</p>
+                            </div>
+                        }
+                    </div>
+                    <div class="act-dropdown__bottom">
+                        <div class="act-dropdown__row">
+                            <span class="act-dropdown__label">Tạm tính</span>
+                            <span class="act-dropdown__value" id="js-cart-subtotal">@subtotal.ToString("N0", culture2) VND</span>
+                        </div>
+                        <div class="act-dropdown__row">
+                            <span class="act-dropdown__label">Thuế</span>
+                            <span class="act-dropdown__value">@tax.ToString("N0", culture2) VND</span>
+                        </div>
+                        <div class="act-dropdown__row">
+                            <span class="act-dropdown__label">Vận chuyển</span>
+                            <span class="act-dropdown__value" id="js-cart-shipping">@shipping.ToString("N0", culture2) VND</span>
+                        </div>
+                        <div class="act-dropdown__row act-dropdown__row--bold">
+                            <span class="act-dropdown__label">Tổng</span>
+                            <span class="act-dropdown__value" id="js-cart-total">@total.ToString("N0", culture2) VND</span>
+                        </div>
+                    </div>
+                    <div class="act-dropdown__checkout">
+                        <a asp-controller="Checkout" asp-action="Index" class="btn btn--primary btn--rounded act-dropdown__checkout-btn">Xem giỏ hàng</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <a id="login" asp-area="Identity" asp-page="/Account/Login" class="btn btn--text d-md-none">Đăng Nhập</a>
         <a id="register" asp-area="Identity" asp-page="/Account/Register" class="top-act__sign-up btn btn--primary">Đăng Ký</a>
     </div>

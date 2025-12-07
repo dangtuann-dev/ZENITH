@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ZENITH.AppData;
@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
+using System.Text.Json;
 
 namespace ZENITH.Controllers
 {
@@ -16,6 +18,7 @@ namespace ZENITH.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private const string SessionCartKey = "cart.items";
         public FavoritesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
@@ -293,15 +296,11 @@ namespace ZENITH.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [Route("Favorites/AddToCart")]
         public async Task<IActionResult> AddToCart([FromBody] AddToCartRequest request)
         {
             var userId = _userManager.GetUserId(User);
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized(new { success = false, message = "Bạn cần đăng nhập để thêm vào giỏ hàng." });
-            }
-
             int variantId = request?.VariantId ?? 0;
             int quantity = request?.Quantity ?? 1;
             if (variantId <= 0 || quantity <= 0)
@@ -309,10 +308,72 @@ namespace ZENITH.Controllers
                 return BadRequest(new { success = false, message = "Thiếu hoặc không hợp lệ VariantId/Quantity." });
             }
 
-            var variant = await _context.ProductVariants.FirstOrDefaultAsync(v => v.VariantId == variantId && v.IsActive);
-            if (variant == null)
+            var variantActive = await _context.ProductVariants.AnyAsync(v => v.VariantId == variantId && v.IsActive);
+            if (!variantActive)
             {
                 return NotFound(new { success = false, message = "Biến thể không tồn tại hoặc không hoạt động." });
+            }
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                // Ensure session is available
+                if (!HttpContext.Session.IsAvailable)
+                {
+                    await HttpContext.Session.LoadAsync();
+                }
+
+                var sCart = HttpContext.Session.GetString(SessionCartKey);
+                System.Collections.Generic.List<Models.CartItemSession> cartRaw;
+                if (string.IsNullOrEmpty(sCart)) cartRaw = new System.Collections.Generic.List<Models.CartItemSession>();
+                else { try { cartRaw = JsonSerializer.Deserialize<System.Collections.Generic.List<Models.CartItemSession>>(sCart) ?? new System.Collections.Generic.List<Models.CartItemSession>(); } catch { cartRaw = new System.Collections.Generic.List<Models.CartItemSession>(); } }
+                var idx = cartRaw.FindIndex(x => x.VariantId == variantId);
+                if (idx >= 0) cartRaw[idx].Quantity = Math.Max(1, cartRaw[idx].Quantity + quantity);
+                else cartRaw.Add(new Models.CartItemSession { VariantId = variantId, Quantity = Math.Max(1, quantity) });
+                
+                var serialized = JsonSerializer.Serialize(cartRaw);
+                HttpContext.Session.SetString(SessionCartKey, serialized);
+                
+                // Mark session as modified to ensure it's saved
+                HttpContext.Session.SetString("_last_updated", DateTime.UtcNow.Ticks.ToString());
+                
+                // Force session to be saved - this is critical for distributed cache
+                // The session will be committed when the response is sent, but we need to ensure
+                // the distributed cache has the data before the next request
+                try
+                {
+                    await HttpContext.Session.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    // Log the error but continue - session will be saved when response is sent
+                    System.Diagnostics.Debug.WriteLine($"Session commit error: {ex.Message}");
+                }
+                
+                // Verify session was saved (read it back immediately from the same session)
+                // This should work because we're reading from the same HttpContext
+                var verify = HttpContext.Session.GetString(SessionCartKey);
+                var verifyCount = 0;
+                if (!string.IsNullOrEmpty(verify))
+                {
+                    try
+                    {
+                        var verifyList = JsonSerializer.Deserialize<System.Collections.Generic.List<Models.CartItemSession>>(verify);
+                        verifyCount = verifyList?.Count ?? 0;
+                    }
+                    catch
+                    {
+                        verifyCount = 0;
+                    }
+                }
+                
+                // Return session ID for debugging
+                return Ok(new { 
+                    success = true, 
+                    count = cartRaw.Count, 
+                    verifiedCount = verifyCount,
+                    sessionId = HttpContext.Session.Id,
+                    serializedLength = serialized.Length
+                });
             }
 
             var existing = await _context.CartItems.FirstOrDefaultAsync(ci => ci.UserId == userId && ci.VariantId == variantId);
@@ -479,14 +540,163 @@ namespace ZENITH.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("Favorites/CartPreview")]
         public async Task<IActionResult> CartPreview()
         {
             var userId = _userManager.GetUserId(User);
             if (string.IsNullOrEmpty(userId))
             {
+                // Always try to load session first
+                try
+                {
+                    await HttpContext.Session.LoadAsync();
+                }
+                catch { }
+                
                 var culture = new System.Globalization.CultureInfo("vi-VN");
-                return Ok(new { count = 0, subtotalFormatted = 0m.ToString("N0", culture) + " VND", items = Array.Empty<object>() });
+                
+                // Debug: Log session info
+                var sessionId = HttpContext.Session.Id;
+                var isAvailable = HttpContext.Session.IsAvailable;
+                
+                // Read session data
+                var sCart = HttpContext.Session.GetString(SessionCartKey);
+                System.Collections.Generic.List<Models.CartItemSession> cartRaw;
+                if (string.IsNullOrEmpty(sCart)) 
+                {
+                    cartRaw = new System.Collections.Generic.List<Models.CartItemSession>();
+                }
+                else 
+                { 
+                    try 
+                    { 
+                        cartRaw = JsonSerializer.Deserialize<System.Collections.Generic.List<Models.CartItemSession>>(sCart) ?? new System.Collections.Generic.List<Models.CartItemSession>(); 
+                    } 
+                    catch 
+                    { 
+                        cartRaw = new System.Collections.Generic.List<Models.CartItemSession>(); 
+                    } 
+                }
+
+                // Group by VariantId and sum quantities
+                cartRaw = cartRaw
+                    .Where(x => x != null && x.VariantId > 0)
+                    .GroupBy(x => x.VariantId)
+                    .Select(g => new Models.CartItemSession { VariantId = g.Key, Quantity = Math.Max(1, g.Sum(i => i.Quantity)) })
+                    .ToList();
+
+                // Filter out invalid variants
+                var validCartItems = cartRaw
+                    .Where(ci => ci.VariantId > 0 && ci.Quantity > 0)
+                    .ToList();
+
+                // Debug info - always include it
+                var debugInfo = new
+                {
+                    sessionId = sessionId,
+                    isAvailable = isAvailable,
+                    cartRawCount = cartRaw.Count,
+                    validCartItemsCount = validCartItems.Count,
+                    sCartLength = sCart?.Length ?? 0,
+                    sCartIsEmpty = string.IsNullOrEmpty(sCart),
+                    sCartPreview = sCart != null ? sCart.Substring(0, Math.Min(100, sCart.Length)) : "null"
+                };
+
+                if (!validCartItems.Any())
+                {
+                    return Ok(new { 
+                        count = 0, 
+                        subtotalFormatted = "0 VND", 
+                        items = Array.Empty<object>(),
+                        debug = debugInfo
+                    });
+                }
+
+                var ids = validCartItems.Select(x => x.VariantId).Distinct().ToList();
+                var variants = await _context.ProductVariants
+                    .AsNoTracking()
+                    .Where(v => ids.Contains(v.VariantId) && v.IsActive)
+                    .Include(v => v.Product)
+                        .ThenInclude(p => p.ProductImages)
+                    .ToListAsync();
+
+                // Filter cart items to only include valid variants with products
+                var validItemsWithVariants = validCartItems
+                    .Where(ci => variants.Any(v => v.VariantId == ci.VariantId && v.Product != null))
+                    .ToList();
+
+                int countG = validItemsWithVariants.Sum(c => Math.Max(c.Quantity, 1));
+                decimal subtotalG = validItemsWithVariants.Sum(c => 
+                {
+                    var v = variants.FirstOrDefault(v => v.VariantId == c.VariantId);
+                    return (v?.SalePrice ?? v?.Price ?? 0) * Math.Max(c.Quantity, 1);
+                });
+
+                var recentG = validItemsWithVariants.Take(3).Select(ci => new {
+                    v = variants.FirstOrDefault(x => x.VariantId == ci.VariantId && x.Product != null),
+                    qty = Math.Max(ci.Quantity, 1)
+                }).Where(x => x.v != null && x.v.Product != null).Select(x => new {
+                    productId = x.v!.ProductId,
+                    productName = x.v!.Product!.ProductName,
+                    imageUrlRaw = x.v!.Product!.ProductImages
+                        .OrderByDescending(i => i.IsPrimary)
+                        .ThenBy(i => i.DisplayOrder)
+                        .Select(i => i.ImageUrl)
+                        .FirstOrDefault(),
+                    quantity = x.qty,
+                    priceEach = x.v!.SalePrice ?? x.v!.Price
+                }).ToList();
+
+                string ResolveImageUrlG(string? s)
+                {
+                    if (string.IsNullOrWhiteSpace(s)) return Url.Content("~/image/default.avif");
+                    s = s.Trim();
+                    var lower = s.ToLowerInvariant();
+                    if (lower.StartsWith("http://") || lower.StartsWith("https://")) return s;
+                    if (s.StartsWith("~/")) return Url.Content(s);
+                    if (s.StartsWith("/")) return Url.Content(s);
+                    var marker = "wwwroot";
+                    int idx = lower.IndexOf(marker);
+                    if (idx >= 0)
+                    {
+                        var tail = s.Substring(idx + marker.Length).Replace('\\', '/');
+                        return Url.Content("~" + (tail.StartsWith("/") ? tail : "/" + tail));
+                    }
+                    s = s.Replace('\\', '/');
+                    s = s.TrimStart('~');
+                    return Url.Content("~/" + s.TrimStart('/'));
+                }
+
+                var itemsG = recentG.Select(x => new
+                {
+                    productId = x.productId,
+                    productName = x.productName,
+                    imgUrl = ResolveImageUrlG(x.imageUrlRaw),
+                    quantity = x.quantity,
+                    priceEachFormatted = x.priceEach.ToString("N0", culture) + " VND"
+                }).ToList();
+
+                // Update debug info with additional fields
+                var debugInfoFinal = new
+                {
+                    sessionId = sessionId,
+                    isAvailable = isAvailable,
+                    cartRawCount = cartRaw.Count,
+                    validCartItemsCount = validCartItems.Count,
+                    validItemsWithVariantsCount = validItemsWithVariants.Count,
+                    variantsCount = variants.Count,
+                    sCartLength = sCart?.Length ?? 0,
+                    sCartIsEmpty = string.IsNullOrEmpty(sCart),
+                    sCartPreview = sCart != null ? sCart.Substring(0, Math.Min(100, sCart.Length)) : "null"
+                };
+
+                return Ok(new { 
+                    count = countG, 
+                    subtotalFormatted = subtotalG.ToString("N0", culture) + " VND", 
+                    items = itemsG,
+                    debug = debugInfoFinal
+                });
             }
 
             var culture2 = new System.Globalization.CultureInfo("vi-VN");
@@ -498,21 +708,25 @@ namespace ZENITH.Controllers
                     .ThenInclude(v => v.Product)
                         .ThenInclude(p => p.ProductImages)
                 .ToListAsync();
+            var merged = cartItems
+                .GroupBy(c => c.VariantId)
+                .Select(g => new { Variant = g.First().ProductVariant, Quantity = g.Sum(x => x.Quantity) })
+                .ToList();
 
-            int count = cartItems.Sum(c => c.Quantity);
-            decimal subtotal = cartItems.Sum(c => (c.ProductVariant.SalePrice ?? c.ProductVariant.Price) * c.Quantity);
+            int count = merged.Sum(m => m.Quantity);
+            decimal subtotal = merged.Sum(m => (m.Variant.SalePrice ?? m.Variant.Price) * m.Quantity);
 
-            var recent = cartItems.Take(3).Select(ci => new
+            var recent = merged.Take(3).Select(m => new
             {
-                productId = ci.ProductVariant.ProductId,
-                productName = ci.ProductVariant.Product.ProductName,
-                imageUrlRaw = ci.ProductVariant.Product.ProductImages
+                productId = m.Variant.ProductId,
+                productName = m.Variant.Product.ProductName,
+                imageUrlRaw = m.Variant.Product.ProductImages
                     .OrderByDescending(i => i.IsPrimary)
                     .ThenBy(i => i.DisplayOrder)
                     .Select(i => i.ImageUrl)
                     .FirstOrDefault(),
-                quantity = ci.Quantity,
-                priceEach = ci.ProductVariant.SalePrice ?? ci.ProductVariant.Price
+                quantity = m.Quantity,
+                priceEach = m.Variant.SalePrice ?? m.Variant.Price
             }).ToList();
 
             string ResolveImageUrl(string? s)

@@ -1,5 +1,13 @@
 ﻿@model ZENITH.ViewModels.PaymentViewModel
-<main class="checkout-page" data-item-count="@Model.ItemCount" data-line-count="@Model.Items.Count" data-subtotal="@Model.Subtotal" data-address-id="@Model.SelectedAddress?.AddressId">
+@{
+    var lineCount = Model.Items?.Count ?? 0;
+    var standardShipping = lineCount * 15000m;
+    var expressShipping = lineCount * 30000m;
+    var culture = new System.Globalization.CultureInfo("vi-VN");
+    var standardShippingFormatted = standardShipping.ToString("N0", culture) + " VND";
+    var expressShippingFormatted = expressShipping.ToString("N0", culture) + " VND";
+}
+<main class="checkout-page" data-item-count="@Model.ItemCount" data-line-count="@lineCount" data-subtotal="@Model.Subtotal" data-address-id="@Model.SelectedAddress?.AddressId">
     <div class="container">
         <!-- Search bar -->
         <div class="checkout-container">
@@ -92,7 +100,7 @@
                                                checked
                                                data-rate="15000"
                                                class="cart-info__checkbox-input payment-item__checkbox-input" />
-                                        <span class="payment-item__cost">0 VND</span>
+                                        <span class="payment-item__cost">@standardShippingFormatted</span>
                                     </span>
                                 </div>
                             </article>
@@ -115,7 +123,7 @@
                                                name="delivery-method"
                                                data-rate="30000"
                                                class="cart-info__checkbox-input payment-item__checkbox-input" />
-                                        <span class="payment-item__cost">0 VND</span>
+                                        <span class="payment-item__cost">@expressShippingFormatted</span>
                                     </span>
                                 </div>
                             </article>

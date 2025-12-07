@@ -246,7 +246,8 @@ function initMobileAccordion() {
         const menu = item?.parentElement;
         if (!item || !menu) return;
         Array.from(menu.children).forEach((child) => {
-          if (child !== item) child.classList.remove("menu-column__item--active");
+          if (child !== item)
+            child.classList.remove("menu-column__item--active");
         });
         item.classList.toggle("menu-column__item--active");
       };
@@ -401,7 +402,9 @@ function initProductPreview() {
         }
         wrap
           .querySelectorAll(".prod-preview__thumb-img--current")
-          .forEach((el) => el.classList.remove("prod-preview__thumb-img--current"));
+          .forEach((el) =>
+            el.classList.remove("prod-preview__thumb-img--current")
+          );
         next.classList.add("prod-preview__thumb-img--current");
       };
 
@@ -436,57 +439,114 @@ function isLoggedIn() {
 }
 
 async function refreshCartPreview() {
-  const res = await fetch("/Favorites/CartPreview", { method: "GET", cache: "no-store" });
-  if (!res.ok) return;
-  const data = await res.json();
-  const titleEl = document.getElementById("js-cart-title");
-  if (titleEl && typeof data.count === "number") {
-    titleEl.textContent = `Bạn có ${data.count} sản phẩm`;
-  }
-  const subtotalEl = document.getElementById("js-cart-subtotal");
-  if (subtotalEl && typeof data.subtotalFormatted === "string") {
-    subtotalEl.textContent = data.subtotalFormatted;
-  }
-  const navQnt = document.getElementById("js-navbar-cart-qnt");
-  if (navQnt && typeof data.count === "number") {
-    navQnt.textContent = String(data.count);
-  }
-          const headerSubtotal = document.getElementById("js-header-cart-subtotal");
-          if (headerSubtotal && typeof data.subtotalFormatted === "string") {
-            headerSubtotal.textContent = data.subtotalFormatted;
-          }
-  const listEl = document.getElementById("js-cart-dropdown-list");
-  if (listEl && Array.isArray(data.items)) {
-    if (data.items.length === 0) {
-      listEl.innerHTML = '<div class="col"><p class="text-muted">Giỏ hàng của bạn đang trống</p></div>';
+  try {
+    console.log("refreshCartPreview: Fetching cart preview...");
+    console.log("refreshCartPreview: Current cookies:", document.cookie);
+    const res = await fetch("/Favorites/CartPreview", {
+      method: "GET",
+      cache: "no-store",
+      credentials: "include",
+      headers: {
+        "Cache-Control": "no-cache"
+      }
+    });
+    if (!res.ok) {
+      console.error("refreshCartPreview: Response not OK", res.status);
       return;
     }
-    const html = data.items
-      .map(
-        (it) =>
-          `<div class="col">
-            <article class="cart-preview-item">
-              <div class="cart-preview-item__img-wrap">
-                <a href="/Product/Detail/${it.productId}">
-                  <img src="${it.imgUrl}" alt="${it.productName}" class="cart-preview-item__thumb" />
-                </a>
-              </div>
-              <h3 class="cart-preview-item__title">${it.productName}</h3>
-              <p class="cart-preview-item__price">${it.priceEachFormatted} x ${it.quantity}</p>
-            </article>
-          </div>`
-      )
-      .join("");
-    listEl.innerHTML = html;
-    try {
-      var imgs = listEl.querySelectorAll('img.cart-preview-item__thumb');
-      imgs.forEach(function(img){
-        img.addEventListener('error', function(){
-          img.onerror = null;
-          img.src = '/image/default.avif';
-        });
-      });
-    } catch (_) {}
+    const data = await res.json();
+    console.log("refreshCartPreview: Response data", JSON.stringify(data, null, 2));
+    if (data && data.debug) {
+      console.log("refreshCartPreview: Debug info", JSON.stringify(data.debug, null, 2));
+      console.log("refreshCartPreview: Session ID", data.debug.sessionId);
+      console.log("refreshCartPreview: Cart raw count", data.debug.cartRawCount);
+      console.log("refreshCartPreview: Valid items count", data.debug.validItemsWithVariantsCount);
+      console.log("refreshCartPreview: sCart is empty", data.debug.sCartIsEmpty);
+      console.log("refreshCartPreview: sCart length", data.debug.sCartLength);
+    } else {
+      console.log("refreshCartPreview: No debug info in response");
+    }
+    
+    const titleEl = document.getElementById("js-cart-title");
+    if (titleEl && typeof data.count === "number") {
+      titleEl.textContent = `Bạn có ${data.count} sản phẩm`;
+      console.log("refreshCartPreview: Updated cart title", data.count);
+    } else {
+      console.log("refreshCartPreview: Cart title element not found or invalid count");
+    }
+    
+    const subtotalEl = document.getElementById("js-cart-subtotal");
+    if (subtotalEl && typeof data.subtotalFormatted === "string") {
+      subtotalEl.textContent = data.subtotalFormatted;
+      console.log("refreshCartPreview: Updated cart subtotal", data.subtotalFormatted);
+    } else {
+      console.log("refreshCartPreview: Cart subtotal element not found");
+    }
+    
+    const navQnt = document.getElementById("js-navbar-cart-qnt");
+    if (navQnt && typeof data.count === "number") {
+      navQnt.textContent = String(data.count);
+      console.log("refreshCartPreview: Updated navbar cart quantity", data.count);
+    } else {
+      console.log("refreshCartPreview: Navbar cart quantity element not found");
+    }
+    
+    const headerSubtotal = document.getElementById("js-header-cart-subtotal");
+    if (headerSubtotal && typeof data.subtotalFormatted === "string") {
+      headerSubtotal.textContent = data.subtotalFormatted;
+      console.log("refreshCartPreview: Updated header cart subtotal", data.subtotalFormatted);
+    } else {
+      console.log("refreshCartPreview: Header cart subtotal element not found");
+    }
+    
+    const listEl = document.getElementById("js-cart-dropdown-list");
+    if (listEl) {
+      console.log("refreshCartPreview: Found cart dropdown list element");
+      if (Array.isArray(data.items)) {
+        console.log("refreshCartPreview: Items array", data.items);
+        if (data.items.length === 0) {
+          listEl.innerHTML =
+            '<div class="col"><p class="text-muted">Giỏ hàng của bạn đang trống</p></div>';
+          console.log("refreshCartPreview: Cart is empty");
+          return;
+        }
+        const html = data.items
+          .map(
+            (it) =>
+              `<div class="col">
+                <article class="cart-preview-item">
+                  <div class="cart-preview-item__img-wrap">
+                    <a href="/Product/Detail/${it.productId}">
+                      <img src="${it.imgUrl}" alt="${it.productName}" class="cart-preview-item__thumb" />
+                    </a>
+                  </div>
+                  <h3 class="cart-preview-item__title">${it.productName}</h3>
+                  <p class="cart-preview-item__price">${it.priceEachFormatted} x ${it.quantity}</p>
+                </article>
+              </div>`
+          )
+          .join("");
+        listEl.innerHTML = html;
+        console.log("refreshCartPreview: Updated cart dropdown list with", data.items.length, "items");
+        try {
+          var imgs = listEl.querySelectorAll("img.cart-preview-item__thumb");
+          imgs.forEach(function (img) {
+            img.addEventListener("error", function () {
+              img.onerror = null;
+              img.src = "/image/default.avif";
+            });
+          });
+        } catch (err) {
+          console.error("refreshCartPreview: Error setting up image error handlers", err);
+        }
+      } else {
+        console.error("refreshCartPreview: data.items is not an array", data.items);
+      }
+    } else {
+      console.error("refreshCartPreview: Cart dropdown list element not found (js-cart-dropdown-list)");
+    }
+  } catch (err) {
+    console.error("refreshCartPreview: Error", err);
   }
 }
 
@@ -497,7 +557,9 @@ document.addEventListener("DOMContentLoaded", initProductPreview);
 function initPreviewZoom() {
   qsa(".prod-preview").forEach((wrap) => {
     const container = wrap.querySelector(".prod-preview__item");
-    const img = container ? container.querySelector(".prod-preview__img") : null;
+    const img = container
+      ? container.querySelector(".prod-preview__img")
+      : null;
     if (!container || !img) return;
 
     const ZOOM = 2.2;
@@ -914,14 +976,15 @@ document.addEventListener("DOMContentLoaded", initSimilarCarousel);
       });
     });
   });
-  document.addEventListener('DOMContentLoaded', function(){
-    try{
-      var imgs = document.querySelectorAll('img');
-      imgs.forEach(function(img){
-        if (!img.hasAttribute('loading')) img.setAttribute('loading','lazy');
-        if (!img.hasAttribute('decoding')) img.setAttribute('decoding','async');
+  document.addEventListener("DOMContentLoaded", function () {
+    try {
+      var imgs = document.querySelectorAll("img");
+      imgs.forEach(function (img) {
+        if (!img.hasAttribute("loading")) img.setAttribute("loading", "lazy");
+        if (!img.hasAttribute("decoding"))
+          img.setAttribute("decoding", "async");
       });
-    }catch(e){}
+    } catch (e) {}
   });
 })();
 
@@ -929,131 +992,192 @@ document.addEventListener("DOMContentLoaded", initSimilarCarousel);
 document.addEventListener("DOMContentLoaded", function () {
   var path = (window.location.pathname || "").toLowerCase();
   if (path.indexOf("/checkout/payment") === -1) return;
-  (function(){
-    function fmt(n){ try{ return new Intl.NumberFormat('vi-VN').format(n) + ' VND'; }catch(_){ return String(Math.round(n)) + ' VND'; } }
-    var main = document.querySelector('main.checkout-page');
+  (function () {
+    function fmt(n) {
+      try {
+        return new Intl.NumberFormat("vi-VN").format(n) + " VND";
+      } catch (_) {
+        return String(Math.round(n)) + " VND";
+      }
+    }
+    var main = document.querySelector("main.checkout-page");
     if (!main) return;
-    var itemCount = parseInt(main.getAttribute('data-item-count') || '0', 10) || 0;
-    var subtotal = parseFloat(main.getAttribute('data-subtotal') || '0') || 0;
-    var radios = Array.prototype.slice.call(document.querySelectorAll('.payment-item__checkbox-input'));
-    var shippingEl = document.getElementById('js-pay-shipping');
-    var totalEl = document.getElementById('js-pay-total');
-    var subtotalEl = document.getElementById('js-pay-subtotal');
-    var submitBtn = document.getElementById('js-pay-submit-btn');
-  var pmRadios = [];
-  var cardForm = null;
-  var cardHolderEl = null;
-  var cardNumberEl = null;
-  var cardExpireEl = null;
-  var cardCvcEl = null;
-    
-    function applyCosts(){
-      radios.forEach(function(r){
-        var rate = parseFloat(r.getAttribute('data-rate') || '0') || 0;
-        var wrap = r.closest('.payment-item__checkbox');
-        var label = wrap ? wrap.querySelector('.payment-item__cost') : null;
-        var lineCount = parseInt(main.getAttribute('data-line-count') || '0', 10) || 0;
+    var itemCount =
+      parseInt(main.getAttribute("data-item-count") || "0", 10) || 0;
+    var subtotal = parseFloat(main.getAttribute("data-subtotal") || "0") || 0;
+    var radios = Array.prototype.slice.call(
+      document.querySelectorAll(".payment-item__checkbox-input")
+    );
+    var shippingEl = document.getElementById("js-pay-shipping");
+    var totalEl = document.getElementById("js-pay-total");
+    var subtotalEl = document.getElementById("js-pay-subtotal");
+    var submitBtn = document.getElementById("js-pay-submit-btn");
+    var pmRadios = [];
+    var cardForm = null;
+    var cardHolderEl = null;
+    var cardNumberEl = null;
+    var cardExpireEl = null;
+    var cardCvcEl = null;
+
+    function applyCosts() {
+      radios.forEach(function (r) {
+        var rate = parseFloat(r.getAttribute("data-rate") || "0") || 0;
+        var wrap = r.closest(".payment-item__checkbox");
+        var label = wrap ? wrap.querySelector(".payment-item__cost") : null;
+        var lineCount =
+          parseInt(main.getAttribute("data-line-count") || "0", 10) || 0;
         if (label) label.textContent = fmt(rate * lineCount);
       });
     }
 
-    function updateSummary(){
-      var sel = radios.find(function(r){ return r.checked; });
-      var rate = sel ? parseFloat(sel.getAttribute('data-rate') || '0') || 0 : 0;
-      var lineCount = parseInt(main.getAttribute('data-line-count') || '0', 10) || 0;
+    function updateSummary() {
+      var sel = radios.find(function (r) {
+        return r.checked;
+      });
+      var rate = sel
+        ? parseFloat(sel.getAttribute("data-rate") || "0") || 0
+        : 0;
+      var lineCount =
+        parseInt(main.getAttribute("data-line-count") || "0", 10) || 0;
       var shipping = rate * lineCount;
       if (shippingEl) shippingEl.textContent = fmt(shipping);
       var total = subtotal + shipping;
       if (totalEl) totalEl.textContent = fmt(total);
-      if (submitBtn) submitBtn.textContent = 'Thanh toán ' + fmt(total);
-      if (subtotalEl && !subtotalEl.textContent) subtotalEl.textContent = fmt(subtotal);
+      if (submitBtn) submitBtn.textContent = "Thanh toán " + fmt(total);
+      if (subtotalEl && !subtotalEl.textContent)
+        subtotalEl.textContent = fmt(subtotal);
     }
 
     applyCosts();
     updateSummary();
-    radios.forEach(function(r){ r.addEventListener('change', updateSummary); });
+    radios.forEach(function (r) {
+      r.addEventListener("change", updateSummary);
+    });
 
-  function toggleCardForm(){
-    var v = (pmRadios.find(function(r){ return r.checked; })?.value || 'card');
-    if (cardForm) cardForm.style.display = v === 'card' ? '' : 'none';
-    // Toggle required attributes for card inputs
-    var req = v === 'card';
-    if (cardHolderEl) cardHolderEl.required = req;
-    if (cardNumberEl) cardNumberEl.required = req;
-    if (cardExpireEl) cardExpireEl.required = req;
-    if (cardCvcEl) cardCvcEl.required = req;
-  }
+    function toggleCardForm() {
+      var v =
+        pmRadios.find(function (r) {
+          return r.checked;
+        })?.value || "card";
+      if (cardForm) cardForm.style.display = v === "card" ? "" : "none";
+      // Toggle required attributes for card inputs
+      var req = v === "card";
+      if (cardHolderEl) cardHolderEl.required = req;
+      if (cardNumberEl) cardNumberEl.required = req;
+      if (cardExpireEl) cardExpireEl.required = req;
+      if (cardCvcEl) cardCvcEl.required = req;
+    }
     toggleCardForm();
   })();
-    var payBtn = document.querySelector(".checkout-page .cart-info__next-btn");
-    if (!payBtn) return;
-    payBtn.addEventListener("click", async function (e) {
-      e.preventDefault();
-      try {
-        var mainEl = document.querySelector('main.checkout-page');
-        var radiosNow = Array.prototype.slice.call(document.querySelectorAll('.payment-item__checkbox-input'));
-        var sel = radiosNow.find(function(r){ return r.checked; });
-        var rate = sel ? parseFloat(sel.getAttribute('data-rate') || '0') || 0 : 0;
-        var method = rate>=30000? 'express':'standard';
-        var addrId = parseInt((mainEl?.getAttribute('data-address-id') || '0'),10) || null;
-        var paymentType = 'cod';
-        var cardHolder = '';
-        var cardNumber = '';
-        var cardExpire = '';
+  var payBtn = document.querySelector(".checkout-page .cart-info__next-btn");
+  if (!payBtn) return;
+  payBtn.addEventListener("click", async function (e) {
+    e.preventDefault();
+    try {
+      var mainEl = document.querySelector("main.checkout-page");
+      var radiosNow = Array.prototype.slice.call(
+        document.querySelectorAll(".payment-item__checkbox-input")
+      );
+      var sel = radiosNow.find(function (r) {
+        return r.checked;
+      });
+      var rate = sel
+        ? parseFloat(sel.getAttribute("data-rate") || "0") || 0
+        : 0;
+      var method = rate >= 30000 ? "express" : "standard";
+      var addrId =
+        parseInt(mainEl?.getAttribute("data-address-id") || "0", 10) || null;
+      var paymentType = "cod";
+      var cardHolder = "";
+      var cardNumber = "";
+      var cardExpire = "";
 
-        var token = (document.querySelector('input[name="__RequestVerificationToken"]')?.value || '');
-        var resp = await fetch('/Checkout/PlaceOrder', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
-          credentials: 'include',
-          body: JSON.stringify({ addressId: addrId, shippingMethod: method, shippingRate: rate, paymentType: paymentType, cardHolder: cardHolder, cardNumber: cardNumber, expiryDate: cardExpire })
-        });
-        var data;
-        try { data = await resp.json(); } catch(_) { data = null; }
-        if (!resp.ok || !data || !data.success) {
-          var msg = (data && data.message) ? data.message : 'Không thể tạo đơn hàng. Vui lòng thử lại!';
-          alert(msg);
-          var lower = msg.toLowerCase();
-          if (lower.includes('address') || lower.includes('địa chỉ')) {
-            window.location.href = '/Checkout/Shipping';
-          } else if (lower.includes('hoàn tất thông tin') || lower.includes('hồ sơ')) {
-            window.location.href = '/Profile/Index';
-          }
-          return;
-        }
-        try { localStorage.setItem('checkoutSuccess', 'true'); } catch (_){ }
-        window.location.href = '/';
-      } catch (err) {
-        console.error('PlaceOrder error:', err);
-        alert('Có lỗi xảy ra khi thanh toán.');
+      var token =
+        document.querySelector('input[name="__RequestVerificationToken"]')
+          ?.value || "";
+      var resp = await fetch("/Checkout/PlaceOrder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          RequestVerificationToken: token,
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          addressId: addrId,
+          shippingMethod: method,
+          shippingRate: rate,
+          paymentType: paymentType,
+          cardHolder: cardHolder,
+          cardNumber: cardNumber,
+          expiryDate: cardExpire,
+        }),
+      });
+      var data;
+      try {
+        data = await resp.json();
+      } catch (_) {
+        data = null;
       }
-    });
+      if (!resp.ok || !data || !data.success) {
+        var msg =
+          data && data.message
+            ? data.message
+            : "Không thể tạo đơn hàng. Vui lòng thử lại!";
+        alert(msg);
+        var lower = msg.toLowerCase();
+        if (lower.includes("address") || lower.includes("địa chỉ")) {
+          window.location.href = "/Checkout/Shipping";
+        } else if (
+          lower.includes("hoàn tất thông tin") ||
+          lower.includes("hồ sơ")
+        ) {
+          window.location.href = "/Profile/Index";
+        }
+        return;
+      }
+      try {
+        localStorage.setItem("checkoutSuccess", "true");
+      } catch (_) {}
+      window.location.href = "/";
+    } catch (err) {
+      console.error("PlaceOrder error:", err);
+      alert("Có lỗi xảy ra khi thanh toán.");
+    }
   });
+});
 
 // Show checkout success modal on Home
 document.addEventListener("DOMContentLoaded", function () {
   if (window.location.pathname !== "/") return;
   var flag = null;
-  try { flag = localStorage.getItem("checkoutSuccess"); } catch (_) {}
+  try {
+    flag = localStorage.getItem("checkoutSuccess");
+  } catch (_) {}
   if (flag === "true") {
-    try { localStorage.removeItem("checkoutSuccess"); } catch (_) {}
+    try {
+      localStorage.removeItem("checkoutSuccess");
+    } catch (_) {}
     var modal = document.createElement("div");
     modal.className = "modal modal--small show";
-    modal.innerHTML = (
+    modal.innerHTML =
       '<div class="modal__overlay"></div>' +
       '<div class="modal__content">' +
       '  <button class="modal__close" aria-label="Đóng">×</button>' +
       '  <h2 class="modal__heading">Thanh toán thành công</h2>' +
       '  <div class="modal__body">' +
       '    <p class="modal__text">Cảm ơn bạn đã mua sắm tại Zenith. Đơn hàng của bạn đang được xử lý và sẽ được giao tới trong thời gian sớm nhất.</p>' +
-      '  </div>' +
+      "  </div>" +
       '  <div class="modal__bottom">' +
       '    <button class="btn btn--primary">Đóng</button>' +
-      '  </div>' +
-      '</div>'
-    );
+      "  </div>" +
+      "</div>";
     document.body.appendChild(modal);
-    var close = function () { modal.classList.remove("show"); setTimeout(function(){ modal.remove(); }, 200); };
+    var close = function () {
+      modal.classList.remove("show");
+      setTimeout(function () {
+        modal.remove();
+      }, 200);
+    };
     modal.querySelector(".modal__close").addEventListener("click", close);
     modal.querySelector(".modal__overlay").addEventListener("click", close);
     modal.querySelector(".btn--primary").addEventListener("click", close);
@@ -1062,25 +1186,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Avatar fallback: nếu ảnh bị xóa hoặc lỗi tải, tự động dùng ảnh mặc định
 (function () {
-    function attachFallback(img) {
-        if (!img) return;
-        img.addEventListener('error', function onErr() {
-            img.onerror = null;
-            img.src = '/image/account/default-avatar.jpg';
-        });
-    }
+  function attachFallback(img) {
+    if (!img) return;
+    img.addEventListener("error", function onErr() {
+      img.onerror = null;
+      img.src = "/image/account/default-avatar.jpg";
+    });
+  }
 
-    function initAvatarFallbacks() {
-        document.querySelectorAll('.top-act__avatar, .user-menu__avatar').forEach(attachFallback);
-        var profileAvatar = document.getElementById('profileAvatar');
-        attachFallback(profileAvatar);
-    }
+  function initAvatarFallbacks() {
+    document
+      .querySelectorAll(".top-act__avatar, .user-menu__avatar")
+      .forEach(attachFallback);
+    var profileAvatar = document.getElementById("profileAvatar");
+    attachFallback(profileAvatar);
+  }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initAvatarFallbacks);
-    } else {
-        initAvatarFallbacks();
-    }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAvatarFallbacks);
+  } else {
+    initAvatarFallbacks();
+  }
 })();
 
 // Xử lý tăng/giảm số lượng trong trang Favorites
@@ -1112,14 +1238,6 @@ document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll(".js-add-to-cart").forEach((btn) => {
     btn.addEventListener("click", async function () {
       try {
-        // Nếu chưa đăng nhập, chuyển sang trang đăng nhập
-        if (!isLoggedIn()) {
-          if (typeof loginUrl !== "undefined" && loginUrl) {
-            window.location.href = loginUrl;
-            return;
-          }
-        }
-
         const article = btn.closest("article.cart-item");
         if (!article) return;
 
@@ -1139,11 +1257,16 @@ document.addEventListener("DOMContentLoaded", function () {
           return;
         }
 
+        const headers = { "Content-Type": "application/json" };
+        const tokenEl = document.querySelector(
+          'input[name="__RequestVerificationToken"]'
+        );
+        if (tokenEl && tokenEl.value)
+          headers["RequestVerificationToken"] = tokenEl.value;
         const resp = await fetch("/Favorites/AddToCart", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers,
+          credentials: "include",
           body: JSON.stringify({ VariantId: variantId, Quantity: quantity }),
         });
 
@@ -1156,8 +1279,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const data = await resp.json();
         if (data && data.success) {
-          try { await refreshCartPreview(); } catch (_) {}
-          try { await refreshCartTotals(); } catch (_) {}
+          // Check if we're on checkout index page, if so reload the page
+          const currentPath = window.location.pathname.toLowerCase();
+          const isCheckoutIndex = currentPath === "/checkout" || currentPath === "/checkout/index" || currentPath.includes("/checkout/index");
+          
+          if (isCheckoutIndex) {
+            // Reload the page to show updated cart
+            window.location.reload();
+            return;
+          }
+          
+          // For other pages, refresh cart preview with a small delay to ensure session is committed
+          setTimeout(async () => {
+            try {
+              await refreshCartPreview();
+            } catch (_) {}
+            try {
+              await refreshCartTotals();
+            } catch (_) {}
+          }, 100);
         } else {
           alert(data?.message || "Không thể thêm vào giỏ hàng.");
         }
@@ -1295,9 +1435,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const unitPrice = priceEl.dataset.unitPrice
       ? parseFloat(priceEl.dataset.unitPrice)
       : null;
-    const unitOld = oldPriceEl && oldPriceEl.dataset.unitPrice
-      ? parseFloat(oldPriceEl.dataset.unitPrice)
-      : null;
+    const unitOld =
+      oldPriceEl && oldPriceEl.dataset.unitPrice
+        ? parseFloat(oldPriceEl.dataset.unitPrice)
+        : null;
 
     if (!isNaN(unitSale) && !isNaN(unitOld) && oldPriceEl) {
       oldPriceEl.textContent = formatCurrencyVND(unitOld * qty);
@@ -1309,7 +1450,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Quan sát thay đổi text số lượng để cập nhật giá
   const observer = new MutationObserver(() => updateTotals());
-  observer.observe(qtySpan, { childList: true, subtree: true, characterData: true });
+  observer.observe(qtySpan, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+  });
 
   // Cập nhật sau khi ấn nút +/-
   root.addEventListener("click", (e) => {
@@ -1324,35 +1469,49 @@ document.addEventListener("DOMContentLoaded", function () {
 // Trang Chi tiết sản phẩm: thêm vào giỏ
 document.addEventListener("DOMContentLoaded", function () {
   const root = document.querySelector(".product-page");
-  if (!root) return;
+  if (!root) {
+    console.log("Product page root not found");
+    return;
+  }
 
   const addBtn = root.querySelector(".prod-info__add-to-cart");
-  if (!addBtn) return;
+  if (!addBtn) {
+    console.log("Add to cart button not found");
+    return;
+  }
+
+  console.log("Add to cart button found, attaching event listener");
 
   addBtn.addEventListener("click", async function (e) {
     e.preventDefault();
+    e.stopPropagation();
+    console.log("Add to cart button clicked");
+    
     try {
-      if (!isLoggedIn()) {
-        if (typeof loginUrl !== "undefined" && loginUrl) {
-          window.location.href = loginUrl;
-          return;
-        }
-      }
-
       const qtySpan = root.querySelector(".js-qty-value");
       const quantity = qtySpan ? parseInt(qtySpan.textContent || "1", 10) : 1;
-      if (!quantity || quantity < 1) return;
+      console.log("Quantity:", quantity);
+      if (!quantity || quantity < 1) {
+        console.error("Invalid quantity:", quantity);
+        return;
+      }
 
       let variantId = null;
       const sel = root.querySelector('select[data-variant-select="true"]');
       if (sel) {
         variantId = parseInt(sel.value || "0", 10);
+        console.log("VariantId from select:", variantId);
       } else {
-        const productId = parseInt(root.getAttribute("data-product-id") || "0", 10);
+        const productId = parseInt(
+          root.getAttribute("data-product-id") || "0",
+          10
+        );
+        console.log("ProductId:", productId);
         const selects = root.querySelectorAll("select[data-attr-id]");
         const valueIds = Array.from(selects)
           .map((s) => parseInt(s.value || "0", 10))
           .filter((x) => !!x);
+        console.log("ValueIds from selects:", valueIds);
         if (productId && valueIds.length > 0) {
           const res = await fetch("/Product/ResolveVariant", {
             method: "POST",
@@ -1363,6 +1522,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const data = await res.json();
             if (data && data.success) {
               variantId = parseInt(data.variantId || "0", 10);
+              console.log("VariantId from ResolveVariant:", variantId);
             }
           }
         }
@@ -1372,35 +1532,103 @@ document.addEventListener("DOMContentLoaded", function () {
         const likeBtn = root.querySelector(".js-toggle-favorite");
         if (likeBtn) {
           variantId = parseInt(likeBtn.dataset.variantId || "0", 10);
+          console.log("VariantId from like button:", variantId);
         }
       }
 
       if (!variantId || isNaN(variantId) || variantId <= 0) {
+        console.error("No valid variantId found");
         alert("Vui lòng chọn biến thể hợp lệ.");
         return;
       }
 
+      console.log("Final VariantId:", variantId, "Quantity:", quantity);
+
+      const headers = { "Content-Type": "application/json" };
+      const tokenEl = document.querySelector(
+        'input[name="__RequestVerificationToken"]'
+      );
+      if (tokenEl && tokenEl.value)
+        headers["RequestVerificationToken"] = tokenEl.value;
+      
+      console.log("Calling AddToCart API...");
       const resp = await fetch("/Favorites/AddToCart", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
+        credentials: "include",
         body: JSON.stringify({ VariantId: variantId, Quantity: quantity }),
       });
+      
+      console.log("AddToCart response status:", resp.status);
+      
       if (!resp.ok) {
         const txt = await resp.text();
-        console.error("AddToCart failed:", txt);
+        console.error("AddToCart failed:", resp.status, txt);
         alert("Không thể thêm vào giỏ hàng. Vui lòng thử lại!");
         return;
       }
+      
       const data = await resp.json();
+      console.log("AddToCart response data:", data);
+      console.log("AddToCart verifiedCount:", data.verifiedCount);
+      console.log("AddToCart count:", data.count);
+      console.log("AddToCart sessionId:", data.sessionId);
+      console.log("AddToCart serializedLength:", data.serializedLength);
+      
       if (data && data.success) {
-        try { await refreshCartPreview(); } catch (_) {}
-        try { await refreshCartTotals(); } catch (_) {}
+        console.log("Add to cart successful, refreshing cart preview...");
+        // Check if we're on checkout index page, if so reload the page
+        const currentPath = window.location.pathname.toLowerCase();
+        const isCheckoutIndex = currentPath === "/checkout" || currentPath === "/checkout/index" || currentPath.includes("/checkout/index");
+        
+        if (isCheckoutIndex) {
+          console.log("On checkout page, reloading...");
+          // Reload the page to show updated cart
+          window.location.reload();
+          return;
+        }
+        
+        // For other pages, refresh cart preview with a delay to ensure session is committed
+        // Session is committed when response is sent, but we need to wait a bit for it to be available
+        // Also ensure cookies are sent with the request
+        // Try multiple times with increasing delays to ensure session is available
+        let attempts = 0;
+        const maxAttempts = 3;
+        const delays = [200, 500, 1000];
+        
+        const tryRefresh = async (delay) => {
+          await new Promise(resolve => setTimeout(resolve, delay));
+          try {
+            console.log(`Refreshing cart preview (attempt ${attempts + 1})...`);
+            console.log("Cookies before refresh:", document.cookie);
+            await refreshCartPreview();
+            console.log("Cart preview refreshed");
+          } catch (err) {
+            console.error("Error refreshing cart preview:", err);
+            attempts++;
+            if (attempts < maxAttempts) {
+              setTimeout(() => tryRefresh(delays[attempts]), delays[attempts]);
+            }
+          }
+        };
+        
+        setTimeout(() => tryRefresh(delays[0]), delays[0]);
+        
+        // Also try refresh cart totals
+        setTimeout(async () => {
+          try {
+            await refreshCartTotals();
+          } catch (err) {
+            console.error("Error refreshing cart totals:", err);
+          }
+        }, 1000);
       } else {
+        console.error("Add to cart failed:", data);
         alert(data?.message || "Không thể thêm vào giỏ hàng.");
       }
     } catch (err) {
       console.error("Add to cart (detail) error:", err);
-      alert("Có lỗi xảy ra khi thêm vào giỏ.");
+      alert("Có lỗi xảy ra khi thêm vào giỏ: " + err.message);
     }
   });
 });
@@ -1437,8 +1665,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         const data = await resp.json();
         if (data && data.success) {
-          try { await refreshCartPreview(); } catch (_) {}
-          try { await refreshCartTotals(); } catch (_) {}
+          try {
+            await refreshCartPreview();
+          } catch (_) {}
+          try {
+            await refreshCartTotals();
+          } catch (_) {}
           try {
             const item = btn.closest("article.favourite-item");
             if (item) {
@@ -1506,22 +1738,25 @@ document.addEventListener("DOMContentLoaded", function () {
 // Close header search when clicking outside or pressing Escape (empty only)
 document.addEventListener("DOMContentLoaded", function () {
   document.addEventListener("click", function (e) {
-    document.querySelectorAll(".top-act__group--search").forEach(function (group) {
-      var form = group.querySelector(".header-search");
-      var input = group.querySelector(".header-search__input");
-      if (!form) return;
-      var inside = !!e.target.closest(".top-act__group--search");
-      if (!inside && form.classList.contains("header-search--open")) {
-        var val = (input && input.value || "").trim();
-        if (!val) form.classList.remove("header-search--open");
-      }
-    });
+    document
+      .querySelectorAll(".top-act__group--search")
+      .forEach(function (group) {
+        var form = group.querySelector(".header-search");
+        var input = group.querySelector(".header-search__input");
+        if (!form) return;
+        var inside = !!e.target.closest(".top-act__group--search");
+        if (!inside && form.classList.contains("header-search--open")) {
+          var val = ((input && input.value) || "").trim();
+          if (!val) form.classList.remove("header-search--open");
+        }
+      });
   });
   document.querySelectorAll(".header-search__input").forEach(function (input) {
     input.addEventListener("keydown", function (e) {
       if (e.key === "Escape") {
         var form = input.closest(".header-search");
-        if (form && !input.value.trim()) form.classList.remove("header-search--open");
+        if (form && !input.value.trim())
+          form.classList.remove("header-search--open");
       }
     });
   });
@@ -1537,14 +1772,27 @@ document.addEventListener("DOMContentLoaded", function () {
       const url = q ? `/Product?q=${encodeURIComponent(q)}` : `/Product`;
       window.location.href = url;
     };
-    if (submit) submit.addEventListener("click", (e) => { e.preventDefault(); go(); });
-    if (input) input.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); go(); } });
+    if (submit)
+      submit.addEventListener("click", (e) => {
+        e.preventDefault();
+        go();
+      });
+    if (input)
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          go();
+        }
+      });
   });
 });
 
 async function refreshCartTotals() {
   try {
-    const res = await fetch("/Checkout/GetCartSummary", { method: "GET", cache: "no-store" });
+    const res = await fetch("/Checkout/GetCartSummary", {
+      method: "GET",
+      cache: "no-store",
+    });
     if (!res.ok) return;
     const data = await res.json();
     const subtotalEl = document.getElementById("js-cart-subtotal");
@@ -1563,6 +1811,23 @@ async function refreshCartTotals() {
     if (headerSubtotal && typeof data.subtotalFormatted === "string") {
       headerSubtotal.textContent = data.subtotalFormatted;
     }
-  } catch (_) {
-  }
+  } catch (_) {}
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  try {
+    refreshCartPreview();
+  } catch (_) {}
+  try {
+    refreshCartTotals();
+  } catch (_) {}
+});
+
+window.addEventListener("template-loaded", function () {
+  try {
+    refreshCartPreview();
+  } catch (_) {}
+  try {
+    refreshCartTotals();
+  } catch (_) {}
+});

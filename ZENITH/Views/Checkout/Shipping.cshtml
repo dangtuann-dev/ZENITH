@@ -444,8 +444,8 @@
                     e.preventDefault();
                     const article = delBtn.closest('article.address-card');
                     const id = article ? parseInt(article.getAttribute('data-address-id')||'0',10) : 0;
-                    if(!id){ return; }
                     if(!confirm('Bạn có chắc muốn xóa địa chỉ này?')) return;
+                    // For guest users, addressId can be 0
                     fetch('/Checkout/DeleteAddress', {
                         method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ addressId: id })
                     }).then(r=>r.json()).then(data=>{
@@ -472,11 +472,45 @@
                         const firstArticle = document.querySelector('.user-address__list article.address-card');
                         id = firstArticle ? parseInt(firstArticle.getAttribute('data-address-id')||'0',10) : 0;
                     }
-                    if(!id){ alert('Vui lòng chọn địa chỉ giao hàng'); return; }
-                    const payUrl = '@Url.Action("Payment","Checkout")' + '?addressId=' + id;
+                    // Check if there's an address (for guests, addressId can be 0)
+                    const hasAddress = document.querySelector('.user-address__list article.address-card') !== null;
+                    if(!hasAddress){
+                        showAddressRequiredModal();
+                        return;
+                    }
+                    // For guest users, addressId is 0 and address is stored in session
+                    // For logged-in users, addressId must be > 0
+                    const payUrl = '@Url.Action("Payment","Checkout")' + (id > 0 ? '?addressId=' + id : '');
                     window.location.href = payUrl;
                 }
             });
+            
+            function showAddressRequiredModal(){
+                const modal = document.createElement('div');
+                modal.className = 'modal modal--small show';
+                modal.innerHTML = 
+                    '<div class="modal__overlay"></div>' +
+                    '<div class="modal__content">' +
+                    '  <button class="modal__close" aria-label="Đóng">×</button>' +
+                    '  <h2 class="modal__heading">Thông báo</h2>' +
+                    '  <div class="modal__body">' +
+                    '    <p class="modal__text">Vui lòng nhập thông tin cá nhân và địa chỉ giao hàng.</p>' +
+                    '  </div>' +
+                    '  <div class="modal__bottom">' +
+                    '    <button class="btn btn--primary">Đóng</button>' +
+                    '  </div>' +
+                    '</div>';
+                document.body.appendChild(modal);
+                const close = function(){
+                    modal.classList.remove('show');
+                    setTimeout(function(){
+                        modal.remove();
+                    }, 200);
+                };
+                modal.querySelector('.modal__close').addEventListener('click', close);
+                modal.querySelector('.modal__overlay').addEventListener('click', close);
+                modal.querySelector('.btn--primary').addEventListener('click', close);
+            }
         })();
     </script>
 </div>
