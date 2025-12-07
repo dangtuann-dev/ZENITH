@@ -139,8 +139,25 @@ table {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Prevent horizontal overflow */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+img,
+video,
+iframe {
+  max-width: 100%;
+  height: auto;
+}
+
 html {
   font-size: 62.5%;
+  overflow-x: hidden;
+  max-width: 100%;
+  position: relative;
 }
 
 body {
@@ -148,6 +165,55 @@ body {
   font-family: Lato, sans-serif;
   color: var(--text-color);
   background: var(--body-bg);
+  overflow-x: hidden;
+  max-width: 100vw;
+  position: relative;
+  width: 100%;
+}
+
+/* Prevent horizontal scrolling - chỉ áp dụng cho container, không áp dụng cho header vì dropdown cần overflow */
+main,
+footer,
+.container,
+.container-fluid,
+.row {
+  max-width: 100%;
+}
+
+/* Header không có overflow-x: hidden để dropdown có thể hiển thị */
+.site-header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 1000 !important;
+  max-width: 100% !important;
+  background: var(--header-bg-color) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  transform: none !important;
+  will-change: auto !important;
+}
+
+/* Thêm padding-top cho main để tránh nội dung bị header che */
+main.container,
+main[role="main"] {
+  padding-top: 80px;
+}
+
+@media (max-width: 767.98px) {
+  main.container,
+  main[role="main"] {
+    padding-top: 72px;
+  }
+}
+
+img,
+video,
+iframe,
+table {
+  max-width: 100%;
+  height: auto;
 }
 
 a {
@@ -231,12 +297,14 @@ strong {
   --grid-gutter-x: 30px;
   --grid-gutter-y: 0;
   width: 1370px;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
 }
 
 .container {
   width: 1370px;
+  max-width: 100%;
 }
 
 .row {
@@ -1933,11 +2001,18 @@ html {
   }
 }
 
+/* Navbar list - chỉ có overflow-y trên mobile khi cần */
+.navbar__list {
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
 @media (max-width: 991.98px) {
   .navbar__list {
     flex-direction: column;
     align-items: flex-start;
     overflow-y: auto;
+    overflow-x: hidden;
     overscroll-behavior: contain;
     height: calc(100% - 40px);
   }
@@ -2612,6 +2687,8 @@ html {
   width: min(1240px, 100%);
   padding-top: 35px;
   display: none;
+  z-index: 1000;
+  overflow: visible;
 }
 
 @media (max-width: 991.98px) {
@@ -2856,6 +2933,8 @@ html::-webkit-scrollbar-thumb {
 
 .slideshow {
   position: relative;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .slideshow__inner {
@@ -4465,6 +4544,47 @@ html.dark .form__select {
 
 .home__container {
   margin-top: 0px;
+  /* Reset để đảm bảo các container khác không bị ảnh hưởng */
+  margin-left: 0;
+  margin-right: 0;
+  width: auto;
+  max-width: none;
+  padding-left: inherit;
+  padding-right: inherit;
+  overflow: visible;
+}
+
+/* Chỉ container đầu tiên (chứa slideshow) break out khỏi container */
+.home__container:first-child {
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  width: 100vw;
+  max-width: 100vw;
+  padding-left: 0;
+  padding-right: 0;
+  overflow: visible;
+}
+
+/* Đảm bảo slideshow chiếm 100% width */
+.home__container:first-child .slideshow {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  left: 0 !important;
+  transform: none !important;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Đảm bảo các container khác (không phải first-child) không bị ảnh hưởng */
+.home__container:not(:first-child) {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: auto !important;
+  max-width: none !important;
+  padding-left: inherit !important;
+  padding-right: inherit !important;
 }
 
 @media (max-width: 767.98px) {
@@ -4700,7 +4820,23 @@ html.dark .form__select {
   flex-direction: column;
   min-height: 80vh;
   padding-bottom: 50px;
-  background: var(--product-detail-bg);
+  background: #fff;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  width: 100vw;
+  max-width: 100vw;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Đảm bảo container bên trong product-page có padding lại */
+.product-page > .container {
+  padding-left: calc(var(--grid-gutter-x) * 0.5);
+  padding-right: calc(var(--grid-gutter-x) * 0.5);
+  max-width: 1370px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }
 
 .product-container {

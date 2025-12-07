@@ -8,6 +8,81 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\image\productImage\HT-031\**" />
+    <Compile Remove="wwwroot\image\productImage\HT-032\**" />
+    <Compile Remove="wwwroot\image\productImage\HT-033\**" />
+    <Compile Remove="wwwroot\image\productImage\HT-034\**" />
+    <Compile Remove="wwwroot\image\productImage\HT-035\**" />
+    <Compile Remove="wwwroot\image\productImage\HT-036\**" />
+    <Compile Remove="wwwroot\image\productImage\HT-037\**" />
+    <Compile Remove="wwwroot\image\productImage\HT-038\**" />
+    <Compile Remove="wwwroot\image\productImage\HT-039\**" />
+    <Compile Remove="wwwroot\image\productImage\HT-040\**" />
+    <Compile Remove="wwwroot\image\productImage\HT-041\**" />
+    <Compile Remove="wwwroot\image\productImage\HT-042\**" />
+    <Compile Remove="wwwroot\image\productImage\HT-043\**" />
+    <Compile Remove="wwwroot\image\productImage\HT-044\**" />
+    <Compile Remove="wwwroot\image\productImage\HT-045\**" />
+    <Compile Remove="wwwroot\image\productImage\HT-046\**" />
+    <Compile Remove="wwwroot\image\productImage\HT-047\**" />
+    <Compile Remove="wwwroot\image\productImage\HT-048\**" />
+    <Content Remove="wwwroot\image\productImage\HT-031\**" />
+    <Content Remove="wwwroot\image\productImage\HT-032\**" />
+    <Content Remove="wwwroot\image\productImage\HT-033\**" />
+    <Content Remove="wwwroot\image\productImage\HT-034\**" />
+    <Content Remove="wwwroot\image\productImage\HT-035\**" />
+    <Content Remove="wwwroot\image\productImage\HT-036\**" />
+    <Content Remove="wwwroot\image\productImage\HT-037\**" />
+    <Content Remove="wwwroot\image\productImage\HT-038\**" />
+    <Content Remove="wwwroot\image\productImage\HT-039\**" />
+    <Content Remove="wwwroot\image\productImage\HT-040\**" />
+    <Content Remove="wwwroot\image\productImage\HT-041\**" />
+    <Content Remove="wwwroot\image\productImage\HT-042\**" />
+    <Content Remove="wwwroot\image\productImage\HT-043\**" />
+    <Content Remove="wwwroot\image\productImage\HT-044\**" />
+    <Content Remove="wwwroot\image\productImage\HT-045\**" />
+    <Content Remove="wwwroot\image\productImage\HT-046\**" />
+    <Content Remove="wwwroot\image\productImage\HT-047\**" />
+    <Content Remove="wwwroot\image\productImage\HT-048\**" />
+    <EmbeddedResource Remove="wwwroot\image\productImage\HT-031\**" />
+    <EmbeddedResource Remove="wwwroot\image\productImage\HT-032\**" />
+    <EmbeddedResource Remove="wwwroot\image\productImage\HT-033\**" />
+    <EmbeddedResource Remove="wwwroot\image\productImage\HT-034\**" />
+    <EmbeddedResource Remove="wwwroot\image\productImage\HT-035\**" />
+    <EmbeddedResource Remove="wwwroot\image\productImage\HT-036\**" />
+    <EmbeddedResource Remove="wwwroot\image\productImage\HT-037\**" />
+    <EmbeddedResource Remove="wwwroot\image\productImage\HT-038\**" />
+    <EmbeddedResource Remove="wwwroot\image\productImage\HT-039\**" />
+    <EmbeddedResource Remove="wwwroot\image\productImage\HT-040\**" />
+    <EmbeddedResource Remove="wwwroot\image\productImage\HT-041\**" />
+    <EmbeddedResource Remove="wwwroot\image\productImage\HT-042\**" />
+    <EmbeddedResource Remove="wwwroot\image\productImage\HT-043\**" />
+    <EmbeddedResource Remove="wwwroot\image\productImage\HT-044\**" />
+    <EmbeddedResource Remove="wwwroot\image\productImage\HT-045\**" />
+    <EmbeddedResource Remove="wwwroot\image\productImage\HT-046\**" />
+    <EmbeddedResource Remove="wwwroot\image\productImage\HT-047\**" />
+    <EmbeddedResource Remove="wwwroot\image\productImage\HT-048\**" />
+    <None Remove="wwwroot\image\productImage\HT-031\**" />
+    <None Remove="wwwroot\image\productImage\HT-032\**" />
+    <None Remove="wwwroot\image\productImage\HT-033\**" />
+    <None Remove="wwwroot\image\productImage\HT-034\**" />
+    <None Remove="wwwroot\image\productImage\HT-035\**" />
+    <None Remove="wwwroot\image\productImage\HT-036\**" />
+    <None Remove="wwwroot\image\productImage\HT-037\**" />
+    <None Remove="wwwroot\image\productImage\HT-038\**" />
+    <None Remove="wwwroot\image\productImage\HT-039\**" />
+    <None Remove="wwwroot\image\productImage\HT-040\**" />
+    <None Remove="wwwroot\image\productImage\HT-041\**" />
+    <None Remove="wwwroot\image\productImage\HT-042\**" />
+    <None Remove="wwwroot\image\productImage\HT-043\**" />
+    <None Remove="wwwroot\image\productImage\HT-044\**" />
+    <None Remove="wwwroot\image\productImage\HT-045\**" />
+    <None Remove="wwwroot\image\productImage\HT-046\**" />
+    <None Remove="wwwroot\image\productImage\HT-047\**" />
+    <None Remove="wwwroot\image\productImage\HT-048\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="EntityFramework" Version="6.5.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.10" />
@@ -56,24 +131,6 @@
     <Folder Include="wwwroot\image\productImage\HT-028\" />
     <Folder Include="wwwroot\image\productImage\HT-029\" />
     <Folder Include="wwwroot\image\productImage\HT-030\" />
-    <Folder Include="wwwroot\image\productImage\HT-031\" />
-    <Folder Include="wwwroot\image\productImage\HT-032\" />
-    <Folder Include="wwwroot\image\productImage\HT-033\" />
-    <Folder Include="wwwroot\image\productImage\HT-034\" />
-    <Folder Include="wwwroot\image\productImage\HT-035\" />
-    <Folder Include="wwwroot\image\productImage\HT-036\" />
-    <Folder Include="wwwroot\image\productImage\HT-037\" />
-    <Folder Include="wwwroot\image\productImage\HT-038\" />
-    <Folder Include="wwwroot\image\productImage\HT-039\" />
-    <Folder Include="wwwroot\image\productImage\HT-040\" />
-    <Folder Include="wwwroot\image\productImage\HT-041\" />
-    <Folder Include="wwwroot\image\productImage\HT-042\" />
-    <Folder Include="wwwroot\image\productImage\HT-043\" />
-    <Folder Include="wwwroot\image\productImage\HT-044\" />
-    <Folder Include="wwwroot\image\productImage\HT-045\" />
-    <Folder Include="wwwroot\image\productImage\HT-046\" />
-    <Folder Include="wwwroot\image\productImage\HT-047\" />
-    <Folder Include="wwwroot\image\productImage\HT-048\" />
   </ItemGroup>
 
 </Project>

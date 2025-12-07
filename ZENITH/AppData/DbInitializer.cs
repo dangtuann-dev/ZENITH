@@ -449,13 +449,117 @@ public static class DbInitializer
    //HT030
    new {
         Name = "Xe đẩy cắm trại gấp gọn - Đen",
-        Desc = "",
+        Desc = "Bàn cắm trại nhỏ gọn, cứng cáp, dễ dàng gấp gọn trong cốp xe. Nặng chỉ 2,3kg. Bàn xếp cắm trại MH500 gọn nhẹ cho những chuyến cắm trại cuối tuần năng động.",
         CategoryName = "Bàn Cắm Trại",
         SportName = "Cắm Trại",
         SkuBase = "HT-030",
         IsFeat = true,
         Variants = new[] {
             new { Sku = "HT-030", Stock = 150, Price = 1999000, SalePrice = 1999000, Attributes = "Một Cỡ Duy Nhất" },
+        },
+        ImageCount = 4
+    },
+    //RW001
+   new {
+        Name = "Giày chạy bộ nam - Run One xám",
+        Desc = "Giày này có đế xốp bằng EVA nên thoải mái và có trọng lượng nhẹ cho người mới bắt đầu chạy bộ.",
+        CategoryName = "Giày Chạy Bộ",
+        SportName = "Chạy Bộ Đường Trường",
+        SkuBase = "RW-001",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "RW-001-39", Stock = 150, Price = 299000, SalePrice = 299000, Attributes = "39" },
+            new { Sku = "RW-001-40", Stock = 150, Price = 299000, SalePrice = 299000, Attributes = "40" },
+            new { Sku = "RW-001-41", Stock = 150, Price = 299000, SalePrice = 299000, Attributes = "41" },
+            new { Sku = "RW-001-42", Stock = 150, Price = 299000, SalePrice = 299000, Attributes = "42" },
+            new { Sku = "RW-001-43", Stock = 150, Price = 299000, SalePrice = 299000, Attributes = "43" },
+            new { Sku = "RW-001-44", Stock = 150, Price = 299000, SalePrice = 299000, Attributes = "44" }
+        },
+        ImageCount = 4
+    },
+   new {
+        Name = "Giày chạy bộ nam - Cushion 500 trắng/cam",
+        Desc = "giày chạy bộ Cushion 500 linh hoạt và đa năng. Giày nhẹ với phần mũi giày ôm vừa vặn, giúp nâng đỡ chân hiệu quả và vận động linh hoạt, thoải mái.",
+        CategoryName = "Giày Chạy Bộ",
+        SportName = "Chạy Bộ Đường Trường",
+        SkuBase = "RW-002",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "RW-002-39", Stock = 150, Price = 1299000, SalePrice = 899000, Attributes = "39" },
+            new { Sku = "RW-002-40", Stock = 150, Price = 1299000, SalePrice = 899000, Attributes = "40" },
+            new { Sku = "RW-002-41", Stock = 150, Price = 1299000, SalePrice = 899000, Attributes = "41" },
+            new { Sku = "RW-002-42", Stock = 150, Price = 1299000, SalePrice = 899000, Attributes = "42" },
+            new { Sku = "RW-002-43", Stock = 150, Price = 1299000, SalePrice = 899000, Attributes = "43" },
+            new { Sku = "RW-002-44", Stock = 150, Price = 1299000, SalePrice = 899000, Attributes = "44" }
+        },
+        ImageCount = 4
+    },
+   new {
+        Name = "Giày chạy bộ nam đế carbon - KD900X.2 xanh lá/tím",
+        Desc = "Chất lượng ưu việt mà giá cả phải chăng. Hãy trải nghiệm sản phẩm để bứt phá giới hạn trên mọi cung đường.Giày chạy bộ Kiprun KD900X với mức giá phải chăng. Giày Kiprun được thiết kế với tấm carbon chất lượng cao mà giá cả phải chăng, phù hợp với tất cả mọi người.",
+        CategoryName = "Giày Chạy Bộ",
+        SportName = "Chạy Bộ Đường Trường",
+        SkuBase = "RW-003",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "RW-003-39", Stock = 150, Price = 1999000, SalePrice = 1999000, Attributes = "39" },
+            new { Sku = "RW-003-40", Stock = 150, Price = 1999000, SalePrice = 1999000, Attributes = "40" },
+            new { Sku = "RW-003-41", Stock = 150, Price = 1999000, SalePrice = 1999000, Attributes = "41" },
+            new { Sku = "RW-003-42", Stock = 150, Price = 1999000, SalePrice = 1999000, Attributes = "42" },
+            new { Sku = "RW-003-43", Stock = 150, Price = 1999000, SalePrice = 1999000, Attributes = "43" },
+            new { Sku = "RW-003-44", Stock = 150, Price = 1999000, SalePrice = 1999000, Attributes = "44" }
+        },
+        ImageCount = 4
+    },
+      //RW004
+   new {
+        Name = "Giày chạy địa hình nam - XT8 xanh dương",
+        Desc = "Bạn muốn tìm một đôi giày vừa hiệu quả vừa dễ chịu khi chạy địa hình? Hãy thử mẫu giày đa năng của chúng tôi, kết hợp độ bám mềm mạnh mẽ cùng với khả năng giảm chấn và nâng đỡ hiệu quả. Giày chạy địa hình để tập luyện hoặc chạy địa hình ngoài thực tế lên đến 80km - đặc biệt phù hợp với đường địa hình ẩm ướt và bùn lầy. ",
+       CategoryName = "Giày Chạy Trail",
+        SportName = "Chạy Bộ Đường Trường",
+        SkuBase = "RW-004",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "RW-004-39", Stock = 150, Price = 2399000, SalePrice = 2399000, Attributes = "39" },
+            new { Sku = "RW-004-40", Stock = 150, Price = 2399000, SalePrice = 2399000, Attributes = "40" },
+            new { Sku = "RW-004-41", Stock = 150, Price = 2399000, SalePrice = 2399000, Attributes = "41" },
+            new { Sku = "RW-004-42", Stock = 150, Price = 2399000, SalePrice = 2399000, Attributes = "42" },
+            new { Sku = "RW-004-43", Stock = 150, Price = 2399000, SalePrice = 2399000, Attributes = "43" },
+            new { Sku = "RW-004-44", Stock = 150, Price = 2399000, SalePrice = 2399000, Attributes = "44" }
+        },
+        ImageCount = 4
+    },
+   new {
+        Name = "Giày chạy trail nữ - TR đỏ",
+        Desc = "Đối với những người mới bắt đầu chạy địa hình/dã ngoại trên địa hình bằng phẳng, bạn có thể tận dụng tối đa các tính năng toàn diện & sự mềm dẻo của giày TR, ngay cả khi đang trên đường chạy. Giày chạy địa hình dùng trong tập luyện hoặc thi đấu, với quãng đường lên đến 30 km trên địa hình bằng phẳng.Giày đa năng trên đường bộ và địa hình.",
+        CategoryName = "Giày Chạy Trail",
+        SportName = "Chạy Bộ Đường Trường",
+        SkuBase = "RW-005",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "RW-005-39", Stock = 150, Price = 999000, SalePrice = 999000, Attributes = "39" },
+            new { Sku = "RW-005-40", Stock = 150, Price = 999000, SalePrice = 999000, Attributes = "40" },
+            new { Sku = "RW-005-41", Stock = 150, Price = 999000, SalePrice = 999000, Attributes = "41" },
+            new { Sku = "RW-005-42", Stock = 150, Price = 999000, SalePrice = 999000, Attributes = "42" },
+            new { Sku = "RW-005-43", Stock = 150, Price = 999000, SalePrice = 999000, Attributes = "43" },
+            new { Sku = "RW-005-44", Stock = 150, Price = 999000, SalePrice = 999000, Attributes = "44" }
+        },
+        ImageCount = 4
+    },
+   new {
+        Name = "Giày chạy địa hình EVADICT MT CUSHION 2 cho nam - Xanh ngọc",
+        Desc = "Được thiết kế lại và cải tiến hoàn toàn, MT CUSHION 2 có các đặc tính chuyên môn vượt trội: tăng cường độ giảm chấn, sự thoải mái và độ bền nhờ chất vải MATRYX® nhẹ và thoáng khí.",
+        CategoryName = "Giày Chạy Trail",
+        SportName = "Chạy Bộ Đường Trường",
+        SkuBase = "RW-006",
+        IsFeat = true,
+        Variants = new[] {
+            new { Sku = "RW-006-39", Stock = 150, Price = 1799000, SalePrice = 1799000, Attributes = "39" },
+            new { Sku = "RW-006-40", Stock = 150, Price = 1799000, SalePrice = 1799000, Attributes = "40" },
+            new { Sku = "RW-006-41", Stock = 150, Price = 1799000, SalePrice = 1799000, Attributes = "41" },
+            new { Sku = "RW-006-42", Stock = 150, Price = 1799000, SalePrice = 1799000, Attributes = "42" },
+            new { Sku = "RW-006-43", Stock = 150, Price = 1799000, SalePrice = 1799000, Attributes = "43" },
+            new { Sku = "RW-006-44", Stock = 150, Price = 1799000, SalePrice = 1799000, Attributes = "44" }
         },
         ImageCount = 4
     }

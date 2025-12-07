@@ -13,10 +13,9 @@
 }
 .slideshow {
     overflow: hidden;
-    width: 99vw; /* Chiếm toàn bộ chiều ngang màn hình */
+    width: 100% !important; /* Chiếm toàn bộ chiều ngang container */
     position: relative;
-    left: 50%;
-    transform: translateX(-50%);
+    box-sizing: border-box;
 }
 
 .slideshow__inner {
@@ -67,12 +66,21 @@
         pointer-events: auto;
     }
 
-/* Header sticky trên cùng màn hình */
+/* Header fixed trên cùng màn hình - đảm bảo luôn cố định */
+header.site-header,
 .site-header {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background: var(--header-bg-color, #fff);
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 1000 !important;
+    background: var(--header-bg-color, #fff) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    transform: none !important;
+    will-change: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* Đảm bảo dropdown nổi trên overlay */
