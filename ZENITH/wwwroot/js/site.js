@@ -1,16 +1,7 @@
-﻿// Tránh xung đột với BrowserLink/jQuery: không dùng ký hiệu $ toàn cục
+﻿
 const qs = document.querySelector.bind(document);
 const qsa = document.querySelectorAll.bind(document);
 
-/**
- * Hàm tải template
- *
- * Cách dùng:
- * <div id="parent"></div>
- * <script>
- *  load("#parent", "./path-to-template.html");
- * </script>
- */
 function load(selector, path) {
   const cached = localStorage.getItem(path);
   if (cached) {
@@ -66,13 +57,7 @@ function debounce(func, timeout = 300) {
   };
 }
 
-/**
- * Hàm tính toán vị trí arrow cho dropdown
- *
- * Cách dùng:
- * 1. Thêm class "js-dropdown-list" vào thẻ ul cấp 1
- * 2. CSS "left" cho arrow qua biến "--arrow-left-pos"
- */
+
 const calArrowPos = debounce(() => {
   if (isHidden(qs(".js-dropdown-list"))) return;
 
@@ -92,11 +77,7 @@ window.addEventListener("template-loaded", calArrowPos);
 
 /**
  * Giữ active menu khi hover
- *
- * Cách dùng:
- * 1. Thêm class "js-menu-list" vào thẻ ul menu chính
- * 2. Thêm class "js-dropdown" vào class "dropdown" hiện tại
- *  nếu muốn reset lại item active khi ẩn menu
+
  */
 window.addEventListener("template-loaded", handleActiveMenu);
 document.addEventListener("DOMContentLoaded", handleActiveMenu);
@@ -144,38 +125,12 @@ function handleActiveMenu() {
   // Khởi tạo menu
   init();
 
-  // Thêm sự kiện cho dropdown
-  //dropdowns.forEach((dropdown) => {
-  //    dropdown.onmouseenter = () => {
-  //        if (window.innerWidth <= 991) return;
 
-  //        // Xóa tất cả active
-  //        removeAllActive();
-
-  //        // Thêm active cho dropdown hiện tại
-  //        const currentMenu = dropdown.querySelector(".js-menu-list");
-  //        if (currentMenu && currentMenu.children.length > 0) {
-  //            currentMenu.children[0].classList.add(activeClass);
-  //        }
-  //    };
-
-  //    dropdown.onmouseleave = () => {
-  //        if (window.innerWidth <= 991) return;
-  //        init();
-  //    };
-  //});
   dropdowns.forEach((dropdown) => {
     dropdown.onmouseleave = () => init();
   });
 }
 
-/**
- * JS toggle
- *
- * Cách dùng:
- * <button class="js-toggle" toggle-target="#box">Click</button>
- * <div id="box">Content show/hide</div>
- */
 window.addEventListener("template-loaded", initJsToggle);
 document.addEventListener("DOMContentLoaded", initJsToggle);
 
@@ -1071,10 +1026,85 @@ document.addEventListener("DOMContentLoaded", function () {
   })();
   var payBtn = document.querySelector(".checkout-page .cart-info__next-btn");
   if (!payBtn) return;
+  
+  // Kiểm tra và vô hiệu hóa nút thanh toán nếu không có sản phẩm hoặc địa chỉ
+  (function checkPaymentButton() {
+    var mainEl = document.querySelector("main.checkout-page");
+    if (!mainEl) return;
+    
+    var itemCountAttr = mainEl.getAttribute("data-item-count");
+    var hasAddressAttr = mainEl.getAttribute("data-has-address");
+    
+    var itemCount = itemCountAttr ? (parseInt(itemCountAttr, 10) || 0) : 0;
+    // Kiểm tra có địa chỉ dựa trên data-has-address (hỗ trợ cả guest với AddressId = 0)
+    var hasItems = itemCount > 0;
+    var hasAddress = hasAddressAttr === "true";
+    var canPay = hasItems && hasAddress;
+    
+    var errorMsgEl = document.getElementById("js-pay-error-message");
+    
+    if (!canPay) {
+      payBtn.classList.add("btn--disabled");
+      payBtn.style.pointerEvents = "none";
+      payBtn.style.opacity = "0.6";
+      payBtn.style.cursor = "not-allowed";
+      
+      // Hiển thị thông báo lỗi
+      if (errorMsgEl) {
+        if (!hasItems && !hasAddress) {
+          errorMsgEl.textContent = "Vui lòng thêm sản phẩm vào giỏ hàng và chọn địa chỉ giao hàng";
+        } else if (!hasItems) {
+          errorMsgEl.textContent = "Vui lòng thêm sản phẩm vào giỏ hàng";
+        } else if (!hasAddress) {
+          errorMsgEl.textContent = "Vui lòng chọn địa chỉ giao hàng";
+        }
+        errorMsgEl.style.display = "block";
+      }
+    } else {
+      payBtn.classList.remove("btn--disabled");
+      payBtn.style.pointerEvents = "";
+      payBtn.style.opacity = "";
+      payBtn.style.cursor = "";
+      
+      // Ẩn thông báo lỗi
+      if (errorMsgEl) {
+        errorMsgEl.style.display = "none";
+      }
+    }
+  })();
+  
   payBtn.addEventListener("click", async function (e) {
     e.preventDefault();
+    
+    // Kiểm tra lại trước khi thanh toán
+    var mainEl = document.querySelector("main.checkout-page");
+    if (!mainEl) return;
+    
+    var itemCountAttr = mainEl.getAttribute("data-item-count");
+    var hasAddressAttr = mainEl.getAttribute("data-has-address");
+    
+    var itemCount = itemCountAttr ? (parseInt(itemCountAttr, 10) || 0) : 0;
+    // Kiểm tra có địa chỉ dựa trên data-has-address (hỗ trợ cả guest với AddressId = 0)
+    var hasAddress = hasAddressAttr === "true";
+    var hasItems = itemCount > 0;
+    
+    if (!hasItems) {
+      alert("Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán.");
+      window.location.href = "/Checkout/Index";
+      return;
+    }
+    
+    if (!hasAddress) {
+      alert("Vui lòng chọn địa chỉ giao hàng trước khi thanh toán.");
+      window.location.href = "/Checkout/Shipping";
+      return;
+    }
+    
     try {
-      var mainEl = document.querySelector("main.checkout-page");
+      // Lấy addressId từ data attribute (có thể là 0 cho guest user)
+      var addrIdAttr = mainEl.getAttribute("data-address-id");
+      var addrId = addrIdAttr && addrIdAttr.trim() !== "" ? (parseInt(addrIdAttr, 10) || null) : null;
+      
       var radiosNow = Array.prototype.slice.call(
         document.querySelectorAll(".payment-item__checkbox-input")
       );
@@ -1085,8 +1115,6 @@ document.addEventListener("DOMContentLoaded", function () {
         ? parseFloat(sel.getAttribute("data-rate") || "0") || 0
         : 0;
       var method = rate >= 30000 ? "express" : "standard";
-      var addrId =
-        parseInt(mainEl?.getAttribute("data-address-id") || "0", 10) || null;
       var paymentType = "cod";
       var cardHolder = "";
       var cardNumber = "";

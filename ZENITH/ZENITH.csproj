@@ -5,6 +5,16 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>2a5d04b0-2a7f-44c4-9424-4e893d4b705b</UserSecretsId>
+    
+    <!-- Self-Contained Deployment Configuration -->
+    <!-- RuntimeIdentifier: Chỉ định nền tảng mục tiêu (có thể ghi đè bằng tham số -r) -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <!-- SelfContained: Đóng gói .NET Runtime vào thư mục publish -->
+    <SelfContained>true</SelfContained>
+    <!-- PublishSingleFile: Đóng gói thành một file thực thi duy nhất -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <!-- IncludeNativeLibrariesForSelfExtract: Bao gồm các thư viện native khi dùng PublishSingleFile -->
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
   <ItemGroup>

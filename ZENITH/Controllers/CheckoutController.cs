@@ -848,6 +848,16 @@ namespace ZENITH.Controllers
                 AddressItemViewModel? addr = null;
                 var sAddr = HttpContext.Session.GetString(SessionAddressKey);
                 if (!string.IsNullOrEmpty(sAddr)) { try { addr = JsonSerializer.Deserialize<AddressItemViewModel>(sAddr); } catch { addr = null; } }
+                // Kiểm tra nếu không có sản phẩm trong giỏ hàng hoặc không có địa chỉ
+                if (itemsG == null || itemsG.Count == 0)
+                {
+                    return RedirectToAction("Index");
+                }
+                if (addr == null)
+                {
+                    return RedirectToAction("Shipping");
+                }
+
                 var modelG = new PaymentViewModel
                 {
                     SelectedAddress = addr,
@@ -930,6 +940,16 @@ namespace ZENITH.Controllers
             selectedId ??= addresses.FirstOrDefault()?.AddressId;
 
             var selected = addresses.FirstOrDefault(a => a.AddressId == (selectedId ?? 0));
+
+            // Kiểm tra nếu không có sản phẩm trong giỏ hàng hoặc không có địa chỉ
+            if (items == null || items.Count == 0)
+            {
+                return RedirectToAction("Index");
+            }
+            if (selected == null)
+            {
+                return RedirectToAction("Shipping");
+            }
 
             var model = new PaymentViewModel
             {
